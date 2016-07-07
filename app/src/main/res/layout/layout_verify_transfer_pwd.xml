@@ -29,11 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:gravity="center"
-            android:text="请输入eID签名密码"
-            android:drawablePadding="10dip"
-            android:drawableLeft="@drawable/eid"
+            android:text="提示"
             android:textColor="#333333"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tipTextView"

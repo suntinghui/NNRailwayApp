@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ble_reader_lib_10_12">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/ble_reader_lib_10_12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

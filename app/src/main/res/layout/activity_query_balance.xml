@@ -30,20 +30,22 @@
             android:padding="10dip">
 
             <TextView
+                android:id="@+id/accountTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/bank_test"
+                android:drawableLeft="@drawable/bank_test2"
                 android:drawablePadding="5dip"
                 android:gravity="center_vertical"
-                android:text="6226 2001 0291 7466"
+                android:text=""
                 android:textColor="#333333"
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/accountNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="孙廷会"
+                android:text=""
                 android:textColor="#333333"
                 android:textSize="14sp" />
 
@@ -65,9 +67,10 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/outfitnameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="中国民生银行中关村支行"
+                android:text=""
                 android:textColor="#333333"
                 android:textSize="14sp" />
 
@@ -121,9 +124,10 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/accountBalanceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1236.90"
+                android:text="0.00"
                 android:textColor="#333333"
                 android:textSize="14sp" />
 

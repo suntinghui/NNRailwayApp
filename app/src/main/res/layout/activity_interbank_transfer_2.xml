@@ -50,10 +50,11 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/transferOutTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
-                        android:drawableLeft="@drawable/bank_test"
+                        android:drawableLeft="@drawable/bank_test2"
                         android:drawablePadding="5dip"
                         android:text="6226 2001 0291 7466"
                         android:textColor="@color/blueme"
@@ -111,6 +112,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/transferInTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
@@ -139,6 +141,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/transferInNameTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
@@ -203,6 +206,7 @@
                         android:paddingTop="10dip">
 
                         <TextView
+                            android:id="@+id/amountTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="￥100.00"
@@ -210,6 +214,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/amountCNNTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dip"
@@ -273,7 +278,8 @@
                         android:background="@null"
                         android:hint="请输入短信验证码"
                         android:inputType="numberDecimal"
-                        android:maxLength="6"
+                        android:maxLength="4"
+                        android:text="4668"
                         android:textColor="#666666"
                         android:textColorHint="#cccccc"
                         android:textSize="14sp" />
@@ -312,6 +318,7 @@
                         android:hint="请输入交易密码"
                         android:inputType="numberPassword"
                         android:maxLength="6"
+                        android:text="666666"
                         android:textColor="#666666"
                         android:textColorHint="#cccccc"
                         android:textSize="14sp" />

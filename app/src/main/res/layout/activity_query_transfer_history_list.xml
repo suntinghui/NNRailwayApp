@@ -36,10 +36,11 @@
                 android:padding="10dip">
 
                 <TextView
+                    android:id="@+id/accountNoTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/bank_test"
+                    android:drawableLeft="@drawable/bank_test2"
                     android:drawablePadding="5dip"
                     android:gravity="center_vertical"
                     android:text="6226 2001 0291 7466"
@@ -47,6 +48,7 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/accountNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="孙廷会"
@@ -60,7 +62,8 @@
                 android:layout_height="wrap_content"
                 android:background="#F3F3F3"
                 android:orientation="horizontal"
-                android:padding="10dip">
+                android:padding="10dip"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,7 +100,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2016年06月01日～2016年06月30日"
+                    android:text="2016年07月01日～2016年07月08日"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -119,31 +122,34 @@
                 android:padding="10dip">
 
                 <TextView
+                    android:id="@+id/history11TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t本行存款"
+                    android:text="2016年07月08日\t\t\t\t\t\t\t\t跨行汇款"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/history12TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dip"
                     android:layout_marginTop="5dip"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="转入\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1000.00"
-                    android:textColor="@color/greenme"
+                    android:text="转出\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t0.00"
+                    android:textColor="@color/redme"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/history13TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="余额\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t1200.00"
+                    android:text="余额\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t0.00"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -167,7 +173,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t快捷支付"
+                    android:text="2016年07月04日\t\t\t\t\t\t\t\t跨行汇款"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -211,7 +217,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t其他合法收入"
+                    android:text="2016年07月04日\t\t\t\t\t\t\t\t其他合法收入"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -255,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t跨行汇款"
+                    android:text="2016年07月04日\t\t\t\t\t\t\t\t跨行汇款"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -299,7 +305,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t本行存款"
+                    android:text="2016年07月04日\t\t\t\t\t\t\t\t本行存款"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -343,7 +349,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t本行存款"
+                    android:text="2016年07月04日\t\t\t\t\t\t\t\t本行存款"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 
@@ -387,7 +393,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="2016年06月04日\t\t\t\t\t\t\t\t本行存款"
+                    android:text="2016年07月04日\t\t\t\t\t\t\t\t本行存款"
                     android:textColor="#333333"
                     android:textSize="14sp" />
 

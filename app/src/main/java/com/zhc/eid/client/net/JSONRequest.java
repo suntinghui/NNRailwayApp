@@ -31,7 +31,7 @@ public class JSONRequest extends StringRequest {
 
     private HashMap<String, String> map = null;
 
-    private String id = RequestEnum.HOTELORDER;
+    private String id = RequestEnum.LOGIN;
 
     /**
      * 不缓存, 默认错误处理

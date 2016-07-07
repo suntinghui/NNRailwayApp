@@ -51,7 +51,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dip"
-                    android:text="6226 2001 0291 7466"
+                    android:text=""
+                    android:id="@+id/accountTextView"
                     android:textColor="@color/blueme"
                     android:textSize="14sp" />
 
@@ -79,6 +80,7 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/accountNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dip"
@@ -145,7 +147,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dip"
-                    android:text="2016-06-01"
+                    android:text="2016-07-01"
                     android:textColor="@color/blueme"
                     android:textSize="14sp" />
 
@@ -176,7 +178,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dip"
-                    android:text="2016-06-30"
+                    android:text="2016-07-08"
                     android:textColor="@color/blueme"
                     android:textSize="14sp" />
 

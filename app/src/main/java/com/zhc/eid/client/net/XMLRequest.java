@@ -39,7 +39,7 @@ public class XMLRequest extends Request<XmlPullParser> {
 
     private HashMap<String, String> reqMap = null;
 
-    private String id = RequestEnum.HOTELORDER;
+    private String id = RequestEnum.LOGIN;
 
     public XMLRequest(int method, String url, Response.Listener<XmlPullParser> listener,
                       Response.ErrorListener errorListener) {
@@ -89,7 +89,7 @@ public class XMLRequest extends Request<XmlPullParser> {
             String xmlString = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers));
 
-            Log.e("response","===:" + xmlString);
+            Log.e("response", "===:" + xmlString);
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser xmlPullParser = factory.newPullParser();

@@ -75,4 +75,45 @@ public class BaseActivity extends Activity {
         return false;
     }
 
+    // 等待提示框
+    private ProgressHUD hud = null;
+
+    public void showProgress(String message) {
+        try{
+            if (message == null)
+                return;
+
+            if ("".equals(message.trim()))
+                message = "请稍候...";
+
+            if (hud == null) {
+                hud = ProgressHUD.show(this, message, true, new OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        // TODO
+                        //cancelRequest();
+
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                hud.setMessage(message);
+            }
+
+            if (!hud.isShowing())
+                hud.show();
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void hideProgress() {
+        try {
+            hud.dismiss();
+            hud = null;
+        } catch (Exception e) {
+        }
+    }
+
 }

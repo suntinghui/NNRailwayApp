@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="NFC&amp;BLE-v1.1.0beta">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/NFC&amp;BLE-v1.1.0beta.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

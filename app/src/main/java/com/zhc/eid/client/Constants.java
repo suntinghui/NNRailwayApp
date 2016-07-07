@@ -15,8 +15,12 @@ public class Constants {
 
     // 测试
     //public static final String HOST_IP = "http://182.92.4.182:8080/HotelReqServlet?";
-    public static final String HOST_IP = "http://101.200.213.239:7082/eIDServerDemo/HotelReqServlet?";
+    public static final String HOST_IP = "http://101.200.213.239:7082/eIDServerDemo/MbsReqEntraServlet?";
     public static final String HOST_IP_REQ = HOST_IP;
+
+    public static String CUSTOMERNO = "dyf9702";
+    public static String ACCOUNTNO = "9559980759778592817";
+    public static String ACCOUNTNAME = "";
 
     public static final String PROTOCOL_IP = HOST_IP + "/app/agreement.html";
 

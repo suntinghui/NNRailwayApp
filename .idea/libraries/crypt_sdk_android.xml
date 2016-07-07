@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="crypt_sdk_android">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/crypt_sdk_android.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

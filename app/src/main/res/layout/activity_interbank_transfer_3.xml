@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dip"
                 android:layout_marginTop="15dip"
-                android:text="2016年7月2日 15:12:48"
+                android:text="2016年7月8日 10:12:48"
                 android:textColor="#666666"
                 android:textSize="13sp" />
 
@@ -78,6 +78,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/transferOutTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
@@ -139,6 +140,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/transferInTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
@@ -167,6 +169,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/transferInNameTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
@@ -226,6 +229,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/amountTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
@@ -252,6 +256,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/amountCNNTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dip"
