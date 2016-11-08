@@ -51,17 +51,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/client/Constants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="27" column="48" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="48" />
+            <state relative-caret-position="240">
+              <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="99" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ShowWebViewActivity.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ShowWebViewActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/ShowWebViewActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="60">
@@ -2621,10 +2621,10 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/MessageActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/SettingActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/client/Constants.java" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/MessageDetailActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/MessageListActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/client/Constants.java" />
       </list>
     </option>
   </component>
@@ -3190,14 +3190,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/client/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="48" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/activity/SettingActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
@@ -3240,6 +3232,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/lkpower/railway/client/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="99" />
           <folding />
         </state>
       </provider>
