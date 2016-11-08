@@ -14,9 +14,6 @@ import com.lkpower.railway.client.Constants;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static android.R.attr.type;
-import static cn.pedant.SweetAlert.SweetAlertDialog.NORMAL_TYPE;
-
 /**
  * Created by sth on 19/10/2016.
  */
@@ -91,7 +88,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case R.id.messageLayout: {// 段发信息
-                Intent intent = new Intent(this, MessageActivity.class);
+                Intent intent = new Intent(this, MessageListActivity.class);
                 this.startActivity(intent);
             }
                 break;
