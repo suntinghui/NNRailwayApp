@@ -41,7 +41,7 @@
             android:layout_centerVertical="true"
             android:paddingLeft="10dip"
             android:paddingRight="20dip"
-            android:text="设置"
+            android:text="功能"
             android:textColor="@drawable/text_white_gray_selector"
             android:textSize="15sp" />
     </RelativeLayout>
