@@ -14,7 +14,7 @@ public class Constants {
 //    public static final String HOST_IP_REQ = HOST_IP + ":8111";
 
     // 测试
-    public static final String HOST_IP = "http://103.43.185.166:39/LinkPower.PduOA6.Prj.nanning/InspectionWork/MobileJson.ashx";
+    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
 //    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
 
     public static final String HOST_IP_REQ = HOST_IP;
