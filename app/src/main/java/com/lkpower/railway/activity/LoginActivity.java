@@ -50,8 +50,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         this.findViewById(R.id.nextBtn).setOnClickListener(this);
 
-        phoneEditText.setText("fk");
-        pwdEditText.setText("aaaaaa");
+        phoneEditText.setText("sdp");
+        pwdEditText.setText("aaaaaaa");
     }
 
     @Override

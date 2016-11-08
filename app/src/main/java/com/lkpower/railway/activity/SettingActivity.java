@@ -23,8 +23,10 @@ import static cn.pedant.SweetAlert.SweetAlertDialog.NORMAL_TYPE;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
-    private LinearLayout tipModelLayout = null;
-    private LinearLayout checkUpdateLayout = null;
+    private LinearLayout runInfoLayout = null; // 行车信息
+    private LinearLayout messageLayout = null; // 段发信息
+    private LinearLayout tipModelLayout = null; // 提醒模式
+    private LinearLayout checkUpdateLayout = null; // 检查新版本
     private LinearLayout feedbackLayout = null;
     private LinearLayout contactLayout = null;
     private LinearLayout aboutLayout = null;
@@ -43,10 +45,17 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     private void initView() {
         TextView titleTextView = (TextView) this.findViewById(R.id.titleTextView);
-        titleTextView.setText("设置");
+        titleTextView.setText("功能");
 
         Button backButton = (Button) this.findViewById(R.id.backBtn);
         backButton.setOnClickListener(this);
+
+
+        runInfoLayout = (LinearLayout) this.findViewById(R.id.runInfoLayout);
+        runInfoLayout.setOnClickListener(this);
+
+        messageLayout = (LinearLayout) this.findViewById(R.id.messageLayout);
+        messageLayout.setOnClickListener(this);
 
         tipModelLayout = (LinearLayout) this.findViewById(R.id.tipModelLayout);
         tipModelLayout.setOnClickListener(this);
@@ -75,6 +84,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         switch (view.getId()) {
             case R.id.backBtn:
                 this.finish();
+                break;
+
+            case R.id.runInfoLayout: // 行车信息
+
+                break;
+
+            case R.id.messageLayout: {// 段发信息
+                Intent intent = new Intent(this, MessageActivity.class);
+                this.startActivity(intent);
+            }
                 break;
 
             case R.id.tipModelLayout: {
