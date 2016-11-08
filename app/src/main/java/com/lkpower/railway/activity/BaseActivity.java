@@ -15,7 +15,7 @@ import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.net.NetHelper;
 import com.lkpower.railway.util.NetUtil;
 import com.umeng.analytics.MobclickAgent;
-
+//呵呵呵
 public class BaseActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
