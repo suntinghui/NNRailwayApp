@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MobileBankDemo.iml" filepath="$PROJECT_DIR$/MobileBankDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NNRailwayApp.iml" filepath="$PROJECT_DIR$/NNRailwayApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imagepickerModule/imagepickerModule.iml" filepath="$PROJECT_DIR$/imagepickerModule/imagepickerModule.iml" />
     </modules>
   </component>
 </project>

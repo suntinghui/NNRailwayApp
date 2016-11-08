@@ -15,6 +15,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="Theme.Start" parent="android:Theme">
+        <item name="android:windowBackground">@drawable/welcome_bg</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <declare-styleable name="ProgressWheel">
         <attr name="matProg_progressIndeterminate" format="boolean" />
         <attr name="matProg_barColor" format="color" />

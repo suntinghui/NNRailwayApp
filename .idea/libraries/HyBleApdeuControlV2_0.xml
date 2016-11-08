@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="HyBleApdeuControlV2.0">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/libs/HyBleApdeuControlV2.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

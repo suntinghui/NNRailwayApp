@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/bag_icon_01"></ImageView>
+        android:background="@drawable/ic_launcher"></ImageView>
 
     <TextView
         android:id="@+id/itemText"

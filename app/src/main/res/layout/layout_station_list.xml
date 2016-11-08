@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0.5"
+    android:background="@drawable/bg_white_gray"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="15dip"
+    android:paddingLeft="15dip"
+    android:paddingRight="15dip"
+    android:paddingTop="15dip">
+
+    <TextView
+        android:id="@+id/numTextView"
+        android:layout_width="20dip"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="60dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:text="北京南"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/arrivalTimeTextView"
+        android:layout_width="40dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:text="06:30"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/gooutTimeTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:layout_weight="1"
+        android:text="06:50"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/earnings_right_arrow" />
+
+</LinearLayout>

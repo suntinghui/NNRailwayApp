@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_white_gray"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="15dip"
+    android:paddingLeft="15dip"
+    android:paddingRight="15dip"
+    android:paddingTop="15dip">
+
+    <TextView
+        android:drawableLeft="@drawable/train"
+        android:drawablePadding="6dip"
+        android:id="@+id/nameTextView"
+        android:layout_width="40dip"
+        android:layout_height="wrap_content"
+        android:text="G110"
+        android:textColor="#333333"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/descTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:layout_weight="1"
+        android:text="北京--上海"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/earnings_right_arrow" />
+
+</LinearLayout>

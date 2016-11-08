@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView.ScaleType;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.zhc.eid.R;
-import com.zhc.eid.client.Constants;
-import com.zhc.eid.client.net.ImageCacheManager;
+import com.lkpower.railway.R;
 
 import java.util.List;
 
@@ -58,7 +56,7 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
         if (view == null) {
             holder = new ViewHolder();
             view = holder.imageView = new NetworkImageView(context);
-            holder.imageView.setBackgroundResource(R.drawable.hotel_detail_1);
+            holder.imageView.setBackgroundResource(R.drawable.ic_launcher);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

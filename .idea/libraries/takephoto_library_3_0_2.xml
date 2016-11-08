@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="takephoto_library-3.0.2">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.jph.takephoto/takephoto_library/3.0.2/res" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.jph.takephoto/takephoto_library/3.0.2/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jph.takephoto/takephoto_library/3.0.2/1e9a85aae464889aac4db0eefe6071de1a0cf711/takephoto_library-3.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

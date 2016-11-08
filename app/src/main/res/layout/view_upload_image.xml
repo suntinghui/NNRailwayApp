@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/upload_bg"
+    android:layout_width="150dip"
+    android:layout_height="150dip"
+    android:layout_weight="1"
+    android:background="@drawable/creditcard_upload_bg"
+    android:padding="5dip">
+
+    <com.lkpower.railway.activity.view.CustomNetworkImageView
+        android:id="@+id/picImageView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0.5"
+        android:scaleType="centerCrop" />
+
+    <ImageView
+        android:id="@+id/addImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/creditcard_upload_uploadable_tip" />
+
+    <ImageView
+        android:id="@+id/cameraImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/creditcard_upload_camera" />
+</RelativeLayout>

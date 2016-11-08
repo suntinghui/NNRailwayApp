@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="eid-plug-1.0.3">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/libs/eid-plug-1.0.3.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

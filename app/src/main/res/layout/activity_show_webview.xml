@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="50dip" />
 
-    <com.zhc.eid.activity.view.NoZoomControllWebView
+    <com.lkpower.railway.activity.view.NoZoomControllWebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
