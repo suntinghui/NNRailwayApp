@@ -1,5 +1,7 @@
 package com.lkpower.railway.activity;
 
+import android.os.Bundle;
+
 /**
  * Created by sth on 08/11/2016.
  *
@@ -7,4 +9,10 @@ package com.lkpower.railway.activity;
  */
 
 public class MessageDetailActivity extends BaseActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+    }
 }
