@@ -23,4 +23,5 @@ public class RequestEnum {
     }
 
     public static final String LoginUserInfo = "LoginUserInfo"; // 登录
+    public static final String MessageList = "MissionInfoByUser"; //任务信息列表
 }
