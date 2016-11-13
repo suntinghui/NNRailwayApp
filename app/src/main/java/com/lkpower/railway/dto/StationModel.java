@@ -16,7 +16,7 @@ public class StationModel implements Serializable {
     private String arrivalDay;
     private String longitude;
     private String latitude;
-    private String prioritySet;
+    private String prioritySet;  // 1时间  2距离
     private String aheadTime;
     private String distance;
 
