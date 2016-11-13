@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
@@ -47,7 +46,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         Button backButton = (Button) this.findViewById(R.id.backBtn);
         backButton.setOnClickListener(this);
 
-
         runInfoLayout = (LinearLayout) this.findViewById(R.id.runInfoLayout);
         runInfoLayout.setOnClickListener(this);
 
@@ -83,8 +81,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 this.finish();
                 break;
 
-            case R.id.runInfoLayout: // 行车信息
-
+            case R.id.runInfoLayout: {// 行车信息
+                Intent intent = new Intent(this, DrivingInfoActivity.class);
+                this.startActivity(intent);
+            }
                 break;
 
             case R.id.messageLayout: {// 段发信息
@@ -94,9 +94,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case R.id.tipModelLayout: {
+                /*
                 Constants.TIP_TIME_MODEL = !Constants.TIP_TIME_MODEL;
                 Toast.makeText(this, Constants.TIP_TIME_MODEL ? "已切换到时间优先提醒模式" : "已切换到距离优先提醒模式", Toast.LENGTH_SHORT).show();
                 tipModelTextView.setText(Constants.TIP_TIME_MODEL ? "时间优先" : "距离优先");
+                */
             }
                 break;
 
@@ -111,17 +113,19 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case R.id.feedbackLayout: {
-                Intent intent = new Intent(this, ShowWebViewActivity.class);
-                intent.putExtra("title", "南宁铁路局");
-                intent.putExtra("url", "http://www.nntlj.com/staticpages/20110811/nt4e438839-2697774.shtml");
+                Intent intent = new Intent(this, FeedBackActivity.class);
                 this.startActivity(intent);
             }
                 break;
 
             case R.id.contactLayout: {
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "0771-12306"));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                try{
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Constants.DeviceInfo.getPhone()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
                 break;
 

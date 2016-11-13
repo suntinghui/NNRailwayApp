@@ -1,5 +1,6 @@
 package com.lkpower.railway.client;
 
+import com.lkpower.railway.dto.DeviceInfo;
 import com.lkpower.railway.util.ActivityUtil;
 
 public class Constants {
@@ -22,6 +23,10 @@ public class Constants {
     public static String CUSTOMERNO = "sdp";
     public static String ACCOUNTNO = "9559980759778592817";
     public static String ACCOUNTNAME = "";
+
+    public static DeviceInfo DeviceInfo = null;
+    public static String CarNumberId = null;
+    public static String CarNumberName = null;
 
     public static final String PROTOCOL_IP = HOST_IP + "/app/agreement.html";
 

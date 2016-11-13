@@ -35,6 +35,7 @@ import java.util.List;
  *
  */
 
+@Deprecated
 public class TrainListActivity extends BaseActivity {
 
     private ListView listView = null;

@@ -2,86 +2,90 @@ package com.lkpower.railway.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.dto.MessageDto;
+import com.lkpower.railway.dto.InfoPublishListDto;
+import com.lkpower.railway.dto.MessageModel;
 import com.lkpower.railway.util.ActivityUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by sth on 08/11/2016.
- *
+ * <p>
  * 段发信息列表
  */
 
-public class MessageListActivity extends BaseActivity {
-    public TextView mTvTitle;
-    public ListView mLvMessage;
+public class MessageListActivity extends BaseActivity implements View.OnClickListener {
+
+    public ListView listView;
+
     public MessageListAdapter mAdapter = null;
-    public ArrayList<MessageDto.Message> datas = null;
+    public List<MessageModel> dataList = new ArrayList<MessageModel>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_message_list);
 
         init();
     }
 
-    public void init(){
+    public void init() {
+        TextView titleTextView = (TextView) this.findViewById(R.id.titleTextView);
+        titleTextView.setText("段发信息");
 
-        mTvTitle = (TextView) findViewById(R.id.titleTextView);
-        mTvTitle.setText("任务信息列表");
+        Button backButton = (Button) this.findViewById(R.id.backBtn);
+        backButton.setOnClickListener(this);
 
-        mLvMessage = (ListView) findViewById(R.id.lv_message);
+        listView = (ListView) this.findViewById(R.id.listView);
         mAdapter = new MessageListAdapter(this);
-        mLvMessage.setAdapter(mAdapter);
-        ActivityUtil.setEmptyView(this, mLvMessage).setOnClickListener(new View.OnClickListener() {
+        listView.setAdapter(mAdapter);
+
+        ActivityUtil.setEmptyView(this, listView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestMessageList();
             }
         });
+
         requestMessageList();
-
     }
-
 
     private void requestMessageList() {
         HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "commondKey");
-        tempMap.put("serialNumber", "serialNumber");
-        tempMap.put("userId", "userId");
-        tempMap.put("stationId", "stationId");
+        tempMap.put("commondKey", "InfoPublishList");
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.MessageList, tempMap, new Response.Listener<String>() {
+        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String jsonObject) {
                 try {
                     Gson gson = new GsonBuilder().create();
-                    MessageDto messageDto = gson.fromJson(jsonObject, MessageDto.class);
-                    if (messageDto.getResult().getFlag() == 1) {
-                        datas = messageDto.getDataInfo();
+                    InfoPublishListDto infoPublishListDto = gson.fromJson(jsonObject, InfoPublishListDto.class);
+                    if (infoPublishListDto.getResult().getFlag() == 1) {
+                        dataList = infoPublishListDto.getDataInfo();
                         mAdapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(MessageListActivity.this, messageDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MessageListActivity.this, infoPublishListDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (Exception e) {
@@ -91,7 +95,12 @@ public class MessageListActivity extends BaseActivity {
             }
         });
 
-        this.addToRequestQueue(request, "正在查询任务信息...");
+        this.addToRequestQueue(request, "正在查询信息...");
+    }
+
+    @Override
+    public void onClick(View view) {
+        this.finish();
     }
 
     private class MessageListAdapter extends BaseAdapter {
@@ -103,7 +112,7 @@ public class MessageListActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return datas.size();
+            return dataList.size();
         }
 
         @Override
@@ -124,76 +133,29 @@ public class MessageListActivity extends BaseActivity {
                 holder = new MessageListActivity.ViewHolder();
 
                 convertView = mInflater.inflate(R.layout.item_message_list, null);
-                holder.mTvTaskName = (TextView) convertView.findViewById(R.id.tv_taskname);
-                holder.mTvState = (TextView) convertView.findViewById(R.id.tv_state);
-                holder.mTvTaskContent = (TextView) convertView.findViewById(R.id.tv_task_content);
-                holder.mTvSerialNumber = (TextView) convertView.findViewById(R.id.tv_serial_number);
-                holder.mTvName = (TextView) findViewById(R.id.tv_serial_people);
-                holder.mTvUpdateTime = (TextView) findViewById(R.id.tv_update_time);
+                holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
+                holder.contentTextView = (TextView) convertView.findViewById(R.id.contentTextView);
+                holder.timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
                 convertView.setTag(holder);
+
             } else {
                 holder = (MessageListActivity.ViewHolder) convertView.getTag();
             }
 
-            final MessageDto.Message message = datas.get(position);
-            String taskName = message.getMisName();
-            if(taskName!=null&&!"".equals(taskName)){
-                holder.mTvTaskName.setText(taskName);
-            }else{
-                holder.mTvTaskName.setText("");
-            }
-
-            String state = message.getState();
-            if(state!=null&&!"".equals(state)){
-                if(state.equals("1")){
-                    holder.mTvState.setText("未完成");
-                    holder.mTvState.setTextColor(Color.BLUE);
-                }else{
-                    holder.mTvState.setText("已完成");
-                    holder.mTvState.setTextColor(Color.RED);
-                }
-            }else{
-                holder.mTvState.setText("");
-            }
-
-            String taskContent = message.getMisDistance();
-            if(taskContent!=null&&!"".equals(taskContent)){
-                holder.mTvTaskContent.setText(taskContent);
-            }else{
-                holder.mTvTaskContent.setText("");
-            }
-
-            String serialNumber = message.getSerialNumber();
-            if(serialNumber!=null&&!"".equals(serialNumber)){
-                holder.mTvSerialNumber.setText(serialNumber);
-            }else{
-                holder.mTvSerialNumber.setText("");
-            }
-
-            String name = message.getMisName();
-            if(name!=null&&!"".equals(name)){
-                holder.mTvName.setText(name);
-            }else{
-                holder.mTvName.setText("");
-            }
-
-            String updateTime = message.getUpdateTime();
-            if(updateTime!=null&&!"".equals(updateTime)){
-                holder.mTvUpdateTime.setText(updateTime);
-            }else{
-                holder.mTvUpdateTime.setText(updateTime);
-            }
+            final MessageModel message = dataList.get(position);
+            holder.titleTextView.setText(message.getTitle());
+            holder.contentTextView.setText(message.getContent());
+            holder.timeTextView.setText(message.getSubmitTime().trim());
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MessageListActivity.this, MessageDetailActivity.class);
-                    intent.putExtra("commondKey","commondKey");
-                    intent.putExtra("missionStateId","missionStateId");
+                    intent.putExtra("message", message);
                     startActivity(intent);
                 }
 
-          });
+            });
 
 
             return convertView;
@@ -201,7 +163,9 @@ public class MessageListActivity extends BaseActivity {
     }
 
     private class ViewHolder {
-        private TextView mTvTaskName,mTvState,mTvTaskContent,mTvSerialNumber,mTvName,mTvUpdateTime;
+        private TextView titleTextView;
+        private TextView contentTextView;
+        private TextView timeTextView;
     }
 
 

@@ -1,7 +1,5 @@
 package com.lkpower.railway.dto;
 
-import android.text.StaticLayout;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,6 +7,7 @@ import java.util.List;
  * Created by sth on 19/10/2016.
  */
 
+@Deprecated
 public class TrainDto implements Serializable {
     private ResultDto Result;
     private List<TrainDataInfo> DataInfo;
@@ -33,8 +32,8 @@ public class TrainDto implements Serializable {
         private String ID;
         private String TrainName;
         private String Remark;
-        private StationDto StartStation;
-        private StationDto EndStation;
+        private StationModel StartStation;
+        private StationModel EndStation;
 
         public String getID() {
             return ID;
@@ -60,19 +59,19 @@ public class TrainDto implements Serializable {
             Remark = remark;
         }
 
-        public StationDto getStartStation() {
+        public StationModel getStartStation() {
             return StartStation;
         }
 
-        public void setStartStation(StationDto startStation) {
+        public void setStartStation(StationModel startStation) {
             StartStation = startStation;
         }
 
-        public StationDto getEndStation() {
+        public StationModel getEndStation() {
             return EndStation;
         }
 
-        public void setEndStation(StationDto endStation) {
+        public void setEndStation(StationModel endStation) {
             EndStation = endStation;
         }
     }

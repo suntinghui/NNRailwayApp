@@ -2,88 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_taskname"
-            android:textColor="#333333"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:text="任务名称任务名称任务名称任务名称任务名称任务名称"
-            android:textSize="16sp" />
-        <TextView
-            android:id="@+id/tv_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:textColor="@color/red"
-            android:text="未完成"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
+    android:orientation="vertical"
+    android:paddingBottom="10dip"
+    android:paddingLeft="15dip"
+    android:paddingRight="15dip"
+    android:paddingTop="10dip">
 
     <TextView
-        android:id="@+id/tv_task_content"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:lines="1"
-        android:layout_marginTop="5dp"
+        android:id="@+id/titleTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="标题"
+        android:textColor="#333333"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/contentTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
         android:ellipsize="end"
-        android:textSize="16sp"
+        android:maxLines="3"
+        android:text="内容"
         android:textColor="#666666"
-        android:text="任务内容任务内容任务内容任务内容任务内容任务内容任务内容"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:textSize="15sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tv_serial_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:text="车次:0014000"
-            android:textSize="16sp" />
-        <TextView
-            android:id="@+id/tv_serial_people"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:text="用户姓名:孙大鹏"
-            android:textSize="16sp" />
-
-    </LinearLayout>
     <TextView
-        android:id="@+id/tv_update_time"
-        android:layout_width="wrap_content"
+        android:id="@+id/timeTextView"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="更新时间:2016-10-20 14:10-13"
-        android:textSize="16sp" />
+        android:layout_marginTop="5dip"
+        android:gravity="right"
+        android:text="2016-11-10"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+
 </LinearLayout>

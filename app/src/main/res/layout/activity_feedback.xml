@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_2"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/layout_topbar"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip" />
+
+    <EditText
+        android:id="@+id/contentEditText"
+        android:layout_width="fill_parent"
+        android:layout_height="120dip"
+        android:layout_margin="15dip"
+        android:background="@drawable/bg_white_corner_4"
+        android:gravity="top"
+        android:hint="您的意见对于软件提升非常重要,欢迎您提出宝贵意见和建议"
+        android:maxLines="4"
+        android:padding="15dip"
+        android:textColor="#666666"
+        android:textColorHint="#cccccc"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/commitBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:layout_marginTop="30dip"
+        android:background="@drawable/btn_logout"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:text="提    交"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+
+</LinearLayout>

@@ -19,11 +19,10 @@ import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.ImgDataDto;
 import com.lkpower.railway.dto.LoginDto;
-import com.lkpower.railway.dto.StationDto;
+import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDetailDto;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.dto.TrainDto;
-import com.lkpower.railway.util.ActivityUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
 
     private LoginDto loginInfo = null;
     private TrainDto.TrainDataInfo trainInfo = null;
-    private StationDto stationDto = null;
+    private StationModel stationModel = null;
     private TaskDto.TaskListInfoDto taskInfo = null;
 
     private TaskDto.TaskListInfoDto info = null;
@@ -58,7 +57,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
 
         loginInfo = (LoginDto) this.getIntent().getSerializableExtra("LOGIN_INFO");
         trainInfo = (TrainDto.TrainDataInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
-        stationDto = (StationDto) this.getIntent().getSerializableExtra("STATION_INFO");
+        stationModel = (StationModel) this.getIntent().getSerializableExtra("STATION_INFO");
         taskInfo = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK_INFO");
 
         initView();
@@ -131,7 +130,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
 
         for (ImgDataDto imgDto : list) {
             ImageView imageView = new ImageView(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 800);
             imageView.setLayoutParams(layoutParams);
             imageView.setImageBitmap(stringtoBitmap(imgDto.getImgInfo()));
             imageView.setPadding(0, 20, 0, 0);

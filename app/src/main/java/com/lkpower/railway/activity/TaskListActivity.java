@@ -18,12 +18,14 @@ import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
+import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.LoginDto;
-import com.lkpower.railway.dto.StationDto;
+import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.dto.TrainDto;
+import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 
@@ -41,9 +43,8 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
     private TaskListActivity.TaskListAdapter adapter = null;
     private List<TaskDto.TaskListInfoDto> mList = new ArrayList<TaskDto.TaskListInfoDto>();
 
-    private LoginDto loginInfo = null;
-    private TrainDto.TrainDataInfo trainInfo = null;
-    private StationDto stationDto = null;
+    private TrainInfo train = null;
+    private StationModel station = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +52,8 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
 
         setContentView(R.layout.activity_task_list);
 
-        loginInfo = (LoginDto) this.getIntent().getSerializableExtra("LOGIN_INFO");
-        trainInfo = (TrainDto.TrainDataInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
-        stationDto = (StationDto) this.getIntent().getSerializableExtra("STATION_INFO");
+        train = (TrainInfo) this.getIntent().getSerializableExtra("TRAIN");
+        station = (StationModel) this.getIntent().getSerializableExtra("STATION");
 
         initView();
     }
@@ -83,8 +83,8 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "MissionInfoByUser");
         tempMap.put("serialNumber", DateUtil.getCurrentDate());
-        tempMap.put("userId", loginInfo.getDataInfo().getID());
-        tempMap.put("stationId", stationDto.getID());
+        tempMap.put("userId", Constants.DeviceInfo.getID());
+        tempMap.put("stationId", station.getID());
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
@@ -175,18 +175,13 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
                 @Override
                 public void onClick(View view) {
                     if (info.getState().equals("1")) {
-                        Intent intent = new Intent(TaskListActivity.this, TaskInfoUploadActivity.class);
-                        intent.putExtra("TRAIN_INFO", trainInfo);
-                        intent.putExtra("LOGIN_INFO", loginInfo);
-                        intent.putExtra("STATION_INFO", stationDto);
-                        intent.putExtra("TASK_INFO", info);
+                        Intent intent = new Intent(TaskListActivity.this, TaskInfoUploadActivityEx.class);
+                        intent.putExtra("TASK", info);
                         startActivityForResult(intent, 0);
 
                     } else {
                         Intent intent = new Intent(TaskListActivity.this, TaskInfoDownloadActivity.class);
-                        intent.putExtra("TRAIN_INFO", trainInfo);
-                        intent.putExtra("LOGIN_INFO", loginInfo);
-                        intent.putExtra("STATION_INFO", stationDto);
+
                         intent.putExtra("TASK_INFO", info);
                         startActivity(intent);
 

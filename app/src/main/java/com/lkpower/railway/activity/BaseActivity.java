@@ -3,6 +3,8 @@ package com.lkpower.railway.activity;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.android.volley.Request;
@@ -12,9 +14,9 @@ import com.lkpower.railway.MyApplication;
 import com.lkpower.railway.activity.view.NetErrorDialog;
 import com.lkpower.railway.activity.view.ProgressHUD;
 import com.lkpower.railway.client.ActivityManager;
-import com.lkpower.railway.client.net.NetHelper;
 import com.lkpower.railway.util.NetUtil;
 import com.umeng.analytics.MobclickAgent;
+
 //呵呵呵
 public class BaseActivity extends Activity {
 

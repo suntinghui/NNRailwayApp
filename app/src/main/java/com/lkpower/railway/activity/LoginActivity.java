@@ -18,6 +18,7 @@ import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.LoginDto;
+import com.lkpower.railway.util.NotificationUtil;
 import com.lkpower.railway.util.ViewUtil;
 import com.umeng.analytics.MobclickAgent;
 
@@ -58,9 +59,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.nextBtn:
-                if (checkValue()) {
-                    requestLogin();
-                }
+                NotificationUtil.showNotification(this, "周瑶", "瑶瑶我想你", new Intent(this, SettingActivity.class));
+
+
+//                if (checkValue()) {
+//                    requestLogin();
+//                }
 
                 break;
         }

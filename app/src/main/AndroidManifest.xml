@@ -35,7 +35,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light.NoTitleBar"
-        tools:replace="android:icon">
+        tools:replace="android:icon, android:theme">
 
         <meta-data android:value="580d95c6c895761f96000494" android:name="UMENG_APPKEY"></meta-data>
         <meta-data android:value="UMeng" android:name="UMENG_CHANNEL"/>
@@ -55,10 +55,10 @@
         <!-- 阿里 -->
         <meta-data
             android:name="com.alibaba.app.appkey"
-            android:value="23484251" />
+            android:value="23526531" />
         <meta-data
             android:name="com.alibaba.app.appsecret"
-            android:value="21e8be31700e3a33cfc25e7d5d18f6d2" />
+            android:value="1da945d2607d29f3f86509b1438fdf5f" />
 
         <!-- 通道保持服务（幽灵进程自动保活该服务） -->
         <service
@@ -115,7 +115,8 @@
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -133,7 +134,7 @@
         </activity>
 
         <activity
-            android:name="com.lkpower.railway.activity.TrainListActivity"
+            android:name="com.lkpower.railway.activity.TrainListActivityEx"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
@@ -146,15 +147,15 @@
         </activity>
 
         <activity
-            android:name="com.lkpower.railway.activity.StationListActivity"
+            android:name="com.lkpower.railway.activity.StationListActivityEx"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
-                <action android:name="com.gugu.activity.MainActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -172,7 +173,7 @@
         </activity>
 
         <activity
-            android:name="com.lkpower.railway.activity.TaskInfoUploadActivity"
+            android:name="com.lkpower.railway.activity.TaskInfoUploadActivityEx"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
@@ -224,6 +225,19 @@
         </activity>
 
         <activity
+            android:name="com.lkpower.railway.activity.FeedBackActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan">
+            <intent-filter>
+                <action android:name="com.gugu.activity.MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="com.lkpower.railway.activity.SettingActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
@@ -236,6 +250,31 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.lkpower.railway.activity.GalleryActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan">
+            <intent-filter>
+                <action android:name="com.gugu.activity.MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.lkpower.railway.activity.DrivingInfoActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan">
+            <intent-filter>
+                <action android:name="com.gugu.activity.MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".activity.ShowWebViewActivity"

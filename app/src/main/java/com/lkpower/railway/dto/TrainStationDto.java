@@ -10,21 +10,21 @@ import java.util.List;
 public class TrainStationDto implements Serializable {
 
     private ResultDto Result;
-    private List<StationDto> DataInfo;
+    private TrainInfoDto DataInfo;
 
     public ResultDto getResult() {
         return Result;
     }
 
-    public void setResult(ResultDto Result) {
-        Result = Result;
+    public void setResult(ResultDto result) {
+        Result = result;
     }
 
-    public List<StationDto> getDataInfo() {
+    public TrainInfoDto getDataInfo() {
         return DataInfo;
     }
 
-    public void setDataInfo(List<StationDto> dataInfo) {
+    public void setDataInfo(TrainInfoDto dataInfo) {
         DataInfo = dataInfo;
     }
 }

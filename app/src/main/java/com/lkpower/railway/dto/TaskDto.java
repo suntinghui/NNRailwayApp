@@ -43,10 +43,11 @@ public class TaskDto implements Serializable {
         private String updateTime;
         private String misName;
         private String misRemark;
-        private String misDistance;
-        private String misAheadTime;
-        private String misPrioritySet;
+        private String IsUploadPhoto;
         private ArrayList<ImgDataDto> imgData;
+
+        private String stationId;
+        private String stationName;
 
         public String getID() {
             return ID;
@@ -136,28 +137,28 @@ public class TaskDto implements Serializable {
             this.misRemark = misRemark;
         }
 
-        public String getMisDistance() {
-            return misDistance;
+        public String getIsUploadPhoto() {
+            return IsUploadPhoto;
         }
 
-        public void setMisDistance(String misDistance) {
-            this.misDistance = misDistance;
+        public void setIsUploadPhoto(String isUploadPhoto) {
+            IsUploadPhoto = isUploadPhoto;
         }
 
-        public String getMisAheadTime() {
-            return misAheadTime;
+        public String getStationName() {
+            return stationName;
         }
 
-        public void setMisAheadTime(String misAheadTime) {
-            this.misAheadTime = misAheadTime;
+        public void setStationName(String stationName) {
+            this.stationName = stationName;
         }
 
-        public String getMisPrioritySet() {
-            return misPrioritySet;
+        public String getStationId() {
+            return stationId;
         }
 
-        public void setMisPrioritySet(String misPrioritySet) {
-            this.misPrioritySet = misPrioritySet;
+        public void setStationId(String stationId) {
+            this.stationId = stationId;
         }
 
         public ArrayList<ImgDataDto> getImgData() {

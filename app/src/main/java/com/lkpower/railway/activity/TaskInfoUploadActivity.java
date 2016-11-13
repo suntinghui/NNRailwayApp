@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -32,8 +31,7 @@ import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.ResultMsgDto;
-import com.lkpower.railway.dto.StationDto;
-import com.lkpower.railway.dto.TaskDetailDto;
+import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.dto.TrainDto;
 import com.lkpower.railway.util.DateUtil;
@@ -43,7 +41,6 @@ import com.pizidea.imagepicker.ImgLoader;
 import com.pizidea.imagepicker.UilImgLoader;
 import com.pizidea.imagepicker.Util;
 import com.pizidea.imagepicker.bean.ImageItem;
-import com.pizidea.imagepicker.ui.activity.ImagesGridActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,10 +48,13 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static com.lkpower.railway.R.id.toggleGestureLockBtn;
+
 /**
  * Created by sth on 19/10/2016.
  */
 
+@Deprecated
 public class TaskInfoUploadActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText remarkEditText = null;
@@ -75,7 +75,7 @@ public class TaskInfoUploadActivity extends BaseActivity implements View.OnClick
 
     private LoginDto loginInfo = null;
     private TrainDto.TrainDataInfo trainInfo = null;
-    private StationDto stationDto = null;
+    private StationModel stationModel = null;
     private TaskDto.TaskListInfoDto taskInfo = null;
 
 
@@ -87,7 +87,7 @@ public class TaskInfoUploadActivity extends BaseActivity implements View.OnClick
 
         loginInfo = (LoginDto) this.getIntent().getSerializableExtra("LOGIN_INFO");
         trainInfo = (TrainDto.TrainDataInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
-        stationDto = (StationDto) this.getIntent().getSerializableExtra("STATION_INFO");
+        stationModel = (StationModel) this.getIntent().getSerializableExtra("STATION_INFO");
         taskInfo = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK_INFO");
 
         initView();

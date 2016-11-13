@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/topbarLayout"
         android:layout_width="fill_parent"
         android:layout_height="50dip"
         android:background="#1caff6"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <Button
@@ -20,31 +22,40 @@
             android:background="@drawable/btn_logout"
             android:paddingBottom="5dip"
             android:paddingTop="5dip"
-            android:text="   开始   "
+            android:text="   启动   "
             android:textColor="@color/white"
             android:textSize="13sp" />
 
-        <TextView
-            android:id="@+id/titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="车站列表"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <org.angmarch.views.NiceSpinner
+                android:id="@+id/titleSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                tool:paddingEnd="15dip"
+                tool:paddingStart="15dip"
+                tool:textTint="#333333" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/settingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:paddingLeft="10dip"
             android:paddingRight="20dip"
             android:text="功能"
             android:textColor="@drawable/text_white_gray_selector"
-            android:textSize="15sp" />
-    </RelativeLayout>
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"

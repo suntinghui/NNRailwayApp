@@ -1,7 +1,6 @@
 package com.lkpower.railway.activity;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,9 +23,8 @@ import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.LoginDto;
-import com.lkpower.railway.dto.ResultDto;
 import com.lkpower.railway.dto.ResultMsgDto;
-import com.lkpower.railway.dto.StationDto;
+import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TrainDto;
 import com.lkpower.railway.dto.TrainStationDto;
 import com.lkpower.railway.util.ActivityUtil;
@@ -44,11 +42,12 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  * 车站列表
  */
 
+@Deprecated
 public class StationListActivity extends BaseActivity implements View.OnClickListener {
 
     private ListView listView = null;
     private StationListAdapter adapter = null;
-    private List<StationDto> mList = new ArrayList<StationDto>();
+    private List<StationModel> mList = new ArrayList<StationModel>();
 
     private Button runningBtn = null;
 
@@ -101,7 +100,7 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
                     Gson gson = new GsonBuilder().create();
                     TrainStationDto trainDto = gson.fromJson(jsonObject, TrainStationDto.class);
                     if (trainDto.getResult().getFlag() == 1) {
-                        mList = trainDto.getDataInfo();
+//                        mList = trainDto.getDataInfo();
                         adapter.notifyDataSetChanged();
 
                     } else {
@@ -220,7 +219,7 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            final StationDto dto = mList.get(position);
+            final StationModel dto = mList.get(position);
 
             holder.numTextView.setText(position + 1 + "");
             holder.nameTextView.setText(dto.getStationName());
