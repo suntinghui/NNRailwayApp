@@ -22,7 +22,9 @@
             android:background="@drawable/btn_logout"
             android:paddingBottom="5dip"
             android:paddingTop="5dip"
-            android:text="   启动   "
+            android:text="启动"
+            android:paddingLeft="15dip"
+            android:paddingRight="15dip"
             android:textColor="@color/white"
             android:textSize="13sp" />
 
@@ -35,10 +37,11 @@
 
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/titleSpinner"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 tool:paddingEnd="15dip"
+                android:gravity="center"
                 tool:paddingStart="15dip"
                 tool:textTint="#333333" />
 

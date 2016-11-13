@@ -1,47 +1,90 @@
 package com.lkpower.railway.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import static java.lang.Integer.parseInt;
 
 public class DateUtil {
 
-	public static String second2Time(long second) {
-		try {
-			if (second < 0)
-				return "-- : -- : --";
+    public static String second2Time(long second) {
+        try {
+            if (second < 0)
+                return "-- : -- : --";
 
-			long hour = second / 3600;
-			second = second % 3600;
-			long min = second / 60;
-			second = second % 60;
-			long sec = second;
+            long hour = second / 3600;
+            second = second % 3600;
+            long min = second / 60;
+            second = second % 60;
+            long sec = second;
 
-			String temp = String.format("%02d : %02d : %02d", hour, min, sec);
-			return temp;
+            String temp = String.format("%02d : %02d : %02d", hour, min, sec);
+            return temp;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return "-- : -- : --";
-	}
-	
-	public static String getCurrentDate(){
-		Date today = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-		return df.format(today);
-	}
+        return "-- : -- : --";
+    }
 
-	public static String getCurrentDateTime(){
-		Date today = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return df.format(today);
-	}
+    public static String getCurrentDate() {
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+        return df.format(today);
+    }
 
-	public static String getData(long time){
-		Date date = new Date(time);
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return df.format(date);
-	}
+    public static String getCurrentDateTime() {
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(today);
+    }
+
+    public static String getData(long time) {
+        Date date = new Date(time);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(date);
+    }
+
+    public static Date getDate(String addDayStr, String addMinuteStr, String time) {
+        int addDay = 0;
+        int addMinute = 0;
+
+        try {
+            addDay = Integer.parseInt(addDayStr);
+        } catch (Exception e) {
+            addDay = 0;
+        }
+
+        try{
+            addMinute = Integer.parseInt(addMinuteStr);
+        } catch (Exception e) {
+            addMinute = 0;
+        }
+
+
+        try {
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String yyyyMMdd = df.format(date);
+            String dateTime = yyyyMMdd + " " + time;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            date = sdf.parse(dateTime);
+
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            calendar.add(calendar.DATE, addDay);
+            calendar.add(calendar.MINUTE, -addMinute);
+            Date date1 = calendar.getTime();
+
+            return date1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Date();
+        }
+    }
 
 }

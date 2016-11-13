@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +32,9 @@ import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.ActivityUtil;
+import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
+import com.lkpower.railway.util.NotificationUtil;
 
 import org.angmarch.views.NiceSpinner;
 
@@ -38,13 +43,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.R.attr.data;
+import static android.R.attr.start;
+import static com.lkpower.railway.R.drawable.train;
+import static com.lkpower.railway.R.id.earlyWarningBtn;
 import static com.lkpower.railway.R.id.settingTextView;
 import static com.lkpower.railway.R.id.title;
 import static com.lkpower.railway.R.id.titleTextView;
+import static u.aly.av.I;
 
 
 /**
@@ -69,6 +80,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private Button runningBtn = null;
 
     private int location = 0;
+
+    private ArrayList<Timer> timerList = new ArrayList<Timer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +116,16 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         });
 
         requestStationList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        boolean EarlyWarning = this.getIntent().getBooleanExtra("EarlyWarning", false);
+        if (EarlyWarning) { // 预警
+            requestEarlyWarning(this.getIntent().getStringExtra("stationId"));
+        }
     }
 
     private void requestStationList() {
@@ -189,6 +212,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         Toast.makeText(StationListActivityEx.this, "列车已标记为开始,请查看相关任务", Toast.LENGTH_SHORT).show();
                         adapter.notifyDataSetChanged();
 
+                        startTimer();
+
                     } else {
                         Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
                     }
@@ -203,10 +228,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.addToRequestQueue(request, "请稍候...");
     }
 
-    private void requestEarlyWarning(String missionStateId) {
+    private void requestEarlyWarning(String stationId) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "UpdateRead");
-        tempMap.put("missionStateId", missionStateId);
+        tempMap.put("stationId", stationId);
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
@@ -216,14 +241,11 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     Gson gson = new GsonBuilder().create();
                     ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
                     if (resultDto.getResult().getFlag() == 1) {
-                        Constants.RUNNING = true;
-                        runningBtn.setAlpha(Constants.RUNNING ? 0.5f : 1.0f);
-                        runningBtn.setText("已出发");
-                        Toast.makeText(StationListActivityEx.this, "列车已标记为开始,请查看相关任务", Toast.LENGTH_SHORT).show();
-                        adapter.notifyDataSetChanged();
+                        Log.e("", "=====================预警==================");
 
                     } else {
-                        Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        Log.e("", "预警失败:" + resultDto.getResult().getFlagInfo());
+                        //Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (Exception e) {
@@ -233,11 +255,25 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             }
         });
 
-        this.addToRequestQueue(request, "请稍候...");
+        this.addToRequestQueue(request, null);
     }
 
     // 更换车次
     private void changeTrain(int location) {
+        try{
+            for (Timer timer: timerList) {
+                timer.cancel();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        timerList.clear();
+
+        Constants.RUNNING = false;
+        runningBtn.setAlpha(Constants.RUNNING ? 0.5f : 1.0f);
+        runningBtn.setText("启动");
+
         mList = trainInfoList.get(location).getStationInfo();
         adapter.notifyDataSetChanged();
 
@@ -245,6 +281,50 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         Constants.CarNumberName = trainInfoList.get(location).getTrainName();
 
         titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
+    }
+
+    private void startTimer() {
+        timerList.clear();
+
+        try {
+            for (final StationModel station : trainInfoList.get(location).getStationInfo()) {
+                final Handler handler = new Handler() {
+                    public void handleMessage(Message msg) {
+                        if (msg.what == 1) {
+                            String content = station.getStationName() + "还有" + station.getAheadTime() + "分钟到站,请您及时完成相关任务。";
+                            Intent intent = new Intent(StationListActivityEx.this, StationListActivityEx.class);
+                            intent.putExtra("EarlyWarning", true);
+                            intent.putExtra("stationId", station.getID());
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            NotificationUtil.showNotification(StationListActivityEx.this, "到站提醒", content, intent);
+                        }
+                        super.handleMessage(msg);
+                    }
+
+                    ;
+                };
+
+                Timer timer = new Timer();
+                TimerTask task = new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        // 需要做的事:发送消息
+                        Message message = new Message();
+                        message.what = 1;
+                        handler.sendMessage(message);
+                    }
+                };
+
+                timerList.add(timer);
+
+                timer.schedule(task, DateUtil.getDate(station.getArrivalDay(), station.getAheadTime(), station.getStartTime()));
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

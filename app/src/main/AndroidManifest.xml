@@ -150,6 +150,7 @@
             android:name="com.lkpower.railway.activity.StationListActivityEx"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">

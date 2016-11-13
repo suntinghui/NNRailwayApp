@@ -111,7 +111,7 @@ public class NiceSpinner extends TextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.NiceSpinner);
         int defaultPadding = resources.getDimensionPixelSize(R.dimen.one_and_a_half_grid_unit);
 
-        setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         setPadding(resources.getDimensionPixelSize(R.dimen.three_grid_unit), defaultPadding, defaultPadding,
             defaultPadding);
         setClickable(true);
