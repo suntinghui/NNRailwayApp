@@ -5,7 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.lkpower.railway.R;
@@ -21,13 +23,16 @@ public class NotificationUtil {
 
     // 通知栏显示当前播放信息，利用通知和 PendingIntent来启动对应的activity
     public static void showNotification(Context context, String title, String msg, Intent intent) {
+
+        Log.e("===","=======================showNotification");
+
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setAutoCancel(true);
         Notification mNotification = builder.build();
         mNotification.icon = R.drawable.ic_launcher;// notification通知栏图标
-        mNotification.defaults |= Notification.DEFAULT_SOUND;
         mNotification.defaults |= Notification.DEFAULT_VIBRATE;
+        mNotification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.tip);
         // 自定义布局
         RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification_view);
         contentView.setImageViewResource(R.id.notification_large_icon, R.drawable.logo);

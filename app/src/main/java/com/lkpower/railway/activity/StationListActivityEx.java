@@ -40,6 +40,7 @@ import org.angmarch.views.NiceSpinner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,11 +52,13 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import static android.R.attr.data;
 import static android.R.attr.start;
 import static com.lkpower.railway.R.drawable.train;
+import static com.lkpower.railway.R.id.contactLayout;
 import static com.lkpower.railway.R.id.earlyWarningBtn;
 import static com.lkpower.railway.R.id.settingTextView;
 import static com.lkpower.railway.R.id.title;
 import static com.lkpower.railway.R.id.titleTextView;
 import static u.aly.av.I;
+import static u.aly.cw.f;
 
 
 /**
@@ -92,6 +95,14 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         initView();
     }
 
+    @Override
+    protected void onDestory() {
+        super.onDestory();
+
+        stopTimers();
+        timerList.clear();
+    }
+
     private void initView() {
         titleSpinner = (NiceSpinner) this.findViewById(R.id.titleSpinner);
         List<String> initSet = new LinkedList<>(Arrays.asList("车站列表"));
@@ -107,6 +118,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         listView = (ListView) this.findViewById(R.id.listView);
         adapter = new StationListAdapter(this);
         listView.setAdapter(adapter);
+        listView.setAlpha(0.5f);
 
         ActivityUtil.setEmptyView(this, listView).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,13 +131,16 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
-        boolean EarlyWarning = this.getIntent().getBooleanExtra("EarlyWarning", false);
+        Log.e("===","=======================onNewIntent");
+
+        boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
         if (EarlyWarning) { // 预警
-            requestEarlyWarning(this.getIntent().getStringExtra("stationId"));
+            requestEarlyWarning(intent.getStringExtra("stationId"), intent.getStringExtra("SerialNumber"));
         }
+
     }
 
     private void requestStationList() {
@@ -148,6 +163,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
                         if (trainInfoList != null && trainInfoList.size() != 0) {
                             runningBtn.setVisibility(View.VISIBLE);
+                            listView.setAlpha(1.0f);
 
                             mList = trainInfoList.get(0).getStationInfo();
                             adapter.notifyDataSetChanged();
@@ -207,10 +223,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
                     if (resultDto.getResult().getFlag() == 1) {
                         Constants.RUNNING = true;
-                        runningBtn.setAlpha(Constants.RUNNING ? 0.5f : 1.0f);
-                        runningBtn.setText("已出发");
+                        runningBtn.setText("停止");
                         Toast.makeText(StationListActivityEx.this, "列车已标记为开始,请查看相关任务", Toast.LENGTH_SHORT).show();
                         adapter.notifyDataSetChanged();
+                        listView.setAlpha(1.0f);
 
                         startTimer();
 
@@ -228,9 +244,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.addToRequestQueue(request, "请稍候...");
     }
 
-    private void requestEarlyWarning(String stationId) {
+    private void requestEarlyWarning(String stationId, String serialNumber) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "UpdateRead");
+        tempMap.put("SerialNumber", serialNumber);
         tempMap.put("stationId", stationId);
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
@@ -258,20 +275,23 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.addToRequestQueue(request, null);
     }
 
-    // 更换车次
-    private void changeTrain(int location) {
+    private void stopTimers(){
         try{
             for (Timer timer: timerList) {
                 timer.cancel();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            timerList.clear();
         }
+    }
 
-        timerList.clear();
+    // 更换车次
+    private void changeTrain(int location) {
+        stopTimers();
 
         Constants.RUNNING = false;
-        runningBtn.setAlpha(Constants.RUNNING ? 0.5f : 1.0f);
         runningBtn.setText("启动");
 
         mList = trainInfoList.get(location).getStationInfo();
@@ -288,12 +308,22 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         try {
             for (final StationModel station : trainInfoList.get(location).getStationInfo()) {
+                Date when = DateUtil.getDate(station.getArrivalDay(), station.getAheadTime(), station.getStartTime());
+                Log.e("------", when.toString());
+
+                // 如果本站的时间小于当前的时间则说明已经过站了,则不再提醒。
+                if (when.before(new Date()))
+                    continue;
+
+                Log.e("======", when.toString());
+
                 final Handler handler = new Handler() {
                     public void handleMessage(Message msg) {
                         if (msg.what == 1) {
                             String content = station.getStationName() + "还有" + station.getAheadTime() + "分钟到站,请您及时完成相关任务。";
                             Intent intent = new Intent(StationListActivityEx.this, StationListActivityEx.class);
                             intent.putExtra("EarlyWarning", true);
+                            intent.putExtra("SerialNumber", trainInfoList.get(location).getSerialNumber());
                             intent.putExtra("stationId", station.getID());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -319,7 +349,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
                 timerList.add(timer);
 
-                timer.schedule(task, DateUtil.getDate(station.getArrivalDay(), station.getAheadTime(), station.getStartTime()));
+                timer.schedule(task, when);
 
             }
         } catch (Exception e) {
@@ -337,15 +367,44 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
             case R.id.runningBtn: {
                 try {
-                    requestTrainStart();
+                    if (Constants.RUNNING) {
+                        stopRunning();
+
+                    } else {
+                        requestTrainStart();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(StationListActivityEx.this, "启动失败", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
             }
         }
+    }
+
+    private void stopRunning(){
+        new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定停止?").setContentText("停止后将无法完成任务并停止到站预警").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                Constants.RUNNING = !Constants.RUNNING;
+
+                sDialog.cancel();
+
+                stopTimers();
+
+                runningBtn.setText("启动");
+
+                listView.setAlpha(0.5f);
+
+                Toast.makeText(StationListActivityEx.this, "已停止", Toast.LENGTH_SHORT).show();
+            }
+        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.cancel();
+            }
+        }).show();
     }
 
     @Override
@@ -433,7 +492,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             holder.earlyWarningBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    requestEarlyWarning("");
+                    requestEarlyWarning("", "");
                 }
             });
 

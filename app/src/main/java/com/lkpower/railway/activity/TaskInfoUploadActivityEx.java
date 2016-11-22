@@ -38,6 +38,7 @@ import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TaskDto;
+import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.StringUtil;
 
@@ -117,7 +118,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
             }
         });
 
-        noScrollgridview.setVisibility(task.getIsUploadPhoto().equalsIgnoreCase("1")?View.VISIBLE:View.GONE);
+        ActivityUtil.verifyStoragePermissions(this);
     }
 
     @Override

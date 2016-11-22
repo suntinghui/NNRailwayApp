@@ -32,6 +32,7 @@ import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.ResultMsgDto;
+import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.StringUtil;
 
@@ -96,6 +97,8 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                 }
             }
         });
+
+        ActivityUtil.verifyStoragePermissions(this);
     }
 
     @Override
@@ -112,8 +115,9 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     }
 
     private void upload() {
-        if (TextUtils.isEmpty(remarkEditText.getText().toString())) {
-            Toast.makeText(this, "请输入行车信息", Toast.LENGTH_SHORT).show();
+        // 行车信息可以不输入,但是图片必须上传
+        if (Bimp.tempSelectBitmap.isEmpty()) {
+            Toast.makeText(this, "请拍照上传图片", Toast.LENGTH_SHORT).show();
             return;
         }
 
