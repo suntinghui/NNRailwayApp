@@ -86,6 +86,8 @@ dependencies {
 
     compile 'com.jph.takephoto:takephoto_library:3.0.2'
 
+    compile 'cn.aigestudio.datepicker:DatePicker:2.2.0'
+
     compile project(':imagepickerModule')
     compile project(':photo')
 }

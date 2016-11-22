@@ -1,12 +1,14 @@
 package com.lkpower.railway.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.aigestudio.datepicker.cons.DPMode;
+import cn.aigestudio.datepicker.views.DatePicker;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.R.attr.data;
@@ -59,6 +63,7 @@ import static com.lkpower.railway.R.id.title;
 import static com.lkpower.railway.R.id.titleTextView;
 import static u.aly.av.I;
 import static u.aly.cw.f;
+import static u.aly.cw.i;
 
 
 /**
@@ -85,6 +90,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private int location = 0;
 
     private ArrayList<Timer> timerList = new ArrayList<Timer>();
+
+    private String yyyyMd = DateUtil.getCurrentDate3();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -308,7 +315,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         try {
             for (final StationModel station : trainInfoList.get(location).getStationInfo()) {
-                Date when = DateUtil.getDate(station.getArrivalDay(), station.getAheadTime(), station.getStartTime());
+                Date when = DateUtil.getDate(yyyyMd, station.getArrivalDay(), station.getAheadTime(), station.getStartTime());
                 Log.e("------", when.toString());
 
                 // 如果本站的时间小于当前的时间则说明已经过站了,则不再提醒。
@@ -371,7 +378,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         stopRunning();
 
                     } else {
-                        requestTrainStart();
+                        startRunning();
+
                     }
 
                 } catch (Exception e) {
@@ -381,6 +389,47 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 break;
             }
         }
+    }
+
+    private void startRunning(){
+        SweetAlertDialog dialog = new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定启动?").setContentText("请确认列车发车日期:"+DateUtil.getCurrentDate2()).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                sDialog.cancel();
+                requestTrainStart();
+            }
+        }).setCancelText("修改日期").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.cancel();
+                showUpdateDate();
+            }
+        });
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+    }
+
+    private void showUpdateDate(){
+        final AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.show();
+
+        DatePicker picker = new DatePicker(this);
+        picker.setDate(Integer.parseInt(DateUtil.getCurrentYear()), Integer.parseInt(DateUtil.getCurrentDay()));
+        picker.setMode(DPMode.SINGLE);
+        picker.setTodayDisplay(true);
+        picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
+            @Override
+            public void onDatePicked(String date) {
+                dialog.dismiss();
+
+                yyyyMd = date;
+                requestTrainStart();
+            }
+        });
+
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setContentView(picker, params);
+        dialog.getWindow().setGravity(Gravity.CENTER);
     }
 
     private void stopRunning(){

@@ -255,6 +255,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/cn.aigestudio.datepicker/DatePicker/2.2.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="b9b0eec23f47cbd7a3a9df8e6026f39522cabb8e">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/cn.aigestudio.datepicker-DatePicker-2.2.0_434d5b027e2db1d0d1f8911ad3036351668cc50b.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/de.keyboardsurfer.android.widget/crouton/1.8.5/jars/classes.jar"
         jumboMode="false"
         optimize="true"

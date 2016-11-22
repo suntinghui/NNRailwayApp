@@ -37,6 +37,30 @@ public class DateUtil {
         return df.format(today);
     }
 
+    public static String getCurrentDate2() {
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
+        return df.format(today);
+    }
+
+    public static String getCurrentDate3() {
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-M-d");
+        return df.format(today);
+    }
+
+    public static String getCurrentYear() {
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy");
+        return df.format(today);
+    }
+
+    public static String getCurrentDay() {
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("MM");
+        return df.format(today);
+    }
+
     public static String getCurrentDateTime() {
         Date today = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -49,7 +73,7 @@ public class DateUtil {
         return df.format(date);
     }
 
-    public static Date getDate(String addDayStr, String addMinuteStr, String time) {
+    public static Date getDate(String yyyyMd, String addDayStr, String addMinuteStr, String time) {
         int addDay = 0;
         int addMinute = 0;
 
@@ -67,7 +91,9 @@ public class DateUtil {
 
 
         try {
-            Date date = new Date();
+            SimpleDateFormat sdftemp = new SimpleDateFormat("yyyy-M-d");
+            Date date = sdftemp.parse(yyyyMd);
+
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String yyyyMMdd = df.format(date);
             String dateTime = yyyyMMdd + " " + time;
