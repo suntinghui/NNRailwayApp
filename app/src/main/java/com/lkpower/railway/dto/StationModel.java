@@ -19,6 +19,7 @@ public class StationModel implements Serializable {
     private String prioritySet;  // 1时间  2距离
     private String aheadTime;
     private String distance;
+    private String missionState;
 
     public String getID() {
         return ID;
@@ -106,5 +107,13 @@ public class StationModel implements Serializable {
 
     public void setDistance(String distance) {
         this.distance = distance;
+    }
+
+    public String getMissionState() {
+        return missionState;
+    }
+
+    public void setMissionState(String missionState) {
+        this.missionState = missionState;
     }
 }

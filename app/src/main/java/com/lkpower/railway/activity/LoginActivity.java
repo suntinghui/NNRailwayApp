@@ -39,7 +39,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         this.setContentView(R.layout.activity_login);
 
-        ((TextView) this.findViewById(R.id.titleTextView)).setText("运行监控系统");
+        ((TextView) this.findViewById(R.id.titleTextView)).setText("作业监控系统");
         this.findViewById(R.id.backBtn).setVisibility(View.GONE);
 
         phoneEditText = (EditText) this.findViewById(R.id.phoneEditText);

@@ -79,11 +79,11 @@ public class JSONRequest extends StringRequest {
         this.setShouldCache(shouldCache);
 
         if (needRetryPolicy) {
-            RetryPolicy retryPolicy = new DefaultRetryPolicy(3000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            RetryPolicy retryPolicy = new DefaultRetryPolicy(6000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
             this.setRetryPolicy(retryPolicy);
 
         } else {
-            RetryPolicy retryPolicy = new DefaultRetryPolicy(30000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            RetryPolicy retryPolicy = new DefaultRetryPolicy(60000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
             this.setRetryPolicy(retryPolicy);
         }
     }

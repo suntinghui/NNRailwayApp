@@ -72,14 +72,14 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
         ActivityUtil.setEmptyView(this, listView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestTaskList();
+                requestTaskList("正在查询任务列表...");
             }
         });
 
-        requestTaskList();
+        requestTaskList("正在查询任务列表...");
     }
 
-    private void requestTaskList() {
+    private void requestTaskList(String msg) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "MissionInfoByUser");
         tempMap.put("serialNumber", DateUtil.getCurrentDate());
@@ -110,7 +110,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
-        this.addToRequestQueue(request, "正在查询任务列表...");
+        this.addToRequestQueue(request, msg);
     }
 
     private class ViewHolder {
@@ -196,7 +196,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        requestTaskList();
+        requestTaskList(null);
     }
 
     @Override

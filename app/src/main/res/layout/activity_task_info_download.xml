@@ -176,15 +176,17 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_marginTop="15dip"
-                android:id="@+id/imageLayout"
+            <GridView
+                android:id="@+id/noScrollgridview"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-            </LinearLayout>
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dip"
+                android:layout_marginTop="15dip"
+                android:horizontalSpacing="15dp"
+                android:numColumns="3"
+                android:scrollbars="none"
+                android:verticalSpacing="15dp"></GridView>
 
         </LinearLayout>
 

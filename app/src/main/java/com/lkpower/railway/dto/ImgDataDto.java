@@ -8,6 +8,8 @@ public class ImgDataDto {
 
     private String ID;
     private String imgInfo;
+    private String imgInfoNormalPath;
+    private String imgInfoThumbPath;
 
     public String getID() {
         return ID;
@@ -23,5 +25,21 @@ public class ImgDataDto {
 
     public void setImgInfo(String imgInfo) {
         this.imgInfo = imgInfo;
+    }
+
+    public String getImgInfoNormalPath() {
+        return imgInfoNormalPath;
+    }
+
+    public void setImgInfoNormalPath(String imgInfoNormalPath) {
+        this.imgInfoNormalPath = imgInfoNormalPath;
+    }
+
+    public String getImgInfoThumbPath() {
+        return imgInfoThumbPath;
+    }
+
+    public void setImgInfoThumbPath(String imgInfoThumbPath) {
+        this.imgInfoThumbPath = imgInfoThumbPath;
     }
 }

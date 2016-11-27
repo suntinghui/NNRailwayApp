@@ -13,7 +13,6 @@ import android.widget.RemoteViews;
 import com.lkpower.railway.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.alibaba.sdk.android.ams.common.global.AmsGlobalHolder.getPackageName;
 
 /**
  * Created by sth on 09/11/2016.
@@ -32,9 +31,9 @@ public class NotificationUtil {
         Notification mNotification = builder.build();
         mNotification.icon = R.drawable.ic_launcher;// notification通知栏图标
         mNotification.defaults |= Notification.DEFAULT_VIBRATE;
-        mNotification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.tip);
+        mNotification.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" +R.raw.tip);
         // 自定义布局
-        RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification_view);
+        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification_view);
         contentView.setImageViewResource(R.id.notification_large_icon, R.drawable.logo);
         contentView.setTextViewText(R.id.notification_title, title);
         contentView.setTextViewText(R.id.notification_text, msg);

@@ -56,7 +56,7 @@ public class FileUtils {
 				f.delete();
 			}
 			FileOutputStream out = new FileOutputStream(f);
-			bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
 			out.flush();
 			out.close();
 			path=f.getPath();

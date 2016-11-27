@@ -37,20 +37,19 @@
         android:layout_marginLeft="20dip"
         android:text="06:50"
         android:textColor="#666666"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/arrivalTimeTextView"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dip"
-        android:layout_weight="1"
         android:text="06:30"
         android:textColor="#666666"
         android:textSize="13sp" />
 
     <Button
-        android:visibility="gone"
         android:id="@+id/earlyWarningBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,11 +58,22 @@
         android:layout_marginRight="20dip"
         android:background="@drawable/btn_logout"
         android:paddingBottom="5dip"
-        android:paddingTop="5dip"
         android:paddingLeft="15dip"
         android:paddingRight="15dip"
+        android:paddingTop="5dip"
         android:text="预警"
         android:textColor="@color/white"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/missionStateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dip"
+        android:layout_weight="1"
+        android:text="已完成"
+        android:textColor="#666666"
         android:textSize="13sp" />
 
     <ImageView

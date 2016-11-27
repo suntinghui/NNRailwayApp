@@ -2,15 +2,20 @@ package com.lkpower.railway.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,10 +47,10 @@ import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.StringUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.lkpower.railway.R.id.toggleGestureLockBtn;
 
 
 /**
@@ -100,7 +105,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
         adapter = new GridAdapter(this);
-        //adapter.update();
+        adapter.update();
         noScrollgridview.setAdapter(adapter);
         noScrollgridview.setOnItemClickListener(new OnItemClickListener() {
 
@@ -119,6 +124,11 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         });
 
         ActivityUtil.verifyStoragePermissions(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -258,8 +268,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.item_published_grida,
-                        parent, false);
+                convertView = inflater.inflate(R.layout.item_published_grida, parent, false);
                 holder = new ViewHolder();
                 holder.image = (ImageView) convertView.findViewById(R.id.item_grida_image);
                 convertView.setTag(holder);
@@ -323,8 +332,22 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     private static final int TAKE_PICTURE = 0x000001;
 
     public void photo() {
+        // 这处方法取到的其实只是缩略图
+        /*
         Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(openCameraIntent, TAKE_PICTURE);
+        */
+
+        File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
+        if (!photoFile.getParentFile().exists()) {
+            photoFile.getParentFile().mkdirs();
+        }
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+        startActivityForResult(intent, TAKE_PICTURE);//如果用 RESULT_OK 做requestCode，就不会回调onActivityResult()了
+        //这种方法onActivityResult()中不能调用data.getExtra()，否则报错
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -332,6 +355,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
 
+                    /*
                     String fileName = String.valueOf(System.currentTimeMillis());
                     Bitmap bm = (Bitmap) data.getExtras().get("data");
                     String path = FileUtils.saveGetUrl(bm, fileName);
@@ -339,9 +363,37 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     takePhoto.setImagePath(path);
                     takePhoto.setBitmap(bm);
                     Bimp.tempSelectBitmap.add(takePhoto);
+                    */
+
+                    File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
+                    try {
+                        Uri uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
+                                        photoFile.getAbsolutePath(), null, null));
+
+                        Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                        ImageItem takePhoto = new ImageItem();
+                        takePhoto.setImagePath(photoFile.getAbsolutePath());
+                        takePhoto.setBitmap(martixBitmap(bm));
+                        Bimp.tempSelectBitmap.add(takePhoto);
+
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
                 }
                 break;
         }
+    }
+
+    private Bitmap martixBitmap(Bitmap bit){
+        Matrix matrix = new Matrix();
+        matrix.setScale(0.3f, 0.3f);
+        Bitmap bm = Bitmap.createBitmap(bit, 0, 0, bit.getWidth(),
+                bit.getHeight(), matrix, true);
+        Log.i("wechat", "压缩后图片的大小" + (bm.getByteCount() / 1024 / 1024)
+                + "M宽度为" + bm.getWidth() + "高度为" + bm.getHeight());
+        return bm;
     }
 
 }

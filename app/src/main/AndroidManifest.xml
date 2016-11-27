@@ -26,6 +26,8 @@
     <uses-permission android:name="android.permission.BROADCAST_PACKAGE_REPLACED" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 
 
     <application
@@ -51,46 +53,6 @@
             android:value="a683cd0ea3cee68669e25928ad53dcec" />
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService" />
-
-        <!-- 阿里 -->
-        <meta-data
-            android:name="com.alibaba.app.appkey"
-            android:value="23526531" />
-        <meta-data
-            android:name="com.alibaba.app.appsecret"
-            android:value="1da945d2607d29f3f86509b1438fdf5f" />
-
-        <!-- 通道保持服务（幽灵进程自动保活该服务） -->
-        <service
-            android:name="com.alibaba.sdk.android.push.ChannelService"
-            android:exported="true"
-            android:process=":channel">
-            <intent-filter>
-                <action android:name="com.taobao.accs.intent.action.SERVICE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="org.agoo.android.intent.action.PING_V4" />
-
-                <category android:name="taobao" />
-            </intent-filter>
-        </service>
-
-        <!-- 消息接收服务 -->
-        <service
-            android:name="com.alibaba.sdk.android.push.MsgService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.taobao.accs.intent.action.RECEIVE" />
-            </intent-filter>
-        </service>
-
-        <!-- 消息接收增强服务（可提高消息/通知到达率） -->
-        <service android:name="com.alibaba.sdk.android.push.channel.TaobaoRecvService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="org.android.agoo.client.MessageReceiverService"/>
-            </intent-filter>
-        </service>
 
         <activity
             android:name="com.lkpower.railway.activity.SplashActivity"
@@ -173,6 +135,9 @@
             </intent-filter>
         </activity>
 
+        <!-- 不能添加 android:launchMode="singleInstance"
+        http://892848153.iteye.com/blog/1851869
+        -->
         <activity
             android:name="com.lkpower.railway.activity.TaskInfoUploadActivityEx"
             android:clearTaskOnLaunch="true"
@@ -278,12 +243,24 @@
         </activity>
 
         <activity
+            android:name="com.lkpower.railway.activity.ShowImageActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan">
+            <intent-filter>
+                <action android:name="com.gugu.activity.MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".activity.ShowWebViewActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
 
     </application>
 

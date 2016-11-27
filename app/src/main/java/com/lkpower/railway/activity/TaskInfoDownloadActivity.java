@@ -1,12 +1,17 @@
 package com.lkpower.railway.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +20,9 @@ import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
+import com.lkpower.railway.activity.view.CustomNetworkImageView;
 import com.lkpower.railway.client.RequestEnum;
+import com.lkpower.railway.client.net.ImageCacheManager;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.dto.ImgDataDto;
 import com.lkpower.railway.dto.LoginDto;
@@ -33,14 +40,10 @@ import java.util.HashMap;
 
 public class TaskInfoDownloadActivity extends BaseActivity implements View.OnClickListener {
 
-    private LoginDto loginInfo = null;
-    private TrainDto.TrainDataInfo trainInfo = null;
-    private StationModel stationModel = null;
     private TaskDto.TaskListInfoDto taskInfo = null;
 
     private TaskDto.TaskListInfoDto info = null;
 
-    private LinearLayout imageLayout = null;
     private LinearLayout infoLayout = null;
     private TextView taskNameTextView = null;
     private TextView taskIdTextView = null;
@@ -49,15 +52,16 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
     private TextView remarkTextView = null;
     private TextView stateTextView = null;
 
+    private GridView noScrollgridview;
+    private GridAdapter adapter;
+    private ArrayList<ImgDataDto> list = new ArrayList<ImgDataDto>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_task_info_download);
 
-        loginInfo = (LoginDto) this.getIntent().getSerializableExtra("LOGIN_INFO");
-        trainInfo = (TrainDto.TrainDataInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
-        stationModel = (StationModel) this.getIntent().getSerializableExtra("STATION_INFO");
         taskInfo = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK_INFO");
 
         initView();
@@ -70,7 +74,6 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         Button backButton = (Button) this.findViewById(R.id.backBtn);
         backButton.setOnClickListener(this);
 
-        imageLayout = (LinearLayout) this.findViewById(R.id.imageLayout);
         infoLayout = (LinearLayout) this.findViewById(R.id.infoLayout);
         taskNameTextView = (TextView) this.findViewById(R.id.taskNameTextView);
         taskIdTextView = (TextView) this.findViewById(R.id.taskIdTextView);
@@ -80,6 +83,19 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         stateTextView = (TextView) this.findViewById(R.id.stateTextView);
 
         infoLayout.setVisibility(View.GONE);
+
+        noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
+        noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        adapter = new GridAdapter(this);
+        noScrollgridview.setAdapter(adapter);
+        noScrollgridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                Intent intent = new Intent(TaskInfoDownloadActivity.this, ShowImageActivity.class);
+                intent.putExtra("url", list.get(arg2).getImgInfoNormalPath());
+                startActivity(intent);
+            }
+        });
 
         requestDownloadTask();
     }
@@ -126,16 +142,8 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         remarkTextView.setText(info.getRemark());
         stateTextView.setText(info.getState().equals("1") ? "未完成" : "已完成");
 
-        ArrayList<ImgDataDto> list = info.getImgData();
-
-        for (ImgDataDto imgDto : list) {
-            ImageView imageView = new ImageView(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 800);
-            imageView.setLayoutParams(layoutParams);
-            imageView.setImageBitmap(stringtoBitmap(imgDto.getImgInfo()));
-            imageView.setPadding(0, 20, 0, 0);
-            imageLayout.addView(imageView);
-        }
+        list = info.getImgData();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -147,16 +155,53 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         }
     }
 
-    private Bitmap stringtoBitmap(String string) {
-        Bitmap bitmap = null;
-        try {
-            byte[] bitmapArray;
-            bitmapArray = Base64.decode(string, Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public class GridAdapter extends BaseAdapter {
+        private LayoutInflater inflater;
+        private int selectedPosition = -1;
+
+        public GridAdapter(Context context) {
+            inflater = LayoutInflater.from(context);
         }
 
-        return bitmap;
+        public int getCount() {
+            return list.size();
+        }
+
+        public Object getItem(int arg0) {
+            return null;
+        }
+
+        public long getItemId(int arg0) {
+            return 0;
+        }
+
+        public void setSelectedPosition(int position) {
+            selectedPosition = position;
+        }
+
+        public int getSelectedPosition() {
+            return selectedPosition;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.item_download_grid,
+                        parent, false);
+                holder = new ViewHolder();
+                holder.image = (CustomNetworkImageView) convertView.findViewById(R.id.item_grida_image);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.image.setImageUrl(list.get(position).getImgInfoThumbPath(), ImageCacheManager.getInstance().getImageLoader());
+
+            return convertView;
+        }
+
+        public class ViewHolder {
+            public CustomNetworkImageView image;
+        }
     }
 }

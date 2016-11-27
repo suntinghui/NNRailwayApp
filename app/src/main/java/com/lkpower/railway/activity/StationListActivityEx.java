@@ -100,6 +100,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         setContentView(R.layout.activity_station_list);
 
         initView();
+
+        ActivityUtil.verifyReadPhoneStatePermissions(this);
     }
 
     @Override
@@ -141,7 +143,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Log.e("===","=======================onNewIntent");
+        Log.e("===", "=======================onNewIntent");
 
         boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
         if (EarlyWarning) { // 预警
@@ -282,9 +284,9 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.addToRequestQueue(request, null);
     }
 
-    private void stopTimers(){
-        try{
-            for (Timer timer: timerList) {
+    private void stopTimers() {
+        try {
+            for (Timer timer : timerList) {
                 timer.cancel();
             }
         } catch (Exception e) {
@@ -391,8 +393,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         }
     }
 
-    private void startRunning(){
-        SweetAlertDialog dialog = new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定启动?").setContentText("请确认列车发车日期:"+DateUtil.getCurrentDate2()).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+    private void startRunning() {
+        SweetAlertDialog dialog = new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定启动?").setContentText("请确认列车发车日期:" + DateUtil.getCurrentDate2()).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sDialog) {
                 sDialog.cancel();
@@ -409,7 +411,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         dialog.show();
     }
 
-    private void showUpdateDate(){
+    private void showUpdateDate() {
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.show();
 
@@ -432,7 +434,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         dialog.getWindow().setGravity(Gravity.CENTER);
     }
 
-    private void stopRunning(){
+    private void stopRunning() {
         new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定停止?").setContentText("停止后将无法完成任务并停止到站预警").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sDialog) {
@@ -468,6 +470,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         private TextView arrivalTimeTextView;
         private TextView gooutTimeTextView;
         private Button earlyWarningBtn;
+        private TextView missionStateTextView;
     }
 
     public class StationListAdapter extends BaseAdapter {
@@ -506,6 +509,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 holder.arrivalTimeTextView = (TextView) convertView.findViewById(R.id.arrivalTimeTextView);
                 holder.gooutTimeTextView = (TextView) convertView.findViewById(R.id.gooutTimeTextView);
                 holder.earlyWarningBtn = (Button) convertView.findViewById(R.id.earlyWarningBtn);
+                holder.missionStateTextView = (TextView) convertView.findViewById(R.id.missionStateTextView);
 
                 convertView.setTag(holder);
             } else {
@@ -518,6 +522,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             holder.nameTextView.setText(dto.getStationName());
             holder.arrivalTimeTextView.setText(dto.getArrivalTime().trim());
             holder.gooutTimeTextView.setText(dto.getStartTime().trim());
+            holder.missionStateTextView.setText(dto.getMissionState().trim());
             holder.contentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
