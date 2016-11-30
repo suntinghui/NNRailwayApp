@@ -98,7 +98,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
         adapter = new GridAdapter(this);
-        adapter.update();
+        //adapter.update();
         noScrollgridview.setAdapter(adapter);
         noScrollgridview.setOnItemClickListener(new OnItemClickListener() {
 
@@ -321,12 +321,12 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
     public void photo() {
         // 这处方法取到的其实只是缩略图
-
+/*
         Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(openCameraIntent, TAKE_PICTURE);
+*/
 
 
-        /*
         File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
         if (!photoFile.getParentFile().exists()) {
             photoFile.getParentFile().mkdirs();
@@ -336,7 +336,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
         startActivityForResult(intent, TAKE_PICTURE);//如果用 RESULT_OK 做requestCode，就不会回调onActivityResult()了
         //这种方法onActivityResult()中不能调用data.getExtra()，否则报错
-        */
+
 
     }
 
@@ -344,6 +344,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         switch (requestCode) {
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
+                    /*
                     String fileName = String.valueOf(System.currentTimeMillis());
                     Bitmap bm = (Bitmap) data.getExtras().get("data");
                     String path = FileUtils.saveGetUrl(bm, fileName);
@@ -351,13 +352,13 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     takePhoto.setImagePath(path);
                     takePhoto.setBitmap(bm);
                     Bimp.tempSelectBitmap.add(takePhoto);
+                    */
 
 
-/*
                     File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
                     try {
                         Uri uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
-                                        photoFile.getAbsolutePath(), null, null));
+                                photoFile.getAbsolutePath(), null, null));
 
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                         ImageItem takePhoto = new ImageItem();
@@ -368,7 +369,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-                    */
 
                 }
                 break;
