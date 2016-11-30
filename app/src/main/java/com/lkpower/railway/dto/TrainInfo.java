@@ -1,6 +1,7 @@
 package com.lkpower.railway.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class TrainInfo implements Serializable {
     private String Remark;
     private StationModel StartStation;
     private StationModel EndStation;
-    private List<StationModel> StationInfo;
+    private ArrayList<StationModel> StationInfo;
 
     public String getID() {
         return ID;
@@ -65,11 +66,11 @@ public class TrainInfo implements Serializable {
         EndStation = endStation;
     }
 
-    public List<StationModel> getStationInfo() {
+    public ArrayList<StationModel> getStationInfo() {
         return StationInfo;
     }
 
-    public void setStationInfo(List<StationModel> stationInfo) {
+    public void setStationInfo(ArrayList<StationModel> stationInfo) {
         this.StationInfo = stationInfo;
     }
 }

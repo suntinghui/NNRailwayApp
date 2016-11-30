@@ -84,7 +84,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.MainActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -97,7 +96,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.TrainListActivityEx"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -110,7 +108,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.StationListActivityEx"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask"
             android:label="@string/app_name"
@@ -124,7 +121,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.TaskListActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -140,20 +136,12 @@
         -->
         <activity
             android:name="com.lkpower.railway.activity.TaskInfoUploadActivityEx"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
-            <intent-filter>
-                <action android:name="com.gugu.activity.MainActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:label="@string/app_name">
         </activity>
 
         <activity
             android:name="com.lkpower.railway.activity.TaskInfoDownloadActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -166,7 +154,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.MessageListActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -179,7 +166,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.MessageDetailActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -192,7 +178,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.FeedBackActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -205,7 +190,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.SettingActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -218,7 +202,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.GalleryActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -231,7 +214,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.DrivingInfoActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -244,7 +226,6 @@
 
         <activity
             android:name="com.lkpower.railway.activity.ShowImageActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -261,6 +242,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <service android:name="com.lkpower.railway.activity.WarningTimeService" />
+
+        <receiver android:name="com.lkpower.railway.activity.WarningNotificationClickReceiver" />
 
     </application>
 

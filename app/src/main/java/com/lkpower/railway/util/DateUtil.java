@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.concurrent.Exchanger;
 
 import static java.lang.Integer.parseInt;
 
@@ -29,6 +30,21 @@ public class DateUtil {
         }
 
         return "-- : -- : --";
+    }
+
+    public static String yyyyMd2yyyyMMDD(String yyyyMd) {
+        try{
+            SimpleDateFormat sdftemp = new SimpleDateFormat("yyyy-M-d");
+            Date date = sdftemp.parse(yyyyMd);
+
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+            String yyyyMMdd = df.format(date);
+            return yyyyMMdd;
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return getCurrentDate();
+        }
     }
 
     public static String getCurrentDate() {

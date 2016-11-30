@@ -13,7 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:alpha="1.0"
-        android:background="@null">
+        android:background="@color/gray_2">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -95,24 +95,33 @@
                 android:layout_height="1px"
                 android:background="@color/gray" />
 
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="20dip"
+                android:background="@color/gray_2" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@color/gray" />
+
             <LinearLayout
-                android:id="@+id/tipModelLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_white_gray"
-                android:descendantFocusability="blocksDescendants"
+                android:background="#ffffff"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="15dip"
+                android:paddingBottom="10dip"
                 android:paddingLeft="20dip"
                 android:paddingRight="20dip"
-                android:paddingTop="15dip">
+                android:paddingTop="10dip">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="提醒模式"
+                    android:drawablePadding="10dip"
+                    android:text="列车晚点"
                     android:textColor="#666666"
                     android:textSize="16sp" />
 
@@ -120,19 +129,35 @@
                     android:id="@+id/tipModelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="时间优先"
+                    android:layout_marginRight="30dip"
+                    android:text="时间预警"
                     android:textColor="#666666"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
 
+                <Button
+                    android:id="@+id/toggleGestureLockBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_toggle_off" />
             </LinearLayout>
 
-            <!-- 检查版本 -->
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1px"
                 android:background="@color/gray" />
 
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="20dip"
+                android:background="@color/gray_2" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@color/gray" />
+
+            <!-- 检查版本 -->
             <LinearLayout
                 android:id="@+id/checkUpdateLayout"
                 android:layout_width="fill_parent"
@@ -254,7 +279,6 @@
                 android:background="@color/gray" />
 
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/aboutLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -265,7 +289,8 @@
                 android:paddingBottom="15dip"
                 android:paddingLeft="20dip"
                 android:paddingRight="20dip"
-                android:paddingTop="15dip">
+                android:paddingTop="15dip"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -282,10 +307,10 @@
             </LinearLayout>
 
             <View
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="1px"
-                android:background="@color/gray" />
+                android:background="@color/gray"
+                android:visibility="gone" />
 
 
             <!-- 登出 -->

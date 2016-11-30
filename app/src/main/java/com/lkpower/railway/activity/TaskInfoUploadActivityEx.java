@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -71,8 +72,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
     private TaskDto.TaskListInfoDto task = null;
 
-    public static Bitmap bimap;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -80,13 +79,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
         Res.init(this);
 
-        bimap = BitmapFactory.decodeResource(
-                getResources(),
-                R.drawable.icon_addpic_unfocused);
-
         Bimp.tempSelectBitmap.clear();
-
-        PublicWay.activityList.add(this);
         parentView = getLayoutInflater().inflate(R.layout.activity_taskinfo_upload_ex, null);
         setContentView(parentView);
 
@@ -124,11 +117,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         });
 
         ActivityUtil.verifyStoragePermissions(this);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -333,11 +321,12 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
     public void photo() {
         // 这处方法取到的其实只是缩略图
-        /*
+
         Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(openCameraIntent, TAKE_PICTURE);
-        */
 
+
+        /*
         File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
         if (!photoFile.getParentFile().exists()) {
             photoFile.getParentFile().mkdirs();
@@ -347,6 +336,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
         startActivityForResult(intent, TAKE_PICTURE);//如果用 RESULT_OK 做requestCode，就不会回调onActivityResult()了
         //这种方法onActivityResult()中不能调用data.getExtra()，否则报错
+        */
 
     }
 
@@ -354,8 +344,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         switch (requestCode) {
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
-
-                    /*
                     String fileName = String.valueOf(System.currentTimeMillis());
                     Bitmap bm = (Bitmap) data.getExtras().get("data");
                     String path = FileUtils.saveGetUrl(bm, fileName);
@@ -363,8 +351,9 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     takePhoto.setImagePath(path);
                     takePhoto.setBitmap(bm);
                     Bimp.tempSelectBitmap.add(takePhoto);
-                    */
 
+
+/*
                     File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
                     try {
                         Uri uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
@@ -377,21 +366,20 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                         Bimp.tempSelectBitmap.add(takePhoto);
 
                     } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+                    */
 
                 }
                 break;
         }
     }
 
-    private Bitmap martixBitmap(Bitmap bit){
+    private Bitmap martixBitmap(Bitmap bit) {
         Matrix matrix = new Matrix();
-        matrix.setScale(0.3f, 0.3f);
-        Bitmap bm = Bitmap.createBitmap(bit, 0, 0, bit.getWidth(),
-                bit.getHeight(), matrix, true);
-        Log.i("wechat", "压缩后图片的大小" + (bm.getByteCount() / 1024 / 1024)
+        matrix.setScale(0.2f, 0.2f);
+        Bitmap bm = Bitmap.createBitmap(bit, 0, 0, bit.getWidth(), bit.getHeight(), matrix, true);
+        Log.i("===", "压缩后图片的大小" + (bm.getByteCount() / 1024 / 1024)
                 + "M宽度为" + bm.getWidth() + "高度为" + bm.getHeight());
         return bm;
     }

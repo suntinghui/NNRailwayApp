@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,37 +31,24 @@ import com.lkpower.railway.dto.DeviceInfo;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TrainInfo;
+import com.lkpower.railway.dto.TrainInfoDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
-import com.lkpower.railway.util.NotificationUtil;
 
 import org.angmarch.views.NiceSpinner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.aigestudio.datepicker.cons.DPMode;
 import cn.aigestudio.datepicker.views.DatePicker;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static android.R.attr.data;
-import static android.R.attr.start;
-import static com.lkpower.railway.R.drawable.train;
-import static com.lkpower.railway.R.id.contactLayout;
-import static com.lkpower.railway.R.id.earlyWarningBtn;
 import static com.lkpower.railway.R.id.settingTextView;
-import static com.lkpower.railway.R.id.title;
-import static com.lkpower.railway.R.id.titleTextView;
-import static u.aly.av.I;
-import static u.aly.cw.f;
-import static u.aly.cw.i;
 
 
 /**
@@ -80,7 +65,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private StationListAdapter adapter = null;
 
     private DeviceInfo deviceInfo = null;
-    private ArrayList<TrainInfo> trainInfoList = null;
+    private ArrayList<TrainInfo> trainInfoList = new ArrayList<TrainInfo>();
 
     private List<StationModel> mList = new ArrayList<StationModel>();
     private List<String> trainList = new ArrayList<String>();
@@ -88,8 +73,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private Button runningBtn = null;
 
     private int location = 0;
-
-    private ArrayList<Timer> timerList = new ArrayList<Timer>();
 
     private String yyyyMd = DateUtil.getCurrentDate3();
 
@@ -104,13 +87,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         ActivityUtil.verifyReadPhoneStatePermissions(this);
     }
 
-    @Override
-    protected void onDestory() {
-        super.onDestory();
-
-        stopTimers();
-        timerList.clear();
-    }
 
     private void initView() {
         titleSpinner = (NiceSpinner) this.findViewById(R.id.titleSpinner);
@@ -132,11 +108,16 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         ActivityUtil.setEmptyView(this, listView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestStationList();
+                requestStationList("正在查询车站信息...");
             }
         });
+    }
 
-        requestStationList();
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        requestStationList(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
     }
 
     @Override
@@ -145,6 +126,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         Log.e("===", "=======================onNewIntent");
 
+        Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
+        warningIntent.putExtra("PLAY", false);
+        this.sendBroadcast(warningIntent);
+
         boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
         if (EarlyWarning) { // 预警
             requestEarlyWarning(intent.getStringExtra("stationId"), intent.getStringExtra("SerialNumber"));
@@ -152,7 +137,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     }
 
-    private void requestStationList() {
+    private void requestStationList(String msg) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "DeviceDetailInfo");
         tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
@@ -165,6 +150,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     Gson gson = new GsonBuilder().create();
                     DeviceDetailInfoDto deviceDetailInfoDto = gson.fromJson(jsonObject, DeviceDetailInfoDto.class);
                     if (deviceDetailInfoDto.getResult().getFlag() == 1) {
+                        trainList.clear();
+
                         deviceInfo = deviceDetailInfoDto.getDataInfo().getDeviceInfo();
                         trainInfoList = (ArrayList<TrainInfo>) deviceDetailInfoDto.getDataInfo().getTrainInfo();
 
@@ -215,7 +202,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             }
         });
 
-        this.addToRequestQueue(request, "正在查询车站信息...");
+        this.addToRequestQueue(request, msg);
     }
 
     private void requestTrainStart() {
@@ -237,7 +224,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         adapter.notifyDataSetChanged();
                         listView.setAlpha(1.0f);
 
-                        startTimer();
+                        startWaningService();
 
                     } else {
                         Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
@@ -251,6 +238,14 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         });
 
         this.addToRequestQueue(request, "请稍候...");
+    }
+
+    private void startWaningService() {
+        Intent intent = new Intent(this, WarningTimeService.class);
+        intent.putExtra("STATION_LIST", trainInfoList.get(location).getStationInfo());
+        intent.putExtra("SERIALNUMBER", trainInfoList.get(location).getSerialNumber());
+        intent.putExtra("DATE", yyyyMd);
+        this.startService(intent);
     }
 
     private void requestEarlyWarning(String stationId, String serialNumber) {
@@ -284,21 +279,12 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.addToRequestQueue(request, null);
     }
 
-    private void stopTimers() {
-        try {
-            for (Timer timer : timerList) {
-                timer.cancel();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            timerList.clear();
-        }
-    }
 
     // 更换车次
     private void changeTrain(int location) {
-        stopTimers();
+        // 停止计时服务
+        Intent intent = new Intent(this, WarningTimeService.class);
+        this.stopService(intent);
 
         Constants.RUNNING = false;
         runningBtn.setText("启动");
@@ -310,60 +296,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         Constants.CarNumberName = trainInfoList.get(location).getTrainName();
 
         titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
-    }
-
-    private void startTimer() {
-        timerList.clear();
-
-        try {
-            for (final StationModel station : trainInfoList.get(location).getStationInfo()) {
-                Date when = DateUtil.getDate(yyyyMd, station.getArrivalDay(), station.getAheadTime(), station.getStartTime());
-                Log.e("------", when.toString());
-
-                // 如果本站的时间小于当前的时间则说明已经过站了,则不再提醒。
-                if (when.before(new Date()))
-                    continue;
-
-                Log.e("======", when.toString());
-
-                final Handler handler = new Handler() {
-                    public void handleMessage(Message msg) {
-                        if (msg.what == 1) {
-                            String content = station.getStationName() + "还有" + station.getAheadTime() + "分钟到站,请您及时完成相关任务。";
-                            Intent intent = new Intent(StationListActivityEx.this, StationListActivityEx.class);
-                            intent.putExtra("EarlyWarning", true);
-                            intent.putExtra("SerialNumber", trainInfoList.get(location).getSerialNumber());
-                            intent.putExtra("stationId", station.getID());
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                            NotificationUtil.showNotification(StationListActivityEx.this, "到站提醒", content, intent);
-                        }
-                        super.handleMessage(msg);
-                    }
-
-                    ;
-                };
-
-                Timer timer = new Timer();
-                TimerTask task = new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        // 需要做的事:发送消息
-                        Message message = new Message();
-                        message.what = 1;
-                        handler.sendMessage(message);
-                    }
-                };
-
-                timerList.add(timer);
-
-                timer.schedule(task, when);
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -442,7 +374,9 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
                 sDialog.cancel();
 
-                stopTimers();
+                // 停止计时服务
+                Intent intent = new Intent(StationListActivityEx.this, WarningTimeService.class);
+                StationListActivityEx.this.stopService(intent);
 
                 runningBtn.setText("启动");
 
@@ -530,6 +464,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         Intent intent = new Intent(StationListActivityEx.this, TaskListActivity.class);
                         intent.putExtra("TRAIN", trainInfoList.get(location));
                         intent.putExtra("STATION", dto);
+                        intent.putExtra("DATE", DateUtil.yyyyMd2yyyyMMDD(yyyyMd));
                         StationListActivityEx.this.startActivity(intent);
 
                     } else {

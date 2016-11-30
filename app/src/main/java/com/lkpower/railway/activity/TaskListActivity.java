@@ -82,7 +82,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
     private void requestTaskList(String msg) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "MissionInfoByUser");
-        tempMap.put("serialNumber", DateUtil.getCurrentDate());
+        tempMap.put("serialNumber", this.getIntent().getStringExtra("DATE"));
         tempMap.put("userId", Constants.DeviceInfo.getID());
         tempMap.put("stationId", station.getID());
 

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
@@ -21,14 +22,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     private LinearLayout runInfoLayout = null; // 行车信息
     private LinearLayout messageLayout = null; // 段发信息
-    private LinearLayout tipModelLayout = null; // 提醒模式
     private LinearLayout checkUpdateLayout = null; // 检查新版本
     private LinearLayout feedbackLayout = null;
     private LinearLayout contactLayout = null;
     private LinearLayout aboutLayout = null;
     private Button logoutBtn = null;
 
+    private Button toggleGestureLockBtn = null;
     private TextView tipModelTextView = null;
+    private boolean toggleFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +54,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         messageLayout = (LinearLayout) this.findViewById(R.id.messageLayout);
         messageLayout.setOnClickListener(this);
 
-        tipModelLayout = (LinearLayout) this.findViewById(R.id.tipModelLayout);
-        tipModelLayout.setOnClickListener(this);
-
         checkUpdateLayout = (LinearLayout) this.findViewById(R.id.checkUpdateLayout);
         checkUpdateLayout.setOnClickListener(this);
 
@@ -70,8 +69,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         logoutBtn = (Button) this.findViewById(R.id.logoutBtn);
         logoutBtn.setOnClickListener(this);
 
+        toggleGestureLockBtn = (Button) this.findViewById(R.id.toggleGestureLockBtn);
+        toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
+        toggleGestureLockBtn.setOnClickListener(this);
+
         tipModelTextView = (TextView) this.findViewById(R.id.tipModelTextView);
-        tipModelTextView.setText(Constants.TIP_TIME_MODEL?"时间优先":"距离优先");
     }
 
     @Override
@@ -85,22 +87,13 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 Intent intent = new Intent(this, DrivingInfoActivity.class);
                 this.startActivity(intent);
             }
-                break;
+            break;
 
             case R.id.messageLayout: {// 段发信息
                 Intent intent = new Intent(this, MessageListActivity.class);
                 this.startActivity(intent);
             }
-                break;
-
-            case R.id.tipModelLayout: {
-                /*
-                Constants.TIP_TIME_MODEL = !Constants.TIP_TIME_MODEL;
-                Toast.makeText(this, Constants.TIP_TIME_MODEL ? "已切换到时间优先提醒模式" : "已切换到距离优先提醒模式", Toast.LENGTH_SHORT).show();
-                tipModelTextView.setText(Constants.TIP_TIME_MODEL ? "时间优先" : "距离优先");
-                */
-            }
-                break;
+            break;
 
             case R.id.checkUpdateLayout: {
                 new SweetAlertDialog(this, SweetAlertDialog.NORMAL_TYPE).setTitleText("\n当前已是最新版本\n").setContentText(null).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -110,16 +103,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     }
                 }).show();
             }
-                break;
+            break;
 
             case R.id.feedbackLayout: {
                 Intent intent = new Intent(this, FeedBackActivity.class);
                 this.startActivity(intent);
             }
-                break;
+            break;
 
             case R.id.contactLayout: {
-                try{
+                try {
                     Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Constants.DeviceInfo.getPhone()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
@@ -127,7 +120,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     e.printStackTrace();
                 }
             }
-                break;
+            break;
 
             case R.id.aboutLayout: {
                 Intent intent = new Intent(this, ShowWebViewActivity.class);
@@ -135,10 +128,29 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 intent.putExtra("url", "http://www.nntlj.com/staticpages/20140721/nt53cc744b-2703110.shtml");
                 this.startActivity(intent);
             }
-                break;
+            break;
 
             case R.id.logoutBtn:
                 break;
+
+            case R.id.toggleGestureLockBtn: {
+                if (toggleFlag) {
+                    // 如果设置了手势密码，则去关闭手势密码
+                    toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
+                    tipModelTextView.setText("时间预警");
+                    Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // 如果没有设置，则切换图片，并去设置
+                    toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_on);
+                    tipModelTextView.setText("位置预警");
+                    Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
+                }
+
+                toggleFlag = !toggleFlag;
+            }
+
+            break;
         }
     }
 }

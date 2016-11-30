@@ -52,7 +52,7 @@ public class ShowImageActivity extends BaseActivity {
         final String testUrl = this.getIntent().getStringExtra("url");
         Log.e("---", "---:" + testUrl);
 
-        this.showProgress("正在加载图片,请稍候...");
+        this.showProgress("正在加载图片...");
 
         final String downDir = FileUtil.getFilePath();
         //使用Glide下载图片,保存到本地
