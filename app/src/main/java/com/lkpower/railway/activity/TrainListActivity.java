@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.TrainDto;
 import com.lkpower.railway.util.ActivityUtil;
@@ -103,7 +104,7 @@ public class TrainListActivity extends BaseActivity {
             }
         });
 
-        this.addToRequestQueue(request, "正在查询车次信息...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在查询车次信息...");
 
     }
 

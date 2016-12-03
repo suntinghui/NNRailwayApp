@@ -15,16 +15,19 @@ public class Constants {
 //    public static final String HOST_IP_REQ = HOST_IP + ":8111";
 
     // 测试
-//    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
+    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
 
     // 生产
-    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
+//    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
 
     public static final String HOST_IP_REQ = HOST_IP;
 
     public static String CUSTOMERNO = "sdp";
     public static String ACCOUNTNO = "9559980759778592817";
     public static String ACCOUNTNAME = "";
+
+    public static String CURRENT_STATION_NUM = "1"; // 当前正要奔向的车站序号
+    public static boolean CURRENT_TRAIN_LATE = false; // 当前车次是否晚点
 
     public static DeviceInfo DeviceInfo = null;
     public static String CarNumberId = null;
@@ -53,8 +56,6 @@ public class Constants {
     public static final String USERID = "USERID";
 
     public static final String CITY_CODE = "CITY_CODE";
-
-    public static final String UMengPUSHId = "UMengPUSHId";
 
     public static final String WX_APP_ID = "wxf7baba5c341a6655";
     public static final String WX_AppSecret = "d4624c36b6795d1d99dcf0547af5443d";

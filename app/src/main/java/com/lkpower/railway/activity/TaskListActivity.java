@@ -21,6 +21,7 @@ import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDto;
@@ -110,14 +111,15 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
-        this.addToRequestQueue(request, msg);
+        NetworkHelper.getInstance().addToRequestQueue(request, msg);
     }
 
     private class ViewHolder {
         private LinearLayout contentLayout;
         private TextView taskName;
         private TextView stateTextView;
-        private TextView remarkTextView;
+        private TextView remarkTextView; // 任务描述
+        private TextView tipTextView; // 完成情况
         private TextView executorNameTextView;
         private TextView updateTimeTextView;
     }
@@ -156,6 +158,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
                 holder.taskName = (TextView) convertView.findViewById(R.id.taskName);
                 holder.stateTextView = (TextView) convertView.findViewById(R.id.stateTextView);
                 holder.remarkTextView = (TextView) convertView.findViewById(R.id.remarkTextView);
+                holder.tipTextView = (TextView) convertView.findViewById(R.id.tipTextView);
                 holder.executorNameTextView = (TextView) convertView.findViewById(R.id.executorNameTextView);
                 holder.updateTimeTextView = (TextView) convertView.findViewById(R.id.updateTimeTextView);
 
@@ -166,9 +169,10 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
 
             final TaskDto.TaskListInfoDto info = mList.get(position);
 
-            holder.taskName.setText(info.getMisName());
+            holder.taskName.setText(info.getStationName() + " ● " + info.getMisName());
             holder.stateTextView.setText(info.getState().equals("1") ? "未完成" : "已完成");
             holder.remarkTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
+            holder.tipTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark());
             holder.executorNameTextView.setText(info.getExecutorName());
             holder.updateTimeTextView.setText(info.getUpdateTime());
             holder.contentLayout.setOnClickListener(new View.OnClickListener() {

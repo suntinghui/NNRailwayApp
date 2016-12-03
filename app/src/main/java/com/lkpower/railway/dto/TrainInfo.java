@@ -13,6 +13,7 @@ public class TrainInfo implements Serializable {
     private String ID;
     private String TrainName;
     private String SerialNumber;
+    private String InstanceId;
     private String Remark;
     private StationModel StartStation;
     private StationModel EndStation;
@@ -40,6 +41,14 @@ public class TrainInfo implements Serializable {
 
     public void setSerialNumber(String serialNumber) {
         SerialNumber = serialNumber;
+    }
+
+    public String getInstanceId() {
+        return InstanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        InstanceId = instanceId;
     }
 
     public String getRemark() {

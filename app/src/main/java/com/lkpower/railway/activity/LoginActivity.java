@@ -17,6 +17,7 @@ import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.util.NotificationUtil;
 import com.lkpower.railway.util.ViewUtil;
@@ -48,7 +49,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         pwdEditText = (EditText) this.findViewById(R.id.pwdEditText);
 
-
         this.findViewById(R.id.nextBtn).setOnClickListener(this);
 
         phoneEditText.setText("sdp");
@@ -59,12 +59,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.nextBtn:
-                NotificationUtil.showNotification(this, "周瑶", "瑶瑶我想你", new Intent(this, SettingActivity.class));
 
-
-//                if (checkValue()) {
-//                    requestLogin();
-//                }
+                if (checkValue()) {
+                    requestLogin();
+                }
 
                 break;
         }
@@ -133,7 +131,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }
         });
 
-        this.addToRequestQueue(request, "正在登录...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在登录...");
     }
 
     private long exitTimeMillis = 0;

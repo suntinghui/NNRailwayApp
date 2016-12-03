@@ -6,10 +6,8 @@ buildscript {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
     }
 }
-
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -72,6 +70,8 @@ android {
             exclude group: 'com.google.android', module: 'support-v4'
         }
 
+        compile(name: 'subsampling-scale-image-view-3.6.0', ext: 'aar')
+
         compile 'org.greenrobot:greendao:3.2.0'
         compile files('libs/AMap_Location_V3.00_20160922.jar')
         compile files('libs/AMap3DMap_4.0.1_AMapSearch_3.5.0_AMapLocation_3.0.0_20160927.jar')
@@ -95,9 +95,13 @@ android {
 
         compile 'com.github.bumptech.glide:glide:3.7.0'
 
+        compile files('libs/AMap_Location_V3.1.0_20161027.jar')
+        compile files('libs/shimmer.jar')
+
         compile project(':imagepickerModule')
         compile project(':photo')
-        compile(name: 'subsampling-scale-image-view-3.6.0', ext: 'aar')
+        compile project(':PushSDK')
+
     }
 
 }

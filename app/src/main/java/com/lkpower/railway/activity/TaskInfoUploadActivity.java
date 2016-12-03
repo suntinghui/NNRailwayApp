@@ -29,6 +29,7 @@ import com.lkpower.railway.R;
 import com.lkpower.railway.activity.view.UploadImageView;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.StationModel;
@@ -232,7 +233,7 @@ public class TaskInfoUploadActivity extends BaseActivity implements View.OnClick
             }
         });
 
-        this.addToRequestQueue(request, "正在上传数据...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
     }
 
     @Override

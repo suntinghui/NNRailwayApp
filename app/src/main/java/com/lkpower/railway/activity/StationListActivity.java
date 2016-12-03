@@ -22,6 +22,7 @@ import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.StationModel;
@@ -114,7 +115,7 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
             }
         });
 
-        this.addToRequestQueue(request, "正在查询车站信息...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在查询车站信息...");
     }
 
     private void requestTrainStart() {
@@ -147,7 +148,7 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
             }
         });
 
-        this.addToRequestQueue(request, "请稍候...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "请稍候...");
     }
 
     @Override

@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.HandlerThread;
+import android.util.Log;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.umeng.message.IUmengRegisterCallback;
+import com.umeng.message.PushAgent;
 
 /**
  * Created by sth on 3/22/16.
@@ -33,6 +36,22 @@ public class MyApplication extends Application {
         HandlerThread workerThread = new HandlerThread("global_worker_thread");
         workerThread.start();
         initImageLoader(this);
+
+        PushAgent mPushAgent = PushAgent.getInstance(this);
+        //注册推送服务，每次调用register方法都会回调该接口
+        mPushAgent.register(new IUmengRegisterCallback() {
+
+            @Override
+            public void onSuccess(String deviceToken) {
+                //注册成功会返回device token
+                Log.e("UMENG DEVICETOKEN", "===:" + deviceToken);
+            }
+
+            @Override
+            public void onFailure(String s, String s1) {
+
+            }
+        });
     }
 
     public static synchronized MyApplication getInstance() {
@@ -77,12 +96,12 @@ public class MyApplication extends Application {
     }
 
 
-    public static void initImageLoader(Context context){
-        if(!com.nostra13.universalimageloader.core.ImageLoader.getInstance().isInited()){
+    public static void initImageLoader(Context context) {
+        if (!com.nostra13.universalimageloader.core.ImageLoader.getInstance().isInited()) {
             ImageLoaderConfiguration config = null;
-            if(BuildConfig.DEBUG){
+            if (BuildConfig.DEBUG) {
                 config = new ImageLoaderConfiguration.Builder(context)
-						/*.threadPriority(Thread.NORM_PRIORITY - 2)
+                        /*.threadPriority(Thread.NORM_PRIORITY - 2)
 						.memoryCacheSize((int) (Runtime.getRuntime().maxMemory() / 4))
 						.diskCacheSize(500 * 1024 * 1024)
 						.writeDebugLogs()
@@ -102,7 +121,7 @@ public class MyApplication extends Application {
                         //.defaultDisplayImageOptions(DisplayImageOptions.createSimple())
                         //.writeDebugLogs()
                         .build();
-            }else{
+            } else {
                 config = new ImageLoaderConfiguration.Builder(context)
                         .threadPriority(Thread.NORM_PRIORITY - 2)
                         .diskCacheSize(500 * 1024 * 1024)

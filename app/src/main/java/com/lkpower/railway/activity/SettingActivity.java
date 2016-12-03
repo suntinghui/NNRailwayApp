@@ -9,10 +9,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
+import com.lkpower.railway.client.RequestEnum;
+import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
+import com.lkpower.railway.dto.InfoPublishListDto;
+import com.lkpower.railway.dto.ResultMsgDto;
+import com.lkpower.railway.dto.TrainInfo;
+import com.lkpower.railway.util.DeviceUtil;
+
+import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.king.photo.activity.ShowAllPhoto.dataList;
+import static com.lkpower.railway.R.id.listView;
+import static com.lkpower.railway.R.id.runningBtn;
 
 /**
  * Created by sth on 19/10/2016.
@@ -32,11 +48,17 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private TextView tipModelTextView = null;
     private boolean toggleFlag = false;
 
+    private TrainInfo trainInfo = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_setting);
+
+        this.trainInfo = (TrainInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
+
+        toggleFlag = Constants.CURRENT_TRAIN_LATE;
 
         initView();
     }
@@ -70,10 +92,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         logoutBtn.setOnClickListener(this);
 
         toggleGestureLockBtn = (Button) this.findViewById(R.id.toggleGestureLockBtn);
-        toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
         toggleGestureLockBtn.setOnClickListener(this);
 
         tipModelTextView = (TextView) this.findViewById(R.id.tipModelTextView);
+
+        toggleGestureLockBtn.setBackgroundResource(toggleFlag ? R.drawable.btn_toggle_on : R.drawable.btn_toggle_off);
+        tipModelTextView.setText(toggleFlag ? "位置预警" : "时间预警");
     }
 
     @Override
@@ -134,23 +158,71 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case R.id.toggleGestureLockBtn: {
-                if (toggleFlag) {
-                    // 如果设置了手势密码，则去关闭手势密码
-                    toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
-                    tipModelTextView.setText("时间预警");
-                    Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    // 如果没有设置，则切换图片，并去设置
-                    toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_on);
-                    tipModelTextView.setText("位置预警");
-                    Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
-                }
-
-                toggleFlag = !toggleFlag;
+                new SweetAlertDialog(SettingActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定修改?").setContentText(toggleFlag ? "确认后将会使本车次所有设备修改为正点运行" : "确认后将会使本车次所有设备修改为晚点运行").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.cancel();
+                        requestLaterNotice();
+                    }
+                }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                    }
+                }).show();
             }
 
             break;
         }
+    }
+
+    private void toggleLaterNotice() {
+        if (toggleFlag) {
+            // 如果设置了手势密码，则去关闭手势密码
+            toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
+            tipModelTextView.setText("时间预警");
+//            Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
+
+        } else {
+            // 如果没有设置，则切换图片，并去设置
+            toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_on);
+            tipModelTextView.setText("位置预警");
+//            Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
+        }
+
+        toggleFlag = !toggleFlag;
+
+        Constants.CURRENT_TRAIN_LATE = toggleFlag;
+    }
+
+    private void requestLaterNotice() {
+        HashMap<String, String> tempMap = new HashMap<String, String>();
+        tempMap.put("commondKey", "SetLaterNotice");
+        tempMap.put("InstanceId", trainInfo.getInstanceId());
+        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
+        tempMap.put("state", toggleFlag ? "0" : "1"); // 1是晚点,其他为正点
+
+        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String jsonObject) {
+                try {
+                    Gson gson = new GsonBuilder().create();
+                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                    if (resultMsgDto.getResult().getFlag() == 1) {
+                        toggleLaterNotice();
+
+                    } else {
+                        Toast.makeText(SettingActivity.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
     }
 }

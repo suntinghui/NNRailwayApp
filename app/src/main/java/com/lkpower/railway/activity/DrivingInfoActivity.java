@@ -31,6 +31,7 @@ import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
@@ -166,7 +167,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             }
         });
 
-        this.addToRequestQueue(request, "正在上传数据...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
 
     }
 

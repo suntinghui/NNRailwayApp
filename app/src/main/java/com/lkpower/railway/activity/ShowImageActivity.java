@@ -14,6 +14,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.lkpower.railway.R;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.util.FileUtil;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public class ShowImageActivity extends BaseActivity {
         final String testUrl = this.getIntent().getStringExtra("url");
         Log.e("---", "---:" + testUrl);
 
-        this.showProgress("正在加载图片...");
+        NetworkHelper.getInstance().showProgress("正在加载图片...");
 
         final String downDir = FileUtil.getFilePath();
         //使用Glide下载图片,保存到本地
@@ -88,7 +89,7 @@ public class ShowImageActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
 
-                            hideProgress();
+                            NetworkHelper.getInstance().hideProgress();
                         }
                     }
                 });

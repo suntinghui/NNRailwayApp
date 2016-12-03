@@ -29,7 +29,7 @@ public class NotificationUtil {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setAutoCancel(true);
         Notification mNotification = builder.build();
-        mNotification.icon = R.drawable.ic_launcher;// notification通知栏图标
+        mNotification.icon = R.drawable.logo;// notification通知栏图标
         mNotification.defaults |= Notification.DEFAULT_VIBRATE;
         mNotification.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" +R.raw.tip);
         // 自定义布局

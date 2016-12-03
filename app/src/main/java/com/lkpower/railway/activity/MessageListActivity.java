@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.InfoPublishListDto;
 import com.lkpower.railway.dto.MessageModel;
 import com.lkpower.railway.util.ActivityUtil;
@@ -95,7 +96,7 @@ public class MessageListActivity extends BaseActivity implements View.OnClickLis
             }
         });
 
-        this.addToRequestQueue(request, "正在查询信息...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在查询信息...");
     }
 
     @Override

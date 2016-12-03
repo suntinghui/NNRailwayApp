@@ -15,6 +15,7 @@ import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
@@ -106,7 +107,7 @@ public class FeedBackActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
-        this.addToRequestQueue(request, "正在提交数据...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在提交数据...");
     }
 
     @Override

@@ -10,6 +10,7 @@ public class StationModel implements Serializable {
 
     private String ID;
     private String stationName;
+    private String orderNum;
     private String stationType;
     private String startTime;
     private String arrivalTime;
@@ -35,6 +36,14 @@ public class StationModel implements Serializable {
 
     public void setStationName(String stationName) {
         stationName = stationName;
+    }
+
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum;
     }
 
     public String getStationType() {

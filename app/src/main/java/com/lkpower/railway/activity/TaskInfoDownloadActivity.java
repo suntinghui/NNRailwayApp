@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.lkpower.railway.activity.view.CustomNetworkImageView;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.ImageCacheManager;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ImgDataDto;
 import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.StationModel;
@@ -50,6 +52,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
     private TextView executorTextView = null;
     private TextView updateTimeTextView = null;
     private TextView remarkTextView = null;
+    private TextView tipTextView = null;
     private TextView stateTextView = null;
 
     private GridView noScrollgridview;
@@ -80,6 +83,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         executorTextView = (TextView) this.findViewById(R.id.executorTextView);
         updateTimeTextView = (TextView) this.findViewById(R.id.updateTimeTextView);
         remarkTextView = (TextView) this.findViewById(R.id.remarkTextView);
+        tipTextView = (TextView) this.findViewById(R.id.tipTextView);
         stateTextView = (TextView) this.findViewById(R.id.stateTextView);
 
         infoLayout.setVisibility(View.GONE);
@@ -130,16 +134,17 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
             }
         });
 
-        this.addToRequestQueue(request, "请稍候...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "请稍候...");
     }
 
     private void refreshView() {
         infoLayout.setVisibility(View.VISIBLE);
-        taskNameTextView.setText(info.getMisName());
+        taskNameTextView.setText(info.getStationName() + " ● " + info.getMisName());
         taskIdTextView.setText(info.getID());
         executorTextView.setText(info.getExecutorName());
         updateTimeTextView.setText(info.getUpdateTime());
-        remarkTextView.setText(info.getRemark());
+        remarkTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
+        tipTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark());
         stateTextView.setText(info.getState().equals("1") ? "未完成" : "已完成");
 
         list = info.getImgData();

@@ -1,34 +1,39 @@
 package com.lkpower.railway.client.net;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.lkpower.railway.MyApplication;
 import com.lkpower.railway.activity.view.NetErrorDialog;
 import com.lkpower.railway.activity.view.ProgressHUD;
+import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.util.NetUtil;
 
 /**
- * Created by sth on 4/22/16.
+ * Created by sth on 03/12/2016.
  */
-public class NetHelper {
 
-    private Activity context = null;
-    private static NetHelper instance = null;
+public class NetworkHelper {
+
+    private Context context = MyApplication.getInstance().getApplicationContext();
+
     // Volley
     private RequestQueue mRequestQueue = null;
 
-    public static NetHelper getInstance() {
-        if (instance == null) {
-            instance = new NetHelper();
+    private static NetworkHelper instance = null;
+
+    public static NetworkHelper getInstance() {
+        if (null == instance) {
+            instance = new NetworkHelper();
         }
 
         return instance;
     }
 
-    private RequestQueue getRequestQueue(Activity context) {
+    private RequestQueue getRequestQueue() {
         // lazy initialize the request queue, the queue instance will be created when it is accessed for the first time
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(context);
@@ -43,19 +48,17 @@ public class NetHelper {
      * @param req
      * @param message 如果message＝null,则不弹出提示框。如果message="",则默认弹出提示框“请稍候...”
      */
-    public <T> boolean addToRequestQueue(Activity context, Request<T> req, String message) {
-        this.context = context;
-
-        if (!NetUtil.isNetworkAvailable(this.context)) {
-            NetErrorDialog.getInstance().show(this.context);
+    public <T> boolean addToRequestQueue(Request<T> req, String message) {
+        if (!NetUtil.isNetworkAvailable(context)) {
+            NetErrorDialog.getInstance().show(context);
 
             return false;
         }
 
         this.showProgress(message);
 
-        req.setTag(context);
-        getRequestQueue(context).add(req);
+        req.setTag(this);
+        getRequestQueue().add(req);
         mRequestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<Object>() {
             @Override
             public void onRequestFinished(Request<Object> request) {
@@ -85,7 +88,7 @@ public class NetHelper {
                 message = "请稍候...";
 
             if (hud == null) {
-                hud = ProgressHUD.show(context, message, true, new DialogInterface.OnCancelListener() {
+                hud = ProgressHUD.show(ActivityManager.getInstance().peekActivity(), message, true, new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         // TODO

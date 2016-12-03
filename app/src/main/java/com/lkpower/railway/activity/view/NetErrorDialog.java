@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import com.lkpower.railway.R;
+import com.lkpower.railway.activity.BaseActivity;
+import com.lkpower.railway.client.ActivityManager;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -30,42 +32,46 @@ public class NetErrorDialog {
 		return instance;
 	}
 
-	public void show(final Activity context) {
-//		if (Crouton.getQueue().size() > 0)
+	public void show(final Context context) {
+		try {
+			//		if (Crouton.getQueue().size() > 0)
 //			return;
 
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.layout_net_eror, null);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View view = inflater.inflate(R.layout.layout_net_eror, null);
 
-		LinearLayout settingLayout = (LinearLayout) view.findViewById(R.id.settingLayout);
-		settingLayout.setOnClickListener(new OnClickListener() {
+			LinearLayout settingLayout = (LinearLayout) view.findViewById(R.id.settingLayout);
+			settingLayout.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				settingNet(context);
+				@Override
+				public void onClick(View v) {
+					settingNet(context);
 
-				Crouton.cancelAllCroutons();
-			}
-		});
-
-		LinearLayout closeLayout = (LinearLayout) view.findViewById(R.id.closeLayout);
-		closeLayout.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (crouton != null) {
 					Crouton.cancelAllCroutons();
 				}
-			}
-		});
+			});
 
-		crouton = Crouton.make(context, view);
-		// 一直显示，手动关闭
-		//crouton.setConfiguration(CONFIGURATION_INFINITE);
-		
-		crouton.setConfiguration(CONFIGURATION_LONG);
-		
-		crouton.show();
+			LinearLayout closeLayout = (LinearLayout) view.findViewById(R.id.closeLayout);
+			closeLayout.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (crouton != null) {
+						Crouton.cancelAllCroutons();
+					}
+				}
+			});
+
+			crouton = Crouton.make(ActivityManager.getInstance().peekActivity(), view);
+			// 一直显示，手动关闭
+			//crouton.setConfiguration(CONFIGURATION_INFINITE);
+
+			crouton.setConfiguration(CONFIGURATION_LONG);
+
+			crouton.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void hide(){

@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"></uses-permission>
 
 
     <application
@@ -39,7 +40,8 @@
         android:theme="@android:style/Theme.Light.NoTitleBar"
         tools:replace="android:icon, android:theme">
 
-        <meta-data android:value="580d95c6c895761f96000494" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="583fea618f4a9d7e38000b51" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:name="UMENG_MESSAGE_SECRET" android:value="f5bb94d13c0e73932142f79b7ceaaea1" />
         <meta-data android:value="UMeng" android:name="UMENG_CHANNEL"/>
 
         <!-- 百度 -->
@@ -52,7 +54,7 @@
             android:name="com.amap.api.v2.apikey"
             android:value="a683cd0ea3cee68669e25928ad53dcec" />
         <!-- 定位需要的服务 -->
-        <service android:name="com.amap.api.location.APSService" />
+        <service android:name="com.amap.api.location.APSService"></service>
 
         <activity
             android:name="com.lkpower.railway.activity.SplashActivity"
@@ -67,7 +69,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
 
         <activity
             android:name="com.lkpower.railway.activity.LoginActivity"
@@ -244,6 +245,10 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <service android:name="com.lkpower.railway.activity.WarningTimeService" />
+
+        <service android:name="com.lkpower.railway.activity.WarningLocationService" />
+
+        <service android:name="com.lkpower.railway.activity.MyUMengPushService" />
 
         <receiver android:name="com.lkpower.railway.activity.WarningNotificationClickReceiver" />
 

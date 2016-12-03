@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
+import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.InfoPublishListDto;
 import com.lkpower.railway.dto.MessageModel;
 import com.lkpower.railway.dto.ResultMsgDto;
@@ -99,7 +100,7 @@ public class MessageDetailActivity extends BaseActivity implements View.OnClickL
             }
         });
 
-        this.addToRequestQueue(request, "正在请求数据...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在请求数据...");
     }
 
     @Override
