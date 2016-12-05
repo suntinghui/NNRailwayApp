@@ -43,6 +43,7 @@ import java.util.HashMap;
 public class TaskInfoDownloadActivity extends BaseActivity implements View.OnClickListener {
 
     private TaskDto.TaskListInfoDto taskInfo = null;
+    private StationModel station = null;
 
     private TaskDto.TaskListInfoDto info = null;
 
@@ -66,6 +67,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         setContentView(R.layout.activity_task_info_download);
 
         taskInfo = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK_INFO");
+        station = (StationModel) this.getIntent().getSerializableExtra("STATION");
 
         initView();
     }
@@ -139,12 +141,12 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
 
     private void refreshView() {
         infoLayout.setVisibility(View.VISIBLE);
-        taskNameTextView.setText(info.getStationName() + " ● " + info.getMisName());
+        taskNameTextView.setText("【" + station.getStationName() + "】" + info.getMisName());
         taskIdTextView.setText(info.getID());
         executorTextView.setText(info.getExecutorName());
         updateTimeTextView.setText(info.getUpdateTime());
-        remarkTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
-        tipTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark());
+        remarkTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark().replace("\n", ""));
+        tipTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
         stateTextView.setText(info.getState().equals("1") ? "未完成" : "已完成");
 
         list = info.getImgData();

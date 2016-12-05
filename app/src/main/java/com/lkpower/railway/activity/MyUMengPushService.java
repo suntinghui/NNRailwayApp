@@ -34,22 +34,32 @@ public class MyUMengPushService extends UmengMessageService {
             Log.e("===", "===:"+message);
 
             msg = new UMessage(new JSONObject(message));
-            String lateType = msg.extra.get("lateType");
+            String PushType = msg.extra.get("PushType");
 
-            if ("1".equalsIgnoreCase(lateType)) { // 晚点
+            /**
+             LateType_Late    晚点
+             LateType_Normal  正点
+             Publish 段发信息
+             */
+            if ("LateType_Late".equalsIgnoreCase(PushType)) { // 晚点
                 Intent tempIntent = new Intent(context, StationListActivityEx.class);
                 tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 tempIntent.putExtra("LATE_TYPE", true);
                 tempIntent.putExtra("LATE", true);
                 showNotification(context, msg, tempIntent);
 
-            } else { // 取消晚点
+            } else if ("LateType_Normal".equalsIgnoreCase(PushType)) { // 取消晚点
                 Intent tempIntent = new Intent(context, StationListActivityEx.class);
                 tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 tempIntent.putExtra("LATE_TYPE", true);
                 tempIntent.putExtra("LATE", false);
                 showNotification(context, msg, tempIntent);
 
+            } else if ("Publish".equalsIgnoreCase(PushType)) {
+                Intent tempIntent = new Intent(context, MessageListActivity.class);
+                tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                tempIntent.putExtra("PUSH", true);
+                context.startActivity(tempIntent);
             }
 
         } catch (Exception e) {

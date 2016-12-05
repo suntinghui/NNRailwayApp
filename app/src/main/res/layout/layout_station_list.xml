@@ -34,16 +34,6 @@
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/gooutTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dip"
-            android:text="06:50"
-            android:textColor="#666666"
-            android:textSize="13sp"
-            android:visibility="gone" />
-
-        <TextView
             android:id="@+id/arrivalTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,29 +42,25 @@
             android:textColor="#666666"
             android:textSize="13sp" />
 
-        <Button
-            android:id="@+id/earlyWarningBtn"
+        <TextView
+            android:id="@+id/distanceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dip"
-            android:layout_marginRight="20dip"
-            android:background="@drawable/btn_logout"
-            android:paddingBottom="5dip"
-            android:paddingLeft="15dip"
-            android:paddingRight="15dip"
-            android:paddingTop="5dip"
-            android:text="预警"
-            android:textColor="@color/white"
+            android:layout_marginLeft="20dip"
+            android:text=""
+            android:textColor="#666666"
             android:textSize="13sp"
             android:visibility="gone" />
+
+        <View android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/missionStateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dip"
-            android:layout_weight="1"
+            android:layout_marginRight="25dip"
             android:text="已完成"
             android:textColor="#666666"
             android:textSize="13sp" />

@@ -169,10 +169,10 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
 
             final TaskDto.TaskListInfoDto info = mList.get(position);
 
-            holder.taskName.setText(info.getStationName() + " ● " + info.getMisName());
+            holder.taskName.setText("【"+station.getStationName() + "】" + info.getMisName());
             holder.stateTextView.setText(info.getState().equals("1") ? "未完成" : "已完成");
-            holder.remarkTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
-            holder.tipTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark());
+            holder.remarkTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark().replace("\n",""));
+            holder.tipTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
             holder.executorNameTextView.setText(info.getExecutorName());
             holder.updateTimeTextView.setText(info.getUpdateTime());
             holder.contentLayout.setOnClickListener(new View.OnClickListener() {
@@ -180,12 +180,13 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
                 public void onClick(View view) {
                     if (info.getState().equals("1")) {
                         Intent intent = new Intent(TaskListActivity.this, TaskInfoUploadActivityEx.class);
-                        intent.putExtra("TASK", info);
+                        intent.putExtra("STATION", station);
+                        intent.putExtra("TASK_INFO", info);
                         startActivityForResult(intent, 0);
 
                     } else {
                         Intent intent = new Intent(TaskListActivity.this, TaskInfoDownloadActivity.class);
-
+                        intent.putExtra("STATION", station);
                         intent.putExtra("TASK_INFO", info);
                         startActivity(intent);
 

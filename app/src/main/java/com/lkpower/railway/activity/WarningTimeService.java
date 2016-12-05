@@ -65,11 +65,15 @@ public class WarningTimeService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        stopTimers();
+        try{
+            stopTimers();
 
-        Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
-        warningIntent.putExtra("PLAY", false);
-        this.sendBroadcast(warningIntent);
+            Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
+            warningIntent.putExtra("PLAY", false);
+            this.sendBroadcast(warningIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -115,7 +119,7 @@ public class WarningTimeService extends Service {
                             String content = station.getStationName() + "还有" + station.getAheadTime() + "分钟到站,请您及时完成相关任务。";
                             Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
                             intent.putExtra("EarlyWarning", true);
-                            intent.putExtra("SerialNumber", trainInfo.getSerialNumber());
+                            intent.putExtra("TRAIN_INFO", trainInfo);
                             intent.putExtra("stationId", station.getID());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

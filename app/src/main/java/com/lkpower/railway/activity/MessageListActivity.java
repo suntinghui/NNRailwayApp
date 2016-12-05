@@ -3,6 +3,7 @@ package com.lkpower.railway.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,15 @@ import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.InfoPublishListDto;
 import com.lkpower.railway.dto.MessageModel;
 import com.lkpower.railway.util.ActivityUtil;
+import com.lkpower.railway.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static anetwork.channel.http.NetworkSdkSetting.context;
 
 /**
  * Created by sth on 08/11/2016.
@@ -47,6 +53,31 @@ public class MessageListActivity extends BaseActivity implements View.OnClickLis
         setContentView(R.layout.activity_message_list);
 
         init();
+
+        showPushTip(this.getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        showPushTip(intent);
+    }
+
+    private void showPushTip(Intent tempIntent) {
+        boolean push = tempIntent.getBooleanExtra("PUSH", false);
+        if (push) {
+            Vibrator vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(2000);
+
+            new SweetAlertDialog(MessageListActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("提示").setContentText("收到新的段发信息,请及时阅读").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sDialog) {
+                    sDialog.cancel();
+
+                }
+            }).show();
+        }
     }
 
     public void init() {

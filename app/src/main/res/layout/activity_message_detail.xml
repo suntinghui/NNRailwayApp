@@ -29,7 +29,7 @@
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
                 android:layout_gravity="center"
-                android:text="标题"
+                android:text=""
                 android:textColor="#333333"
                 android:textSize="20sp" />
 
@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dip"
-                android:text="内容"
+                android:text=""
                 android:textColor="#666666"
                 android:textSize="15sp" />
 
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dip"
                 android:gravity="right"
-                android:text="作者"
+                android:text=""
                 android:textColor="#666666"
                 android:textSize="15sp" />
 
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dip"
                 android:gravity="right"
-                android:text="时间"
+                android:text=""
                 android:textColor="#666666"
                 android:textSize="15sp" />
 

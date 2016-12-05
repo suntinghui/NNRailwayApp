@@ -47,12 +47,17 @@ import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.ImageUtil;
 import com.lkpower.railway.util.StringUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.lkpower.railway.util.ImageUtil.martixBitmap;
 
 
 /**
@@ -76,7 +81,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        task = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK");
+        task = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK_INFO");
 
         Res.init(this);
 
@@ -173,7 +178,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
             ArrayList imgList = new ArrayList();
             for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
                 HashMap<String, String> imgMap = new HashMap<String, String>();
-                imgMap.put("imgData", StringUtil.Image2Base64(Bimp.tempSelectBitmap.get(i).getImagePath()));
+                imgMap.put("imgData", ImageUtil.bitmapToBase64(Bimp.tempSelectBitmap.get(i).getBitmap()));
                 imgList.add(imgMap);
             }
             jsonMap.put("ImgInfo", imgList);
@@ -193,7 +198,8 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
 
                     if (resultMsgDto.getResult().getFlag() == 1) {
-                        Toast.makeText(TaskInfoUploadActivityEx.this, "数据提交成功", Toast.LENGTH_SHORT).show();
+                        showSuccess();
+
 
                     } else {
                         Toast.makeText(TaskInfoUploadActivityEx.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
@@ -208,6 +214,17 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
         NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
 
+    }
+
+    private void showSuccess() {
+        new SweetAlertDialog(TaskInfoUploadActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("提示").setContentText("任务信息提交成功").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                sDialog.cancel();
+
+                TaskInfoUploadActivityEx.this.finish();
+            }
+        }).show();
     }
 
     public class GridAdapter extends BaseAdapter {
@@ -338,7 +355,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         startActivityForResult(intent, TAKE_PICTURE);//如果用 RESULT_OK 做requestCode，就不会回调onActivityResult()了
         //这种方法onActivityResult()中不能调用data.getExtra()，否则报错
 
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -362,9 +378,10 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                                 photoFile.getAbsolutePath(), null, null));
 
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+
                         ImageItem takePhoto = new ImageItem();
                         takePhoto.setImagePath(photoFile.getAbsolutePath());
-                        takePhoto.setBitmap(martixBitmap(bm));
+                        takePhoto.setBitmap(ImageUtil.martixBitmap(bm));
                         Bimp.tempSelectBitmap.add(takePhoto);
 
                     } catch (FileNotFoundException e) {
@@ -374,15 +391,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                 }
                 break;
         }
-    }
-
-    private Bitmap martixBitmap(Bitmap bit) {
-        Matrix matrix = new Matrix();
-        matrix.setScale(0.2f, 0.2f);
-        Bitmap bm = Bitmap.createBitmap(bit, 0, 0, bit.getWidth(), bit.getHeight(), matrix, true);
-        Log.i("===", "压缩后图片的大小" + (bm.getByteCount() / 1024 / 1024)
-                + "M宽度为" + bm.getWidth() + "高度为" + bm.getHeight());
-        return bm;
     }
 
 }

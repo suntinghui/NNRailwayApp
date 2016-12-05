@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -35,10 +37,15 @@ import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.ImageUtil;
 import com.lkpower.railway.util.StringUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.lkpower.railway.util.ImageUtil.martixBitmap;
 
 
 /**
@@ -134,7 +141,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             ArrayList imgList = new ArrayList();
             for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
                 HashMap<String, String> imgMap = new HashMap<String, String>();
-                imgMap.put("imgData", StringUtil.Image2Base64(Bimp.tempSelectBitmap.get(i).getImagePath()));
+                imgMap.put("imgData", ImageUtil.bitmapToBase64(Bimp.tempSelectBitmap.get(i).getBitmap()));
                 imgList.add(imgMap);
             }
             jsonMap.put("ImgInfo", imgList);
@@ -283,40 +290,40 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     private static final int TAKE_PICTURE = 0x000001;
 
     public void photo() {
-        Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(openCameraIntent, TAKE_PICTURE);
+        File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
+        if (!photoFile.getParentFile().exists()) {
+            photoFile.getParentFile().mkdirs();
+        }
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+        startActivityForResult(intent, TAKE_PICTURE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
+                    File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
+                    try {
+                        Uri uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
+                                photoFile.getAbsolutePath(), null, null));
 
-                    String fileName = String.valueOf(System.currentTimeMillis());
-                    Bitmap bm = (Bitmap) data.getExtras().get("data");
-                    String path = FileUtils.saveGetUrl(bm, fileName);
-                    ImageItem takePhoto = new ImageItem();
-                    takePhoto.setImagePath(path);
-                    takePhoto.setBitmap(bm);
-                    Bimp.tempSelectBitmap.add(takePhoto);
+                        Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+
+                        ImageItem takePhoto = new ImageItem();
+                        takePhoto.setImagePath(photoFile.getAbsolutePath());
+                        takePhoto.setBitmap(ImageUtil.martixBitmap(bm));
+                        Bimp.tempSelectBitmap.add(takePhoto);
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 break;
         }
     }
-
-    /*
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            for (int i = 0; i < PublicWay.activityList.size(); i++) {
-                if (null != PublicWay.activityList.get(i)) {
-                    PublicWay.activityList.get(i).finish();
-                }
-            }
-            System.exit(0);
-        }
-        return true;
-    }
-    */
 
 }
 

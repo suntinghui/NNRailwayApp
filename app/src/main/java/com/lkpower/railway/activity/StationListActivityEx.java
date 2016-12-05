@@ -2,8 +2,10 @@ package com.lkpower.railway.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -60,6 +62,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class StationListActivityEx extends BaseActivity implements View.OnClickListener {
 
+    public static String ACTION_UPDATE_DISTANCE = "action_update_distance";
+
     private NiceSpinner titleSpinner = null;
 
     private ListView listView = null;
@@ -77,6 +81,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     private String yyyyMd = DateUtil.getCurrentDate3();
 
+    private HashMap<String, String> distanceMap = new HashMap<String, String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,16 +99,16 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         mPushAgent.enable(new IUmengCallback() {
             @Override
             public void onSuccess() {
-
             }
 
             @Override
             public void onFailure(String s, String s1) {
-
             }
         });
         mPushAgent.setDebugMode(false);
         mPushAgent.setPushIntentServiceClass(MyUMengPushService.class);
+
+        registerBroadcastReceiver();
     }
 
     private void initView() {
@@ -145,9 +151,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         boolean LATE_TYPE = intent.getBooleanExtra("LATE_TYPE", false);
         boolean late = intent.getBooleanExtra("LATE", false);
-        Constants.CURRENT_TRAIN_LATE = late;
 
         if (LATE_TYPE) {
+            Constants.CURRENT_TRAIN_LATE = late;
+
             if (!Constants.RUNNING) {
                 Toast.makeText(this, "收到列车晚点更新通知,但是应用没有\"启动\",忽略该信息", Toast.LENGTH_SHORT).show();
                 return;
@@ -165,15 +172,18 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             }
 
             // 用户点击了预警推送,告知服务器
+            requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
 
         } else {
+            // 停止播放及震动
             Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
             warningIntent.putExtra("PLAY", false);
             this.sendBroadcast(warningIntent);
 
             boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
             if (EarlyWarning) { // 预警
-                requestEarlyWarning(intent.getStringExtra("stationId"), intent.getStringExtra("SerialNumber"));
+                // 用户点击了预警推送,告知服务器
+                requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
             }
         }
     }
@@ -192,6 +202,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     DeviceDetailInfoDto deviceDetailInfoDto = gson.fromJson(jsonObject, DeviceDetailInfoDto.class);
                     if (deviceDetailInfoDto.getResult().getFlag() == 1) {
                         trainList.clear();
+                        mList.clear();
 
                         deviceInfo = deviceDetailInfoDto.getDataInfo().getDeviceInfo();
                         trainInfoList = (ArrayList<TrainInfo>) deviceDetailInfoDto.getDataInfo().getTrainInfo();
@@ -251,6 +262,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "TrainStart");
         tempMap.put("trainNumbeId", trainInfoList.get(location).getID());
+        tempMap.put("deviceId", DeviceUtil.getDeviceId(this));
+        tempMap.put("startTime", DateUtil.getCurrentDate());
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
@@ -296,29 +309,32 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.startService(intent);
     }
 
-    private void stopWarningTimeService(){
+    private void stopWarningTimeService() {
         Intent intent = new Intent(this, WarningTimeService.class);
         this.stopService(intent);
     }
 
-    private void startWarningLocationService(){
+    private void startWarningLocationService() {
         Intent intent = new Intent(this, WarningLocationService.class);
-        intent.putExtra("STATION_LIST", trainInfoList.get(location).getStationInfo());
-        intent.putExtra("SERIALNUMBER", trainInfoList.get(location).getSerialNumber());
+        intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
         intent.putExtra("DATE", yyyyMd);
         this.startService(intent);
     }
 
-    private void stopWarningLocationService(){
+    private void stopWarningLocationService() {
         Intent intent = new Intent(this, WarningLocationService.class);
         this.stopService(intent);
     }
 
-    private void requestEarlyWarning(String stationId, String serialNumber) {
+    private void requestAlarmUpdateLogInfo(String stationId, TrainInfo trainInfo) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "UpdateRead");
-        tempMap.put("SerialNumber", serialNumber);
-        tempMap.put("stationId", stationId);
+        tempMap.put("commondKey", "AlarmUpdateLogInfo");
+        tempMap.put("InstanceId", trainInfo.getInstanceId());
+        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
+        tempMap.put("LogTime", DateUtil.getCurrentDateTime());
+        tempMap.put("StationId", stationId);
+        tempMap.put("Remark", "");
+        tempMap.put("Args", "");
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
@@ -328,11 +344,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     Gson gson = new GsonBuilder().create();
                     ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
                     if (resultDto.getResult().getFlag() == 1) {
-                        Log.e("", "=====================预警==================");
+                        Log.e("===", "用户点击了预警通知,并成功告知服务器");
 
                     } else {
                         Log.e("", "预警失败:" + resultDto.getResult().getFlagInfo());
-                        //Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (Exception e) {
@@ -451,6 +466,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 listView.setAlpha(0.5f);
 
                 Toast.makeText(StationListActivityEx.this, "已停止", Toast.LENGTH_SHORT).show();
+
             }
         }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -458,6 +474,29 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 sweetAlertDialog.cancel();
             }
         }).show();
+    }
+
+    /**
+     * 注册广播
+     */
+    private void registerBroadcastReceiver() {
+        UpdateDistanceReceiver receiver = new UpdateDistanceReceiver();
+        IntentFilter filter = new IntentFilter(ACTION_UPDATE_DISTANCE);
+        registerReceiver(receiver, filter);
+    }
+
+    public class UpdateDistanceReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (StationListActivityEx.ACTION_UPDATE_DISTANCE.equals(action)) {
+                distanceMap = (HashMap<String, String>) intent.getSerializableExtra("DISTANCE_MAP");
+                if (null != distanceMap && null != adapter) {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     @Override
@@ -470,8 +509,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         private TextView numTextView;
         private TextView nameTextView;
         private TextView arrivalTimeTextView;
-        private TextView gooutTimeTextView;
-        private Button earlyWarningBtn;
+        private TextView distanceTextView;
         private TextView missionStateTextView;
     }
 
@@ -518,8 +556,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 holder.numTextView = (TextView) convertView.findViewById(R.id.numTextView);
                 holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
                 holder.arrivalTimeTextView = (TextView) convertView.findViewById(R.id.arrivalTimeTextView);
-                holder.gooutTimeTextView = (TextView) convertView.findViewById(R.id.gooutTimeTextView);
-                holder.earlyWarningBtn = (Button) convertView.findViewById(R.id.earlyWarningBtn);
+                holder.distanceTextView = (TextView) convertView.findViewById(R.id.distanceTextView);
                 holder.missionStateTextView = (TextView) convertView.findViewById(R.id.missionStateTextView);
 
                 convertView.setTag(holder);
@@ -533,8 +570,14 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             holder.numTextView.setText(dto.getOrderNum());
             holder.nameTextView.setText(dto.getStationName());
             holder.arrivalTimeTextView.setText(dto.getArrivalTime().trim());
-            holder.gooutTimeTextView.setText(dto.getStartTime().trim());
             holder.missionStateTextView.setText(dto.getMissionState().trim());
+
+            if (Constants.CURRENT_TRAIN_LATE && null != distanceMap && !distanceMap.isEmpty()) {
+                holder.distanceTextView.setVisibility(View.VISIBLE);
+                holder.distanceTextView.setText(distanceMap.get(dto.getID()) + "公里");
+            } else {
+                holder.distanceTextView.setVisibility(View.GONE);
+            }
 
             /*
             try {
@@ -572,13 +615,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                             }
                         }).show();
                     }
-                }
-            });
-
-            holder.earlyWarningBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    requestEarlyWarning("", "");
                 }
             });
 

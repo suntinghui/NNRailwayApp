@@ -59,7 +59,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dip"
-                android:singleLine="true"
                 android:text="沧州检查"
                 android:textColor="#666666"
                 android:textSize="15sp" />
@@ -109,7 +108,7 @@
                 android:id="@+id/executorNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="周瑶"
+                android:text=""
                 android:textColor="#666666"
                 android:textSize="15sp" />
 

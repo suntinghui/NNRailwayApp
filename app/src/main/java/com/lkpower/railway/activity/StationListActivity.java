@@ -176,7 +176,6 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
         private TextView numTextView;
         private TextView nameTextView;
         private TextView arrivalTimeTextView;
-        private TextView gooutTimeTextView;
     }
 
     public class StationListAdapter extends BaseAdapter {
@@ -213,7 +212,6 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
                 holder.numTextView = (TextView) convertView.findViewById(R.id.numTextView);
                 holder.nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
                 holder.arrivalTimeTextView = (TextView) convertView.findViewById(R.id.arrivalTimeTextView);
-                holder.gooutTimeTextView = (TextView) convertView.findViewById(R.id.gooutTimeTextView);
 
                 convertView.setTag(holder);
             } else {
@@ -225,7 +223,6 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
             holder.numTextView.setText(position + 1 + "");
             holder.nameTextView.setText(dto.getStationName());
             holder.arrivalTimeTextView.setText(dto.getArrivalTime().trim());
-            holder.gooutTimeTextView.setText(dto.getStartTime().trim());
             holder.contentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
