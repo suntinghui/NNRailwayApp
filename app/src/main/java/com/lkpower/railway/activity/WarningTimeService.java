@@ -41,6 +41,11 @@ public class WarningTimeService extends Service {
     private Timer timer = null;
     private Handler handler = null;
 
+    private StationModel station = null;
+
+    private final int MAX_SEND = 10;
+    private int currentSentCount = 0;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -48,7 +53,7 @@ public class WarningTimeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        try{
+        try {
             trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
             yyyyMd = intent.getStringExtra("DATE");
 
@@ -65,7 +70,7 @@ public class WarningTimeService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        try{
+        try {
             stopTimers();
 
             Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
@@ -86,8 +91,10 @@ public class WarningTimeService extends Service {
         stopTimers();
 
         try {
-            for (final StationModel station : trainInfo.getStationInfo()) {
-                Date when = DateUtil.getDate(yyyyMd, station.getArrivalDay(), station.getAheadTime(), station.getArrivalTime());
+            for (final StationModel ss : trainInfo.getStationInfo()) {
+                this.station = ss;
+
+                Date when = DateUtil.getDate(yyyyMd, this.station.getArrivalDay(), this.station.getAheadTime(), this.station.getArrivalTime());
                 Log.e("------", when.toString());
 
                 // 如果本站的时间小于当前的时间则说明已经过站了,则不再提醒。
@@ -125,7 +132,7 @@ public class WarningTimeService extends Service {
 
                             NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
 
-                            requestTellServer(station.getID());
+                            requestTellServer();
                         }
                         super.handleMessage(msg);
                     }
@@ -154,13 +161,13 @@ public class WarningTimeService extends Service {
         }
     }
 
-    private void requestTellServer(String stationId) {
+    private void requestTellServer() {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "AlarmLogInfo");
         tempMap.put("InstanceId", trainInfo.getInstanceId());
         tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
         tempMap.put("LogTime", DateUtil.getCurrentDateTime());
-        tempMap.put("StationId", stationId);
+        tempMap.put("StationId", station.getID());
         tempMap.put("Remark", "");
         tempMap.put("Args", "");
 
@@ -173,9 +180,19 @@ public class WarningTimeService extends Service {
                     ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
                     if (resultMsgDto.getResult().getFlag() == 1) {
                         Log.e("===", "预警信息已经发送到服务器");
+                        currentSentCount = 0;
 
                     } else {
-                        Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+
+                        if (++currentSentCount < MAX_SEND) {
+                            Log.e("===", "预警信息发送到服务器失败,重发:" + currentSentCount);
+
+                            requestTellServer();
+
+                        } else {
+                            currentSentCount = 0;
+                        }
                     }
 
                 } catch (Exception e) {

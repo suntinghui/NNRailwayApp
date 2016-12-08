@@ -15,6 +15,8 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 
+import com.umeng.message.lib.BuildConfig;
+
 /**
  * Created by sth on 3/22/16.
  */

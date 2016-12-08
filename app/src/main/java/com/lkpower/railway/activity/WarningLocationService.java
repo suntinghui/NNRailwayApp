@@ -44,6 +44,10 @@ public class WarningLocationService extends Service {
     private final static int MAX_Count = (10 * 60 * 1000) / Time_Interval;
     private int current_count = 0;
 
+
+    private final int MAX_SEND = 10;
+    private int currentSentCount = 0;
+
     private void startLocation() {
         initLocation();
         // 启动定位
@@ -178,16 +182,16 @@ public class WarningLocationService extends Service {
 
         NotificationUtil.showNotification(WarningLocationService.this, "预警提醒", "请及时关注地理位置信息。距离数据为当前位置距各车站的直线距离,数据仅供参考。", intent);
 
-        requestTellServer("0");
+        requestTellServer();
     }
 
-    private void requestTellServer(String stationId) {
+    private void requestTellServer() {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "AlarmLogInfo");
         tempMap.put("InstanceId", trainInfo.getInstanceId());
         tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
         tempMap.put("LogTime", DateUtil.getCurrentDateTime());
-        tempMap.put("StationId", stationId);
+        tempMap.put("StationId", "000000");
         tempMap.put("Remark", "");
         tempMap.put("Args", "");
 
@@ -200,9 +204,19 @@ public class WarningLocationService extends Service {
                     ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
                     if (resultMsgDto.getResult().getFlag() == 1) {
                         Log.e("===", "预警信息已经发送到服务器");
+                        currentSentCount = 0;
 
                     } else {
-                        Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+
+                        if (++currentSentCount < MAX_SEND) {
+                            Log.e("===", "预警信息发送到服务器失败,重发:" + currentSentCount);
+
+                            requestTellServer();
+
+                        } else {
+                            currentSentCount = 0;
+                        }
                     }
 
                 } catch (Exception e) {

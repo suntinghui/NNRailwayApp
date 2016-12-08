@@ -2,21 +2,17 @@ package com.lkpower.railway.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,15 +24,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.king.photo.util.Bimp;
-import com.king.photo.util.FileUtils;
 import com.king.photo.util.ImageItem;
-import com.king.photo.util.PublicWay;
 import com.king.photo.util.Res;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
@@ -48,7 +43,6 @@ import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.ImageUtil;
-import com.lkpower.railway.util.StringUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,8 +50,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.lkpower.railway.util.ImageUtil.martixBitmap;
 
 
 /**
@@ -72,7 +64,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     private Button backBtn = null;
     private Button sendBtn = null;
     private EditText remarkEditText = null;
-
+    private TextView imgTipTextView = null;
     private Button toggleGestureLockBtn = null;
     private boolean toggleFlag = false;
 
@@ -97,6 +89,10 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
         remarkEditText = (EditText) this.findViewById(R.id.remarkEditText);
 
+        imgTipTextView = (TextView) this.findViewById(R.id.imgTipTextView);
+        boolean imgMustUploadFlag = task.getIsUploadPhoto().equalsIgnoreCase("1");
+        imgTipTextView.setText(imgMustUploadFlag ? "请拍照上传图片 (*必选项)" : "请拍照上传图片 (*非必选项)");
+
         toggleGestureLockBtn = (Button) this.findViewById(R.id.toggleGestureLockBtn);
         toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
         toggleGestureLockBtn.setOnClickListener(this);
@@ -104,7 +100,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
         adapter = new GridAdapter(this);
-        //adapter.update();
         noScrollgridview.setAdapter(adapter);
         noScrollgridview.setOnItemClickListener(new OnItemClickListener() {
 
@@ -155,21 +150,31 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
 
     private void requestUpdateTask() {
-        if (TextUtils.isEmpty(remarkEditText.getText().toString())) {
-            Toast.makeText(this, "请输入任务描述", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        boolean remarkFlag = TextUtils.isEmpty(remarkEditText.getText().toString());
+        boolean imgEmptyFlag = Bimp.tempSelectBitmap.isEmpty();
+        boolean imgMustUploadFlag = task.getIsUploadPhoto().equalsIgnoreCase("1");
 
-        if (task.getIsUploadPhoto().equalsIgnoreCase("1") && Bimp.tempSelectBitmap.isEmpty()) {
-            Toast.makeText(this, "请拍照上传图片", Toast.LENGTH_SHORT).show();
-            return;
+        // 如果要求必须拍照,则检查图片是否为空
+        if (imgMustUploadFlag) {
+            if (imgEmptyFlag) {
+                Toast.makeText(this, "请拍照上传图片", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        } else {
+            // 如果没有要求必须拍照,则检查都不为空即可
+            if (remarkFlag && imgEmptyFlag) {
+                Toast.makeText(this, "文字描述与图片不能同时为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         HashMap<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("ID", task.getID());
         jsonMap.put("missionId", task.getMissionId());
         jsonMap.put("executor", task.getExecutor());
-        jsonMap.put("state", toggleFlag ? "4" : "1");
+        //jsonMap.put("state", toggleFlag ? "4" : "1"); // 1未完成 2已完成
+        jsonMap.put("state", "2");
         jsonMap.put("remark", remarkEditText.getText().toString());
         jsonMap.put("updateUser", Constants.DeviceInfo.getUserName());
         jsonMap.put("updateTime", DateUtil.getCurrentDateTime());

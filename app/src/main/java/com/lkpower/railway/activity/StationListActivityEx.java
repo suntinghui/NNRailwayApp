@@ -385,7 +385,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         switch (view.getId()) {
             case R.id.settingTextView:
                 Intent intent = new Intent(this, SettingActivity.class);
-                intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
+                intent.putExtra("TRAIN_INFO", trainInfoList.isEmpty() ? null : trainInfoList.get(location));
                 this.startActivity(intent);
                 break;
 

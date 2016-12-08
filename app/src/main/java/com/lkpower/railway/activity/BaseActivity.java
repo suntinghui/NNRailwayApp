@@ -46,6 +46,8 @@ public class BaseActivity extends Activity {
 
         NetworkHelper.getInstance().cancelRequest();
 
+        NetworkHelper.getInstance().hideProgress();
+
         ActivityManager.getInstance().popActivity();
     }
 

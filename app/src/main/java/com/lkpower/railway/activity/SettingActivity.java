@@ -3,6 +3,7 @@ package com.lkpower.railway.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -10,25 +11,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
+import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.client.net.NetworkHelper;
-import com.lkpower.railway.dto.InfoPublishListDto;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.DeviceUtil;
 
 import java.util.HashMap;
 
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.king.photo.activity.ShowAllPhoto.dataList;
-import static com.lkpower.railway.R.id.listView;
-import static com.lkpower.railway.R.id.runningBtn;
 
 /**
  * Created by sth on 19/10/2016.
@@ -61,6 +61,20 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         toggleFlag = Constants.CURRENT_TRAIN_LATE;
 
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        UpdateFunGO.onResume(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        UpdateFunGO.onStop(this);
     }
 
     private void initView() {
@@ -120,12 +134,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             break;
 
             case R.id.checkUpdateLayout: {
+                /*
                 new SweetAlertDialog(this, SweetAlertDialog.NORMAL_TYPE).setTitleText("\n当前已是最新版本\n").setContentText(null).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.cancel();
                     }
                 }).show();
+                */
+                checkUpgrade();
             }
             break;
 
@@ -176,6 +193,17 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    private void checkUpgrade() {
+        UpdateKey.API_TOKEN = "b466e4ea1d74d418b79837f4fd6302a8";
+        UpdateKey.APP_ID = "5848e52a959d69340f002b59";
+        //下载方式:
+//        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
+        //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION; //通过通知栏来进行下载(默认)
+//        UpdateFunGO.init(this);
+
+        UpdateFunGO.manualStart(this);
+    }
+
     private void toggleLaterNotice() {
         if (toggleFlag) {
             // 如果设置了手势密码，则去关闭手势密码
@@ -196,6 +224,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void requestLaterNotice() {
+        // 如果用户没有刷新到车站列表就点击了功能,是有可能为空的
+        if (null == this.trainInfo) {
+            Toast.makeText(this, "未检测到当前车次信息,请返回重试", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "SetLaterNotice");
         tempMap.put("InstanceId", trainInfo.getInstanceId());
