@@ -2,61 +2,31 @@ package com.lkpower.railway.client;
 
 import android.app.Activity;
 
-import java.util.ArrayList;
-import java.util.Stack;
+import java.lang.ref.WeakReference;
 
 public class ActivityManager {
 
-    private Stack<Activity> stack = new Stack<Activity>();
+    private static ActivityManager sInstance = new ActivityManager();
+    private WeakReference<Activity> sCurrentActivityWeakRef;
 
-    private static ActivityManager instance = null;
+
+    private ActivityManager() {
+
+    }
 
     public static ActivityManager getInstance() {
-        if (instance == null) {
-            instance = new ActivityManager();
-        }
-
-        return instance;
+        return sInstance;
     }
 
-    public ArrayList<Activity> getAllActivity() {
-        ArrayList<Activity> list = new ArrayList<Activity>();
-
-        if (null == stack || stack.isEmpty()) {
-            return list;
+    public Activity getCurrentActivity() {
+        Activity currentActivity = null;
+        if (sCurrentActivityWeakRef != null) {
+            currentActivity = sCurrentActivityWeakRef.get();
         }
-
-        for (int i = 0; i < stack.size(); i++) {
-            list.add(stack.get(i));
-        }
-
-        return list;
+        return currentActivity;
     }
 
-    public void pushActivity(Activity act) {
-        try {
-            stack.push(act);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    public void setCurrentActivity(Activity activity) {
+        sCurrentActivityWeakRef = new WeakReference<Activity>(activity);
     }
-
-    public void popActivity() {
-        try {
-            stack.pop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Activity peekActivity() {
-        try {
-            return stack.peek();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 }

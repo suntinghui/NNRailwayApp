@@ -259,10 +259,6 @@ public class StationListActivity extends BaseActivity implements View.OnClickLis
             exitTimeMillis = System.currentTimeMillis();
 
         } else {
-            for (Activity act : ActivityManager.getInstance().getAllActivity()) {
-                act.finish();
-            }
-
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
         }

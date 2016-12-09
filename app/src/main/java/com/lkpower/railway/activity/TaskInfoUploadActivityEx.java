@@ -68,6 +68,8 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     private Button toggleGestureLockBtn = null;
     private boolean toggleFlag = false;
 
+    private static String remarkTemp = "";
+
     private TaskDto.TaskListInfoDto task = null;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,6 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
         Res.init(this);
 
-        Bimp.tempSelectBitmap.clear();
         parentView = getLayoutInflater().inflate(R.layout.activity_taskinfo_upload_ex, null);
         setContentView(parentView);
 
@@ -88,13 +89,13 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         sendBtn.setOnClickListener(this);
 
         remarkEditText = (EditText) this.findViewById(R.id.remarkEditText);
+        remarkEditText.setText(remarkTemp);
 
         imgTipTextView = (TextView) this.findViewById(R.id.imgTipTextView);
         boolean imgMustUploadFlag = task.getIsUploadPhoto().equalsIgnoreCase("1");
         imgTipTextView.setText(imgMustUploadFlag ? "请拍照上传图片 (*必选项)" : "请拍照上传图片 (*非必选项)");
 
         toggleGestureLockBtn = (Button) this.findViewById(R.id.toggleGestureLockBtn);
-        toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
         toggleGestureLockBtn.setOnClickListener(this);
 
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
@@ -117,6 +118,10 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
             }
         });
 
+        toggleFlag = false;
+        sendBtn.setVisibility(View.GONE);
+        toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
+
         ActivityUtil.verifyStoragePermissions(this);
     }
 
@@ -124,22 +129,61 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
-                this.finish();
+                backAction();
                 break;
 
-            case R.id.sendBtn:
-                requestUpdateTask();
-                break;
+            case R.id.sendBtn: {
+                boolean remarkFlag = TextUtils.isEmpty(remarkEditText.getText().toString());
+                boolean imgEmptyFlag = Bimp.tempSelectBitmap.isEmpty();
+                boolean imgMustUploadFlag = task.getIsUploadPhoto().equalsIgnoreCase("1");
+
+                // 如果要求必须拍照,则检查图片是否为空
+                if (imgMustUploadFlag) {
+                    if (imgEmptyFlag) {
+                        Toast.makeText(this, "请拍照上传图片", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                } else {
+                    // 如果没有要求必须拍照,则检查都不为空即可
+                    if (remarkFlag && imgEmptyFlag) {
+                        Toast.makeText(this, "文字描述与图片不能同时为空", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                new SweetAlertDialog(TaskInfoUploadActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("提示").setContentText("已经标记为完成状态, 提交后该任务将不能再修改").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.cancel();
+
+                        requestUpdateTask();
+
+                    }
+                }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                    }
+                }).show();
+            }
+            break;
 
             case R.id.toggleGestureLockBtn:
                 if (toggleFlag) {
                     // 如果设置了手势密码，则去关闭手势密码
                     toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_off);
-                    Toast.makeText(this, "已经标记为未完成", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "已经标记为未完成", Toast.LENGTH_SHORT).show();
+
+                    sendBtn.setVisibility(View.GONE);
+
                 } else {
                     // 如果没有设置，则切换图片，并去设置
                     toggleGestureLockBtn.setBackgroundResource(R.drawable.btn_toggle_on);
-                    Toast.makeText(this, "已经标记为完成", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "已经标记为完成", Toast.LENGTH_SHORT).show();
+
+                    sendBtn.setVisibility(View.VISIBLE);
                 }
 
                 toggleFlag = !toggleFlag;
@@ -148,33 +192,24 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        backAction();
+    }
+
+    private void backAction(){
+        this.finish();
+        remarkTemp = remarkEditText.getText().toString();
+    }
 
     private void requestUpdateTask() {
-        boolean remarkFlag = TextUtils.isEmpty(remarkEditText.getText().toString());
-        boolean imgEmptyFlag = Bimp.tempSelectBitmap.isEmpty();
-        boolean imgMustUploadFlag = task.getIsUploadPhoto().equalsIgnoreCase("1");
-
-        // 如果要求必须拍照,则检查图片是否为空
-        if (imgMustUploadFlag) {
-            if (imgEmptyFlag) {
-                Toast.makeText(this, "请拍照上传图片", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-        } else {
-            // 如果没有要求必须拍照,则检查都不为空即可
-            if (remarkFlag && imgEmptyFlag) {
-                Toast.makeText(this, "文字描述与图片不能同时为空", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
         HashMap<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("ID", task.getID());
         jsonMap.put("missionId", task.getMissionId());
         jsonMap.put("executor", task.getExecutor());
-        //jsonMap.put("state", toggleFlag ? "4" : "1"); // 1未完成 2已完成
-        jsonMap.put("state", "2");
+        jsonMap.put("state", toggleFlag ? "2" : "1"); // 1未完成 2已完成
         jsonMap.put("remark", remarkEditText.getText().toString());
         jsonMap.put("updateUser", Constants.DeviceInfo.getUserName());
         jsonMap.put("updateTime", DateUtil.getCurrentDateTime());
@@ -203,8 +238,11 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
 
                     if (resultMsgDto.getResult().getFlag() == 1) {
-                        showSuccess();
+                        Bimp.tempSelectBitmap.clear();
+                        remarkEditText.setText("");
+                        remarkTemp = "";
 
+                        showSuccess();
 
                     } else {
                         Toast.makeText(TaskInfoUploadActivityEx.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
@@ -226,8 +264,8 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
             @Override
             public void onClick(SweetAlertDialog sDialog) {
                 sDialog.cancel();
-
                 TaskInfoUploadActivityEx.this.finish();
+
             }
         }).show();
     }

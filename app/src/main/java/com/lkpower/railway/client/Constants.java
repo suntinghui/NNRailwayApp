@@ -15,10 +15,10 @@ public class Constants {
 //    public static final String HOST_IP_REQ = HOST_IP + ":8111";
 
     // 测试
-    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
+//    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
 
     // 生产
-//    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
+    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
 
     public static final String HOST_IP_REQ = HOST_IP;
 
@@ -32,6 +32,9 @@ public class Constants {
     public static DeviceInfo DeviceInfo = null;
     public static String CarNumberId = null;
     public static String CarNumberName = null;
+
+    public static final String FIR_API_TOKEN = "b466e4ea1d74d418b79837f4fd6302a8";
+    public static final String FIR_APP_ID = "5848e52a959d69340f002b59";
 
     public static final String PROTOCOL_IP = HOST_IP + "/app/agreement.html";
 

@@ -5,10 +5,12 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.HandlerThread;
 import android.util.Log;
 
 import com.baidu.mapapi.SDKInitializer;
+import com.lkpower.railway.client.ActivityManager;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -51,6 +53,44 @@ public class MyApplication extends Application {
 
             @Override
             public void onFailure(String s, String s1) {
+
+            }
+        });
+
+        // for activity manager
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+                ActivityManager.getInstance().setCurrentActivity(activity);
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
 
             }
         });
@@ -104,7 +144,7 @@ public class MyApplication extends Application {
             if (BuildConfig.DEBUG) {
                 config = new ImageLoaderConfiguration.Builder(context)
                         /*.threadPriority(Thread.NORM_PRIORITY - 2)
-						.memoryCacheSize((int) (Runtime.getRuntime().maxMemory() / 4))
+                        .memoryCacheSize((int) (Runtime.getRuntime().maxMemory() / 4))
 						.diskCacheSize(500 * 1024 * 1024)
 						.writeDebugLogs()
 						.diskCacheFileNameGenerator(new Md5FileNameGenerator())

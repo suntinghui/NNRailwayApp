@@ -2,6 +2,7 @@ package com.lkpower.railway.activity.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -49,6 +50,7 @@ public class ProgressHUD extends Dialog {
             return dialog;
 
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

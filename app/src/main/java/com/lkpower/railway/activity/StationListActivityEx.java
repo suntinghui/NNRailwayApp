@@ -1,6 +1,5 @@
 package com.lkpower.railway.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,7 +23,6 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
-import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
@@ -51,6 +49,8 @@ import java.util.List;
 
 import cn.aigestudio.datepicker.cons.DPMode;
 import cn.aigestudio.datepicker.views.DatePicker;
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
@@ -72,7 +72,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private DeviceInfo deviceInfo = null;
     private ArrayList<TrainInfo> trainInfoList = new ArrayList<TrainInfo>();
 
-    private ArrayList<StationModel> mList = new ArrayList<StationModel>();
     private ArrayList<String> trainList = new ArrayList<String>();
 
     private Button runningBtn = null;
@@ -109,6 +108,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         mPushAgent.setPushIntentServiceClass(MyUMengPushService.class);
 
         registerBroadcastReceiver();
+
+        checkUpdate();
     }
 
     private void initView() {
@@ -140,7 +141,16 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
 
+        UpdateFunGO.onResume(this);
+
         requestStationList(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        UpdateFunGO.onStop(this);
     }
 
     @Override
@@ -202,7 +212,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     DeviceDetailInfoDto deviceDetailInfoDto = gson.fromJson(jsonObject, DeviceDetailInfoDto.class);
                     if (deviceDetailInfoDto.getResult().getFlag() == 1) {
                         trainList.clear();
-                        mList.clear();
 
                         deviceInfo = deviceDetailInfoDto.getDataInfo().getDeviceInfo();
                         trainInfoList = (ArrayList<TrainInfo>) deviceDetailInfoDto.getDataInfo().getTrainInfo();
@@ -213,8 +222,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                             runningBtn.setVisibility(View.VISIBLE);
                             listView.setAlpha(1.0f);
 
-                            mList = trainInfoList.get(0).getStationInfo();
-                            adapter.setRecentlyOrderNum(DateUtil.getRecentLyStation(yyyyMd, mList).getOrderNum());
+                            adapter.setData(trainInfoList.get(0).getStationInfo());
                             adapter.notifyDataSetChanged();
 
                             Constants.CarNumberId = trainInfoList.get(0).getID();
@@ -225,6 +233,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                             for (TrainInfo info : trainInfoList) {
                                 trainList.add(info.getTrainName() + "/" + Constants.DeviceInfo.getUserName());
                             }
+
                             titleSpinner.attachDataSource(trainList);
                             titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override
@@ -282,6 +291,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         if (Constants.CURRENT_TRAIN_LATE) {
                             startWarningLocationService();
                             stopWarningTimeService();
+
+                            requestStationList(null);
 
                         } else {
                             startWaringTimeService();
@@ -370,14 +381,22 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         Constants.RUNNING = false;
         runningBtn.setText("启动");
 
-        mList = trainInfoList.get(location).getStationInfo();
-        adapter.setRecentlyOrderNum(DateUtil.getRecentLyStation(yyyyMd, mList).getOrderNum());
+        adapter.setData(trainInfoList.get(location).getStationInfo());
         adapter.notifyDataSetChanged();
 
         Constants.CarNumberId = trainInfoList.get(location).getID();
         Constants.CarNumberName = trainInfoList.get(location).getTrainName();
 
         titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
+    }
+
+    private void checkUpdate() {
+        UpdateKey.API_TOKEN = Constants.FIR_API_TOKEN;
+        UpdateKey.APP_ID = Constants.FIR_APP_ID;
+        //下载方式:
+//        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
+        UpdateKey.DialogOrNotification = UpdateKey.WITH_NOTIFITION; //通过通知栏来进行下载(默认)
+        UpdateFunGO.init(this);
     }
 
     @Override
@@ -515,23 +534,22 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     public class StationListAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
-        private String recentlyOrderNum = null;
+        private ArrayList<StationModel> list = new ArrayList<StationModel>();
 
         public StationListAdapter(Context context) {
             this.mInflater = LayoutInflater.from(context);
         }
 
-        public String getRecentlyOrderNum() {
-            return recentlyOrderNum;
-        }
-
-        public void setRecentlyOrderNum(String recentlyOrderNum) {
-            this.recentlyOrderNum = recentlyOrderNum;
+        public void setData(ArrayList<StationModel> list) {
+            Log.e("", "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            this.list.clear();
+            this.list.addAll(list);
+            notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
-            return mList.size();
+            return this.list.size();
         }
 
         @Override
@@ -565,7 +583,9 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            final StationModel dto = mList.get(position);
+            final StationModel dto = this.list.get(position);
+
+            Log.e("=======", dto.getStationName()+""+dto.getMissionState().trim());
 
             holder.numTextView.setText(dto.getOrderNum());
             holder.nameTextView.setText(dto.getStationName());
@@ -578,24 +598,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             } else {
                 holder.distanceTextView.setVisibility(View.GONE);
             }
-
-            /*
-            try {
-                if (Constants.RUNNING && !Constants.CURRENT_TRAIN_LATE) {
-                    if (Integer.parseInt(this.getRecentlyOrderNum()) == position + 1) {
-                        holder.contentLayout.setDuration(1000);
-                        holder.contentLayout.setRepeatDelay(3000);
-                        holder.contentLayout.startShimmerAnimation();
-                    } else {
-                        holder.contentLayout.stopShimmerAnimation();
-                    }
-                } else {
-                    holder.contentLayout.stopShimmerAnimation();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            */
 
             holder.contentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -633,10 +635,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             exitTimeMillis = System.currentTimeMillis();
 
         } else {
-            for (Activity act : ActivityManager.getInstance().getAllActivity()) {
-                act.finish();
-            }
-
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
         }

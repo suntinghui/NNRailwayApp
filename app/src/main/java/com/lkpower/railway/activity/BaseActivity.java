@@ -14,9 +14,6 @@ public class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 如果页面无法继承BaseActivity,也必须要加上下面这段话。统一管理所有的Activity
-        ActivityManager.getInstance().pushActivity(this);
-
         PushAgent.getInstance(this).onAppStart();
     }
 
@@ -47,8 +44,6 @@ public class BaseActivity extends Activity {
         NetworkHelper.getInstance().cancelRequest();
 
         NetworkHelper.getInstance().hideProgress();
-
-        ActivityManager.getInstance().popActivity();
     }
 
 }

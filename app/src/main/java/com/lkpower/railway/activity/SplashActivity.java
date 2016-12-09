@@ -25,17 +25,6 @@ public class SplashActivity extends BaseActivity {
 		new SplashTask().execute();
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		this.gotoLoginActivity();
-	}
-
-	private void gotoLoginActivity(){
-		Intent intent = new Intent(SplashActivity.this, StationListActivityEx.class);
-		SplashActivity.this.startActivity(intent);
-		SplashActivity.this.finish();
-	}
-
 	class SplashTask extends AsyncTask<Object, Object, Object> {
 		@Override
 		protected Object doInBackground(Object... arg0) {

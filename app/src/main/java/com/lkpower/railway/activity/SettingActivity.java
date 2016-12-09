@@ -193,11 +193,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    // 手动
     private void checkUpgrade() {
-        UpdateKey.API_TOKEN = "b466e4ea1d74d418b79837f4fd6302a8";
-        UpdateKey.APP_ID = "5848e52a959d69340f002b59";
+        UpdateKey.API_TOKEN = Constants.FIR_API_TOKEN;
+        UpdateKey.APP_ID = Constants.FIR_APP_ID;
         //下载方式:
-//        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
+        UpdateKey.DialogOrNotification = UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
         //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION; //通过通知栏来进行下载(默认)
 //        UpdateFunGO.init(this);
 

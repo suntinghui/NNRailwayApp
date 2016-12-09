@@ -2,6 +2,7 @@ package com.lkpower.railway.client.net;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -88,7 +89,7 @@ public class NetworkHelper {
                 message = "请稍候...";
 
             if (hud == null) {
-                hud = ProgressHUD.show(ActivityManager.getInstance().peekActivity(), message, true, new DialogInterface.OnCancelListener() {
+                hud = ProgressHUD.show(ActivityManager.getInstance().getCurrentActivity(), message, true, new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         // TODO
@@ -97,6 +98,10 @@ public class NetworkHelper {
                         dialog.dismiss();
                     }
                 });
+
+                if (null == hud) {
+                    Log.e("NetwrkHelper", "HUD创建失败。。。");
+                }
             } else {
                 hud.setMessage(message);
             }

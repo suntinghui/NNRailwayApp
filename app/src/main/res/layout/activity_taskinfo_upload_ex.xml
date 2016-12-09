@@ -55,8 +55,7 @@
         android:paddingBottom="15dip"
         android:paddingLeft="20dip"
         android:paddingRight="20dip"
-        android:paddingTop="15dip"
-        android:visibility="gone">
+        android:paddingTop="15dip">
 
         <TextView
             android:layout_width="fill_parent"
@@ -77,8 +76,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1px"
-        android:background="@color/gray"
-        android:visibility="gone" />
+        android:background="@color/gray" />
 
     <EditText
         android:id="@+id/remarkEditText"

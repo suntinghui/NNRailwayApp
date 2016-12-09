@@ -84,15 +84,7 @@ public class ShowWebViewActivity extends BaseActivity implements OnClickListener
     }
 
     private void backAction() {
-        // 为推送准备
-        if (ActivityManager.getInstance().getAllActivity().size() == 1) {
-            Intent intent = new Intent(this, MainActivity.class);
-            this.startActivity(intent);
-            this.finish();
-
-        } else {
-            this.finish();
-        }
+        this.finish();
     }
 
 }

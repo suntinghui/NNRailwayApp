@@ -62,7 +62,7 @@ public class NetErrorDialog {
 				}
 			});
 
-			crouton = Crouton.make(ActivityManager.getInstance().peekActivity(), view);
+			crouton = Crouton.make(ActivityManager.getInstance().getCurrentActivity(), view);
 			// 一直显示，手动关闭
 			//crouton.setConfiguration(CONFIGURATION_INFINITE);
 
