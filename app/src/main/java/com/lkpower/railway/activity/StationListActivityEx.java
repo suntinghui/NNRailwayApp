@@ -88,6 +88,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         setContentView(R.layout.activity_station_list);
 
+        UpdateFunGO.init(this);
+
         initView();
 
         ActivityUtil.verifyReadPhoneStatePermissions(this);
@@ -394,9 +396,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         UpdateKey.API_TOKEN = Constants.FIR_API_TOKEN;
         UpdateKey.APP_ID = Constants.FIR_APP_ID;
         //下载方式:
-//        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
+        // UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
         UpdateKey.DialogOrNotification = UpdateKey.WITH_NOTIFITION; //通过通知栏来进行下载(默认)
-        UpdateFunGO.init(this);
     }
 
     @Override

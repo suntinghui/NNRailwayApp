@@ -1,6 +1,9 @@
 package com.lkpower.railway.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +33,8 @@ import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static anetwork.channel.http.NetworkSdkSetting.context;
+
 /**
  * Created by sth on 19/10/2016.
  */
@@ -39,6 +44,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private LinearLayout runInfoLayout = null; // 行车信息
     private LinearLayout messageLayout = null; // 段发信息
     private LinearLayout checkUpdateLayout = null; // 检查新版本
+    private TextView currentVersionTextView = null;
     private LinearLayout feedbackLayout = null;
     private LinearLayout contactLayout = null;
     private LinearLayout aboutLayout = null;
@@ -55,6 +61,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_setting);
+
+        // 检查更新
+        UpdateFunGO.init(this);
 
         this.trainInfo = (TrainInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
 
@@ -92,6 +101,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
         checkUpdateLayout = (LinearLayout) this.findViewById(R.id.checkUpdateLayout);
         checkUpdateLayout.setOnClickListener(this);
+
+        currentVersionTextView = (TextView) this.findViewById(R.id.currentVersionTextView);
+        currentVersionTextView.setText("当前版本号:V" + this.getPackageInfo(this).versionName);
 
         feedbackLayout = (LinearLayout) this.findViewById(R.id.feedbackLayout);
         feedbackLayout.setOnClickListener(this);
@@ -134,14 +146,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             break;
 
             case R.id.checkUpdateLayout: {
-                /*
-                new SweetAlertDialog(this, SweetAlertDialog.NORMAL_TYPE).setTitleText("\n当前已是最新版本\n").setContentText(null).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sDialog) {
-                        sDialog.cancel();
-                    }
-                }).show();
-                */
                 checkUpgrade();
             }
             break;
@@ -259,5 +263,21 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         });
 
         NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
+    }
+
+    private static PackageInfo getPackageInfo(Context context) {
+        PackageInfo pi = null;
+
+        try {
+            PackageManager pm = context.getPackageManager();
+            pi = pm.getPackageInfo(context.getPackageName(),
+                    PackageManager.GET_CONFIGURATIONS);
+
+            return pi;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return pi;
     }
 }

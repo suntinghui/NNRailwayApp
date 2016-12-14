@@ -45,6 +45,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.king.photo.activity.BaseActivity.bimap;
 import static com.lkpower.railway.util.ImageUtil.martixBitmap;
 
 
@@ -61,7 +64,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     private Button sendBtn = null;
     private EditText remarkEditText = null;
 
-    public static Bitmap bimap;
+    private static String remarkTemp = "";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +73,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         bimap = BitmapFactory.decodeResource(
                 getResources(),
                 R.drawable.icon_addpic_unfocused);
-
-        Bimp.tempSelectBitmap.clear();
 
         PublicWay.activityList.add(this);
         parentView = getLayoutInflater().inflate(R.layout.activity_driving_info, null);
@@ -84,6 +85,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         sendBtn.setOnClickListener(this);
 
         remarkEditText = (EditText) this.findViewById(R.id.remarkEditText);
+        remarkEditText.setText(remarkTemp);
 
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
@@ -113,13 +115,26 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.backBtn:
-                this.finish();
+                this.backAction();
                 break;
 
             case R.id.sendBtn:
                 upload();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        backAction();
+    }
+
+    private void backAction(){
+        remarkTemp = remarkEditText.getText().toString();
+
+        this.finish();
     }
 
     private void upload() {
@@ -161,7 +176,18 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                     ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
 
                     if (resultMsgDto.getResult().getFlag() == 1) {
-                        Toast.makeText(DrivingInfoActivity.this, "行车信息提交成功", Toast.LENGTH_SHORT).show();
+                        new SweetAlertDialog(DrivingInfoActivity.this, SweetAlertDialog.NORMAL_TYPE).setTitleText("提示").setContentText("行车信息提交成功").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                                Bimp.tempSelectBitmap.clear();
+                                remarkEditText.setText("");
+                                remarkTemp = "";
+
+                                DrivingInfoActivity.this.finish();
+                            }
+                        }).show();
+
 
                     } else {
                         Toast.makeText(DrivingInfoActivity.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();

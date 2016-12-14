@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.activity.view.CustomNetworkImageView;
+import com.lkpower.railway.activity.view.MyGridView;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.ImageCacheManager;
 import com.lkpower.railway.client.net.JSONRequest;
@@ -56,7 +57,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
     private TextView tipTextView = null;
     private TextView stateTextView = null;
 
-    private GridView noScrollgridview;
+    private MyGridView noScrollgridview;
     private GridAdapter adapter;
     private ArrayList<ImgDataDto> list = new ArrayList<ImgDataDto>();
 
@@ -90,7 +91,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
 
         infoLayout.setVisibility(View.GONE);
 
-        noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
+        noScrollgridview = (MyGridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
         adapter = new GridAdapter(this);
         noScrollgridview.setAdapter(adapter);
@@ -136,7 +137,7 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
             }
         });
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "请稍候...");
+        NetworkHelper.getInstance().addToRequestQueue(request, "正在加载请稍候...");
     }
 
     private void refreshView() {

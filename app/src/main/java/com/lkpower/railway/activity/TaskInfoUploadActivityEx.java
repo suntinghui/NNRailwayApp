@@ -200,8 +200,9 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     }
 
     private void backAction(){
-        this.finish();
         remarkTemp = remarkEditText.getText().toString();
+
+        this.finish();
     }
 
     private void requestUpdateTask() {

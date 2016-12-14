@@ -2,10 +2,12 @@ package com.lkpower.railway.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -22,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static java.lang.System.load;
 import static u.aly.av.F;
 
 /**
@@ -53,7 +56,7 @@ public class ShowImageActivity extends BaseActivity {
         final String testUrl = this.getIntent().getStringExtra("url");
         Log.e("---", "---:" + testUrl);
 
-        NetworkHelper.getInstance().showProgress("正在加载图片...");
+        Toast.makeText(this, "正在加载图片,请稍候", Toast.LENGTH_SHORT).show();
 
         final String downDir = FileUtil.getFilePath();
         //使用Glide下载图片,保存到本地
@@ -61,6 +64,7 @@ public class ShowImageActivity extends BaseActivity {
                 .load(testUrl)
                 .asBitmap()
                 .into(new SimpleTarget<Bitmap>() {
+
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         File file = new File(downDir, "yaoyao.jpg");
@@ -88,8 +92,6 @@ public class ShowImageActivity extends BaseActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
-                            NetworkHelper.getInstance().hideProgress();
                         }
                     }
                 });
