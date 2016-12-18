@@ -321,9 +321,22 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             photoFile.getParentFile().mkdirs();
         }
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-        startActivityForResult(intent, TAKE_PICTURE);
+        try {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+            startActivityForResult(intent, TAKE_PICTURE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE).setTitleText("提示").setContentText("非常抱歉,应用程序无法调用手机拍照功能,建议您重置手机或换一个手机使用。").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sDialog) {
+                    sDialog.cancel();
+
+                }
+            }).show();
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -332,8 +345,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
                     File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
                     try {
-                        Uri uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
-                                photoFile.getAbsolutePath(), null, null));
 
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
 
@@ -342,7 +353,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                         takePhoto.setBitmap(ImageUtil.martixBitmap(bm));
                         Bimp.tempSelectBitmap.add(takePhoto);
 
-                    } catch (FileNotFoundException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 

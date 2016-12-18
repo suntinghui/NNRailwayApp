@@ -88,7 +88,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         setContentView(R.layout.activity_station_list);
 
-        UpdateFunGO.init(this);
+        checkUpdate();
 
         initView();
 
@@ -110,8 +110,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         mPushAgent.setPushIntentServiceClass(MyUMengPushService.class);
 
         registerBroadcastReceiver();
-
-        checkUpdate();
     }
 
     private void initView() {
@@ -151,7 +149,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     @Override
     protected void onStop() {
         super.onStop();
-
         UpdateFunGO.onStop(this);
     }
 
@@ -204,6 +201,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "DeviceDetailInfo");
         tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
+        tempMap.put("Version", ActivityUtil.getPackageInfo(this).versionName);
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
@@ -395,9 +393,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private void checkUpdate() {
         UpdateKey.API_TOKEN = Constants.FIR_API_TOKEN;
         UpdateKey.APP_ID = Constants.FIR_APP_ID;
-        //下载方式:
-        // UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
-        UpdateKey.DialogOrNotification = UpdateKey.WITH_NOTIFITION; //通过通知栏来进行下载(默认)
+        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;
+        UpdateFunGO.init(this);
     }
 
     @Override
@@ -542,7 +539,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         }
 
         public void setData(ArrayList<StationModel> list) {
-            Log.e("", "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             this.list.clear();
             this.list.addAll(list);
             notifyDataSetChanged();
@@ -586,7 +582,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
             final StationModel dto = this.list.get(position);
 
-            Log.e("=======", dto.getStationName()+""+dto.getMissionState().trim());
+            // Log.e("=======", dto.getStationName()+" - "+dto.getMissionState().trim());
 
             holder.numTextView.setText(dto.getOrderNum());
             holder.nameTextView.setText(dto.getStationName());

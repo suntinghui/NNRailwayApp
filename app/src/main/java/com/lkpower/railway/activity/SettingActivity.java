@@ -6,7 +6,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -14,26 +13,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
-import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.client.RequestEnum;
 import com.lkpower.railway.client.net.JSONRequest;
 import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TrainInfo;
+import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DeviceUtil;
 
 import java.util.HashMap;
 
 import cn.hugeterry.updatefun.UpdateFunGO;
-import cn.hugeterry.updatefun.config.UpdateKey;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static anetwork.channel.http.NetworkSdkSetting.context;
 
 /**
  * Created by sth on 19/10/2016.
@@ -62,28 +57,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
         setContentView(R.layout.activity_setting);
 
-        // 检查更新
-        UpdateFunGO.init(this);
-
         this.trainInfo = (TrainInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
 
         toggleFlag = Constants.CURRENT_TRAIN_LATE;
 
         initView();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        UpdateFunGO.onResume(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        UpdateFunGO.onStop(this);
     }
 
     private void initView() {
@@ -103,7 +81,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         checkUpdateLayout.setOnClickListener(this);
 
         currentVersionTextView = (TextView) this.findViewById(R.id.currentVersionTextView);
-        currentVersionTextView.setText("当前版本号:V" + this.getPackageInfo(this).versionName);
+        currentVersionTextView.setText("当前版本号:V" + ActivityUtil.getPackageInfo(this).versionName);
 
         feedbackLayout = (LinearLayout) this.findViewById(R.id.feedbackLayout);
         feedbackLayout.setOnClickListener(this);
@@ -197,15 +175,20 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpdateFunGO.onResume(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        UpdateFunGO.onStop(this);
+    }
+
     // 手动
     private void checkUpgrade() {
-        UpdateKey.API_TOKEN = Constants.FIR_API_TOKEN;
-        UpdateKey.APP_ID = Constants.FIR_APP_ID;
-        //下载方式:
-        UpdateKey.DialogOrNotification = UpdateKey.WITH_DIALOG; //通过Dialog来进行下载
-        //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION; //通过通知栏来进行下载(默认)
-//        UpdateFunGO.init(this);
-
         UpdateFunGO.manualStart(this);
     }
 
@@ -263,21 +246,5 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         });
 
         NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
-    }
-
-    private static PackageInfo getPackageInfo(Context context) {
-        PackageInfo pi = null;
-
-        try {
-            PackageManager pm = context.getPackageManager();
-            pi = pm.getPackageInfo(context.getPackageName(),
-                    PackageManager.GET_CONFIGURATIONS);
-
-            return pi;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return pi;
     }
 }

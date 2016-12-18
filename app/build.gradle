@@ -6,8 +6,10 @@ buildscript {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
     }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
@@ -18,8 +20,8 @@ android {
         applicationId "com.lkpower.railway"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 17
-        versionName "1.7"
+        versionCode 19
+        versionName "1.9"
     }
 
     buildTypes {
@@ -100,11 +102,10 @@ android {
 
         compile 'com.umeng.analytics:analytics:latest.integration'
 
-        compile 'cn.hugeterry.updatefun:updatefun:1.8.6' // http://fir.im/apps
-
         compile project(':imagepickerModule')
         compile project(':photo')
         compile project(':PushSDK')
+        compile project(':updatefun')
 
     }
 
