@@ -2,7 +2,6 @@ package com.lkpower.railway.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,22 +11,24 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.king.photo.util.Bimp;
-import com.king.photo.util.FileUtils;
 import com.king.photo.util.ImageItem;
-import com.king.photo.util.PublicWay;
 import com.king.photo.util.Res;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
@@ -38,17 +39,15 @@ import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.ImageUtil;
-import com.lkpower.railway.util.StringUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import anet.channel.util.StringUtils;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.king.photo.activity.BaseActivity.bimap;
-import static com.lkpower.railway.util.ImageUtil.martixBitmap;
 
 
 /**
@@ -74,7 +73,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                 getResources(),
                 R.drawable.icon_addpic_unfocused);
 
-        PublicWay.activityList.add(this);
         parentView = getLayoutInflater().inflate(R.layout.activity_driving_info, null);
         setContentView(parentView);
 
@@ -131,7 +129,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         backAction();
     }
 
-    private void backAction(){
+    private void backAction() {
         remarkTemp = remarkEditText.getText().toString();
 
         this.finish();
@@ -147,8 +145,8 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         HashMap<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("CarNumberId", Constants.CarNumberId);
         jsonMap.put("CarNumberName", Constants.CarNumberName);
-        jsonMap.put("GroupId", Constants.DeviceInfo.getID());
-        jsonMap.put("GroupName", Constants.DeviceInfo.getUserName());
+        jsonMap.put("GroupId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID());
+        jsonMap.put("GroupName", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
         jsonMap.put("SubmitTime", DateUtil.getCurrentDateTime());
         jsonMap.put("Remark", remarkEditText.getText().toString().trim());
 
@@ -346,12 +344,11 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                     File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
                     try {
 
-                        Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-
                         ImageItem takePhoto = new ImageItem();
                         takePhoto.setImagePath(photoFile.getAbsolutePath());
-                        takePhoto.setBitmap(ImageUtil.martixBitmap(bm));
+                        takePhoto.setBitmap(ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384));
                         Bimp.tempSelectBitmap.add(takePhoto);
+
 
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -27,6 +28,7 @@ import com.lkpower.railway.util.DeviceUtil;
 
 import java.util.HashMap;
 
+import anet.channel.util.StringUtils;
 import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -42,6 +44,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private TextView currentVersionTextView = null;
     private LinearLayout feedbackLayout = null;
     private LinearLayout contactLayout = null;
+    private TextView telphoneTextView = null;
     private LinearLayout aboutLayout = null;
     private Button logoutBtn = null;
 
@@ -50,6 +53,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private boolean toggleFlag = false;
 
     private TrainInfo trainInfo = null;
+
+    private String tel = "07712769564";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         this.trainInfo = (TrainInfo) this.getIntent().getSerializableExtra("TRAIN_INFO");
 
         toggleFlag = Constants.CURRENT_TRAIN_LATE;
+
+        try {
+            tel = StringUtils.isBlank(Constants.DeviceInfo.getPhone()) ? "07712769564" : Constants.DeviceInfo.getPhone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         initView();
     }
@@ -88,6 +99,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
         contactLayout = (LinearLayout) this.findViewById(R.id.contactLayout);
         contactLayout.setOnClickListener(this);
+
+        telphoneTextView = (TextView) this.findViewById(R.id.telphoneTextView);
+        telphoneTextView.setText(tel);
 
         aboutLayout = (LinearLayout) this.findViewById(R.id.aboutLayout);
         aboutLayout.setOnClickListener(this);
@@ -136,7 +150,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
             case R.id.contactLayout: {
                 try {
-                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Constants.DeviceInfo.getPhone()));
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tel));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } catch (Exception e) {

@@ -260,9 +260,10 @@
                     android:id="@+id/telphoneTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/blueme"
-                    android:textSize="15sp" />
+                    android:layout_marginRight="20dip"
+                    android:text="18500972879"
+                    android:textColor="#666666"
+                    android:textSize="12sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"

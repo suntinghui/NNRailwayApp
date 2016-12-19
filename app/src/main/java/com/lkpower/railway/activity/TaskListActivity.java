@@ -84,7 +84,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "MissionInfoByUser");
         tempMap.put("serialNumber", this.getIntent().getStringExtra("DATE"));
-        tempMap.put("userId", Constants.DeviceInfo.getID());
+        tempMap.put("userId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID());
         tempMap.put("stationId", station.getID());
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
@@ -169,9 +169,9 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
 
             final TaskDto.TaskListInfoDto info = mList.get(position);
 
-            holder.taskName.setText("【"+station.getStationName() + "】" + info.getMisName());
+            holder.taskName.setText("【" + station.getStationName() + "】" + info.getMisName());
             holder.stateTextView.setText(info.getState().equals("1") ? "未完成" : "已完成");
-            holder.remarkTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark().replace("\n",""));
+            holder.remarkTextView.setText(TextUtils.isEmpty(info.getMisRemark()) ? "无" : info.getMisRemark().replace("\n", ""));
             holder.tipTextView.setText(TextUtils.isEmpty(info.getRemark()) ? "无" : info.getRemark());
             holder.executorNameTextView.setText(info.getExecutorName());
             holder.updateTimeTextView.setText(info.getUpdateTime());

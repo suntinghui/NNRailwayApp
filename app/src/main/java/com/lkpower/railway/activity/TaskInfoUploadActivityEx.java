@@ -199,7 +199,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         backAction();
     }
 
-    private void backAction(){
+    private void backAction() {
         remarkTemp = remarkEditText.getText().toString();
 
         this.finish();
@@ -212,7 +212,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         jsonMap.put("executor", task.getExecutor());
         jsonMap.put("state", toggleFlag ? "2" : "1"); // 1未完成 2已完成
         jsonMap.put("remark", remarkEditText.getText().toString());
-        jsonMap.put("updateUser", Constants.DeviceInfo.getUserName());
+        jsonMap.put("updateUser", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
         jsonMap.put("updateTime", DateUtil.getCurrentDateTime());
 
         if (!Bimp.tempSelectBitmap.isEmpty()) {
@@ -430,17 +430,12 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
                     File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
                     try {
-                        Uri uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
-                                photoFile.getAbsolutePath(), null, null));
-
-                        Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-
                         ImageItem takePhoto = new ImageItem();
                         takePhoto.setImagePath(photoFile.getAbsolutePath());
-                        takePhoto.setBitmap(ImageUtil.martixBitmap(bm));
+                        takePhoto.setBitmap(ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384));
                         Bimp.tempSelectBitmap.add(takePhoto);
 
-                    } catch (FileNotFoundException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 

@@ -53,7 +53,7 @@ public class FeedBackActivity extends BaseActivity implements View.OnClickListen
         commitBtn.setOnClickListener(this);
     }
 
-    private boolean checkValue(){
+    private boolean checkValue() {
         String content = contentEditText.getText().toString().trim();
         if (TextUtils.isEmpty(content)) {
             Toast.makeText(this, "请输入意见内容", Toast.LENGTH_SHORT).show();
@@ -79,8 +79,8 @@ public class FeedBackActivity extends BaseActivity implements View.OnClickListen
 
         HashMap<String, String> jsonMap = new HashMap<String, String>();
         jsonMap.put("CarNumberId", Constants.CarNumberId);
-        jsonMap.put("GroupId", Constants.DeviceInfo.getID());
-        jsonMap.put("GroupName", Constants.DeviceInfo.getUserName());
+        jsonMap.put("GroupId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID());
+        jsonMap.put("GroupName", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
         jsonMap.put("SubmitTime", DateUtil.getCurrentDateTime());
         jsonMap.put("DeviceInfo", DeviceUtil.getDeviceId(this));
         jsonMap.put("Remark", contentEditText.getText().toString().trim());
