@@ -15,6 +15,7 @@ public class RequestEnum {
             requestMap = new HashMap<String, RequestModel>();
 
             requestMap.put(LoginUserInfo, new RequestModel(LoginUserInfo, Constants.HOST_IP_REQ));
+            requestMap.put(StationList, new RequestModel(StationList, Constants.HOST_IP_REQ));
 
 
         }
@@ -23,5 +24,6 @@ public class RequestEnum {
     }
 
     public static final String LoginUserInfo = "LoginUserInfo"; // 登录
+    public static final String StationList = "StationList";
     public static final String MessageList = "MissionInfoByUser"; //任务信息列表
 }

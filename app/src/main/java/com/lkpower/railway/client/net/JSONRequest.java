@@ -78,14 +78,16 @@ public class JSONRequest extends StringRequest {
         this.map = map;
         this.setShouldCache(shouldCache);
 
+        /*
         if (needRetryPolicy) {
-            RetryPolicy retryPolicy = new DefaultRetryPolicy(6000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            RetryPolicy retryPolicy = new DefaultRetryPolicy(6000, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
             this.setRetryPolicy(retryPolicy);
 
         } else {
             RetryPolicy retryPolicy = new DefaultRetryPolicy(60000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
             this.setRetryPolicy(retryPolicy);
         }
+        */
     }
 
     // 首先所有的请求的报文头中都有Base-Token属性，详情见Request类中的getHeader方法；
@@ -111,35 +113,13 @@ public class JSONRequest extends StringRequest {
         }
 
         try {
-            saveToken(headerMap);
 
-            Cache.Entry mFakeCache = HttpHeaderParser.parseCacheHeaders(response);
-            mFakeCache.etag = null;
-            mFakeCache.softTtl = REFRESH_NEED;
-            mFakeCache.ttl = System.currentTimeMillis() + CACHE_EXPIRES_TIME * 1000;
-
-            return Response.success(responseStr, mFakeCache);
+            return Response.success(responseStr, null);
 
         } catch (Exception je) {
             return Response.error(new ParseError(je));
         }
 
-    }
-
-    private void saveToken(TreeMap<String, String> headerMap) {
-        Editor editor = ActivityUtil.getSharedPreferences().edit();
-        if (headerMap.containsKey(Constants.Base_Token)) {
-            editor.putString(Constants.Base_Token, headerMap.get(Constants.Base_Token));
-        }
-
-        if (headerMap.containsKey(Constants.Set_Cookie)) {
-            String cookie = headerMap.get(Constants.Set_Cookie);
-            HashMap<String, String> tempMap = string2Map(cookie);
-            if (tempMap.containsKey("JSESSIONID")) {
-                editor.putString(Constants.SESSIONID, tempMap.get("JSESSIONID"));
-            }
-        }
-        editor.commit();
     }
 
     protected Map<String, String> getParams() throws AuthFailureError {
@@ -151,51 +131,10 @@ public class JSONRequest extends StringRequest {
         super.onFinish();
     }
 
-    // Volley以url作为Cache Key,因为本项目中有的请求地址有可能地址相同而参数不同，所以重写本方法重定义Cache Key
-    // Cache Key : http://182.92.217.168:8888/rpc/goods/type/v_list.app{}
-    public String getCacheKey() {
-        String cacheKey = "";
-        try {
-            StringBuffer sb = new StringBuffer();
-            sb.append(super.getUrl());
-            if (this.getBody() != null) {
-                sb.append("&");
-                sb.append(new String(this.getBody()));
-            }
-
-            cacheKey = sb.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            cacheKey = super.getCacheKey();
-        }
-
-        Log.e("===", "Cache Key : " + cacheKey);
-
-        return StringUtil.MD5Crypto(cacheKey);
-    }
-
     public void addMarker(String tag) {
         Log.e("===STH", "marker:" + tag);
 
         super.addMarker(tag);
-    }
-
-    private HashMap<String, String> string2Map(String text) {
-        HashMap<String, String> map = new HashMap<String, String>();
-
-        try {
-            for (String temp : text.split(";")) {
-                String str[] = temp.split("=");
-                if (str.length == 2) {
-                    map.put(str[0].trim(), str[1].trim());
-                }
-            }
-            return map;
-        } catch (Exception e) {
-            return new HashMap<String, String>();
-        }
     }
 
 }

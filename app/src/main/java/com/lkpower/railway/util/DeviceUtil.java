@@ -18,7 +18,8 @@ public class DeviceUtil {
         if (TextUtils.isEmpty(deviceId))
             return "0";
 
-        return  "864103022035759";
+        //return  deviceId;
+        return "88888888";
     }
 
 }

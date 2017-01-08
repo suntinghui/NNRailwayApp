@@ -1,11 +1,14 @@
 package com.lkpower.railway.util;
 
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.lkpower.railway.MyApplication;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class FileUtil {
@@ -75,6 +78,32 @@ public class FileUtil {
         File file = new File(getFilePath() + pathName + File.separator + fileName);
         if (file.exists()) {
             file.delete();
+        }
+    }
+
+    /**
+     * 保存照片
+     * @param mBitmap
+     * @return
+     */
+    public static String saveBitmap(Bitmap mBitmap) {
+
+        String path=System.currentTimeMillis()+".jpg";
+        File f = new File(Environment.getExternalStorageDirectory()+"/myphoto/",path);
+
+        getFilePath();
+
+        try {
+            FileOutputStream fOut = null;
+            fOut = new FileOutputStream(f);
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+            return f.getAbsolutePath();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

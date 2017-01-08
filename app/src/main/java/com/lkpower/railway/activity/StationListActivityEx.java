@@ -88,10 +88,11 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         setContentView(R.layout.activity_station_list);
 
-        checkUpdate();
+//        checkUpdate();
 
         initView();
 
+        /*
         ActivityUtil.verifyReadPhoneStatePermissions(this);
 
         new UMengPushUtil().new AddAliasTask(this).execute();
@@ -110,6 +111,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         mPushAgent.setPushIntentServiceClass(MyUMengPushService.class);
 
         registerBroadcastReceiver();
+
+        */
     }
 
     private void initView() {
@@ -143,7 +146,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         UpdateFunGO.onResume(this);
 
-        requestStationList(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
+        //requestStationList(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
+        requestStationList("正在查询车站信息...");
     }
 
     @Override
@@ -203,7 +207,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
         tempMap.put("Version", ActivityUtil.getPackageInfo(this).versionName);
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
+        JSONRequest request = new JSONRequest(this, RequestEnum.StationList, tempMap, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String jsonObject) {

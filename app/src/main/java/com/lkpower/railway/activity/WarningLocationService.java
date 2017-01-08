@@ -130,9 +130,15 @@ public class WarningLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
+        try {
+            trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
 
-        startLocation();
+            startLocation();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Location", "启动WarningLocationService时出现错误。");
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }

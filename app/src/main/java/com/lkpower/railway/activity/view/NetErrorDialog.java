@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+
 import com.lkpower.railway.R;
 import com.lkpower.railway.activity.BaseActivity;
 import com.lkpower.railway.client.ActivityManager;
@@ -14,75 +15,86 @@ import com.lkpower.railway.client.ActivityManager;
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 public class NetErrorDialog {
 
-	private static final Configuration CONFIGURATION_INFINITE = new Configuration.Builder().setDuration(Configuration.DURATION_INFINITE).build();
-	private static final Configuration CONFIGURATION_SHORT = new Configuration.Builder().setDuration(Configuration.DURATION_SHORT).build();
-	private static final Configuration CONFIGURATION_LONG = new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build();
+    private static final Configuration CONFIGURATION_INFINITE = new Configuration.Builder().setDuration(Configuration.DURATION_INFINITE).build();
+    private static final Configuration CONFIGURATION_SHORT = new Configuration.Builder().setDuration(Configuration.DURATION_SHORT).build();
+    private static final Configuration CONFIGURATION_LONG = new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build();
 
-	private Crouton crouton = null;
+    private Crouton crouton = null;
 
-	private static NetErrorDialog instance = null;
+    private static NetErrorDialog instance = null;
 
-	public static NetErrorDialog getInstance() {
-		if (instance == null) {
-			instance = new NetErrorDialog();
-		}
+    public static NetErrorDialog getInstance() {
+        if (instance == null) {
+            instance = new NetErrorDialog();
+        }
 
-		return instance;
-	}
+        return instance;
+    }
 
-	public void show(final Context context) {
-		try {
-			//		if (Crouton.getQueue().size() > 0)
+    public void show(final Context context) {
+        try {
+            //		if (Crouton.getQueue().size() > 0)
 //			return;
 
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View view = inflater.inflate(R.layout.layout_net_eror, null);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.layout_net_eror, null);
 
-			LinearLayout settingLayout = (LinearLayout) view.findViewById(R.id.settingLayout);
-			settingLayout.setOnClickListener(new OnClickListener() {
+            LinearLayout settingLayout = (LinearLayout) view.findViewById(R.id.settingLayout);
+            settingLayout.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					settingNet(context);
+                @Override
+                public void onClick(View v) {
+                    settingNet(context);
 
-					Crouton.cancelAllCroutons();
-				}
-			});
+                    Crouton.cancelAllCroutons();
+                }
+            });
 
-			LinearLayout closeLayout = (LinearLayout) view.findViewById(R.id.closeLayout);
-			closeLayout.setOnClickListener(new OnClickListener() {
+            LinearLayout closeLayout = (LinearLayout) view.findViewById(R.id.closeLayout);
+            closeLayout.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					if (crouton != null) {
-						Crouton.cancelAllCroutons();
-					}
-				}
-			});
+                @Override
+                public void onClick(View v) {
+                    if (crouton != null) {
+                        Crouton.cancelAllCroutons();
+                    }
+                }
+            });
 
-			crouton = Crouton.make(ActivityManager.getInstance().getCurrentActivity(), view);
-			// 一直显示，手动关闭
-			//crouton.setConfiguration(CONFIGURATION_INFINITE);
+            crouton = Crouton.make(ActivityManager.getInstance().getCurrentActivity(), view);
+            // 一直显示，手动关闭
+            //crouton.setConfiguration(CONFIGURATION_INFINITE);
 
-			crouton.setConfiguration(CONFIGURATION_LONG);
+            crouton.setConfiguration(CONFIGURATION_LONG);
 
-			crouton.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void hide(){
-		if (crouton != null){
-			Crouton.cancelAllCroutons();
-		}
-	}
+            crouton.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void settingNet(Context context) {
-		Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
-		context.startActivity(intent);
-	}
+    public void hide() {
+        if (crouton != null) {
+            Crouton.cancelAllCroutons();
+        }
+    }
+
+    private void settingNet(Context context) {
+        try {
+            Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+            context.startActivity(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+    }
 
 }

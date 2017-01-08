@@ -75,15 +75,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.umeng.analytics/analytics/6.0.6/628189662e16d31310245f7fb73dacf605efb6ec/analytics-6.0.6.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="628189662e16d31310245f7fb73dacf605efb6ec">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/analytics-6.0.6_7e154b42e5a0da602a4b946c72cfc35514956d37.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/libs/BaiduLBS_Android.jar"
         jumboMode="false"
         optimize="true"
@@ -414,6 +405,15 @@
         revision="24.0.3"
         sha1="a96e7800ffe107ef0fd262f8025eea5e661377ea">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/utdid4all-1.1.5_proguard_a1bdae9a9f1e911ff961cbd3f7d307f31ead097a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.umeng.analytics/analytics/6.0.7/7224178d65af1443d8be61a2c20914bf3a6088fd/analytics-6.0.7.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="7224178d65af1443d8be61a2c20914bf3a6088fd">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/analytics-6.0.7_1d7456d8c70f3983f91a4840c0aed02421bc1022.jar" />
     </item>
     <item
         is-multidex="false"

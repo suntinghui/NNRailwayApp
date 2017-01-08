@@ -143,31 +143,6 @@ public class XMLRequest extends Request<XmlPullParser> {
         super.onFinish();
     }
 
-    // Volley以url作为Cache Key,因为本项目中有的请求地址有可能地址相同而参数不同，所以重写本方法重定义Cache Key
-    // Cache Key : http://182.92.217.168:8888/rpc/goods/type/v_list.app{}
-    public String getCacheKey() {
-        String cacheKey = "";
-        try {
-            StringBuffer sb = new StringBuffer();
-            sb.append(super.getUrl());
-            if (this.getBody() != null) {
-                sb.append("&");
-                sb.append(new String(this.getBody()));
-            }
-
-            cacheKey = sb.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            cacheKey = super.getCacheKey();
-        }
-
-        Log.e("===", "Cache Key : " + cacheKey);
-
-        return StringUtil.MD5Crypto(cacheKey);
-    }
-
     public void addMarker(String tag) {
         Log.e("===", "marker:" + tag);
 

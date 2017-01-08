@@ -2,6 +2,7 @@ package com.lkpower.railway.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -42,12 +43,15 @@ import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.FileUtil;
 import com.lkpower.railway.util.ImageUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -70,12 +74,17 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
     private static String remarkTemp = "";
 
+    private String localTempImgFileName = null;
+    private ArrayList<String> tempImgList = new ArrayList<String>();
+
     private TaskDto.TaskListInfoDto task = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         task = (TaskDto.TaskListInfoDto) this.getIntent().getSerializableExtra("TASK_INFO");
+
+        refreshImageList();
 
         Res.init(this);
 
@@ -205,6 +214,21 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         this.finish();
     }
 
+    private void refreshImageList() {
+        Bimp.tempSelectBitmap.clear();
+        tempImgList.clear();
+
+        HashSet<String> set = (HashSet<String>) ActivityUtil.getSharedPreferences().getStringSet(task.getID(), new HashSet<String>());
+        Iterator<String> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            String name = iterator.next();
+            tempImgList.add(name);
+            ImageItem imageItem = new ImageItem();
+            imageItem.setImageId(name);
+            Bimp.tempSelectBitmap.add(imageItem);
+        }
+    }
+
     private void requestUpdateTask() {
         HashMap<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("ID", task.getID());
@@ -215,20 +239,38 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
         jsonMap.put("updateUser", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
         jsonMap.put("updateTime", DateUtil.getCurrentDateTime());
 
+        StringBuffer sb = new StringBuffer(new GsonBuilder().create().toJson(jsonMap));
+
         if (!Bimp.tempSelectBitmap.isEmpty()) {
-            ArrayList imgList = new ArrayList();
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append(",\"ImgInfo\":[");
+
             for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-                HashMap<String, String> imgMap = new HashMap<String, String>();
-                imgMap.put("imgData", ImageUtil.bitmapToBase64(Bimp.tempSelectBitmap.get(i).getBitmap()));
-                imgList.add(imgMap);
+                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg", 480, 320);
+
+                sb.append("{\"imgData\":\"");
+                sb.append(ImageUtil.bitmapToBase64(bitmap));
+                sb.append("\"}");
+
+                if (i != Bimp.tempSelectBitmap.size() - 1) {
+                    sb.append(",");
+                }
+
+                // 先判断是否已经回收
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    // 回收并且置为null
+                    bitmap.recycle();
+                    bitmap = null;
+                }
             }
-            jsonMap.put("ImgInfo", imgList);
+
+            sb.append("]}");
         }
 
 
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "UpdateMissionInfo");
-        tempMap.put("jsonData", new GsonBuilder().create().toJson(jsonMap));
+        tempMap.put("jsonData", sb.toString());
 
         JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
 
@@ -242,6 +284,15 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                         Bimp.tempSelectBitmap.clear();
                         remarkEditText.setText("");
                         remarkTemp = "";
+
+
+                        for (String name : tempImgList) {
+                            FileUtil.deleteFile("", name + ".jpg");
+                        }
+
+                        SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                        editor.remove(task.getID());
+                        editor.commit();
 
                         showSuccess();
 
@@ -332,7 +383,8 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                holder.image.setImageBitmap(Bimp.tempSelectBitmap.get(position).getBitmap());
+                Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", null);
+                holder.image.setImageBitmap(bitmap);
             }
 
             return convertView;
@@ -362,6 +414,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                             message.what = 1;
                             handler.sendMessage(message);
                             break;
+
                         } else {
                             Bimp.max += 1;
                             Message message = new Message();
@@ -382,21 +435,17 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     private static final int TAKE_PICTURE = 0x000001;
 
     public void photo() {
+        /*
         // 这处方法取到的其实只是缩略图
-/*
         Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(openCameraIntent, TAKE_PICTURE);
-*/
+        */
 
-
-        File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
-        if (!photoFile.getParentFile().exists()) {
-            photoFile.getParentFile().mkdirs();
-        }
+        localTempImgFileName = System.currentTimeMillis() + "";
 
         try {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg")));
             startActivityForResult(intent, TAKE_PICTURE);
 
         } catch (Exception e) {
@@ -428,16 +477,25 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     */
 
 
-                    File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
-                    try {
-                        ImageItem takePhoto = new ImageItem();
-                        takePhoto.setImagePath(photoFile.getAbsolutePath());
-                        takePhoto.setBitmap(ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384));
-                        Bimp.tempSelectBitmap.add(takePhoto);
+                    File photoFile = new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg");
+                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384);
+                    FileUtil.saveBitmap(bitmap);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                    HashSet<String> set = new HashSet<String>(ActivityUtil.getSharedPreferences().getStringSet(task.getID(), new HashSet<String>()));
+                    set.add(localTempImgFileName);
+                    editor.putStringSet(task.getID(), set);
+                    editor.commit();
+
+                    refreshImageList();
+
+                    // 先判断是否已经回收
+                    if (bitmap != null && !bitmap.isRecycled()) {
+                        // 回收并且置为null
+                        bitmap.recycle();
+                        bitmap = null;
                     }
+                    System.gc();
 
                 }
                 break;

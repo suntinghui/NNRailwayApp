@@ -3,6 +3,7 @@ package com.lkpower.railway.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -20,7 +21,10 @@ import com.king.photo.util.Res;
 import com.king.photo.zoom.PhotoView;
 import com.king.photo.zoom.ViewPagerFixed;
 import com.lkpower.railway.R;
+import com.lkpower.railway.util.FileUtil;
+import com.lkpower.railway.util.ImageUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +70,8 @@ public class GalleryActivity extends BaseActivity {
         backBtn = (Button) findViewById(Res.getWidgetID("backBtn"));
         titleTextView = (TextView) findViewById(Res.getWidgetID("titleTextView"));
         delBtn = (Button) findViewById(Res.getWidgetID("gallery_del"));
+        delBtn.setVisibility(View.INVISIBLE);
+
         backBtn.setOnClickListener(new BackListener());
         delBtn.setOnClickListener(new DelListener());
         intent = getIntent();
@@ -76,7 +82,7 @@ public class GalleryActivity extends BaseActivity {
         pager = (ViewPagerFixed) findViewById(Res.getWidgetID("gallery01"));
         pager.setOnPageChangeListener(pageChangeListener);
         for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-            initListViews(Bimp.tempSelectBitmap.get(i).getBitmap());
+            initListViews(Bimp.tempSelectBitmap.get(i).getImageId());
         }
 
         adapter = new MyPageAdapter(listViews);
@@ -102,12 +108,13 @@ public class GalleryActivity extends BaseActivity {
         }
     };
 
-    private void initListViews(Bitmap bm) {
+    private void initListViews(String name) {
         if (listViews == null)
             listViews = new ArrayList<View>();
         PhotoView img = new PhotoView(this);
         img.setBackgroundColor(0xff000000);
-        img.setImageBitmap(bm);
+        Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + name + ".jpg");
+        img.setImageBitmap(bitmap);
         img.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT));
         listViews.add(img);

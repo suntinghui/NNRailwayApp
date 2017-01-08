@@ -11,10 +11,10 @@ public class Constants {
     public static final int PAGESIZE = 20;
 
     // 测试
-    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
+//    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
 
     // 生产
-//    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
+    public static final String HOST_IP = "http://61.235.163.12:88/InspectionWork/MobileJson.ashx";
 
     public static final String HOST_IP_REQ = HOST_IP;
 

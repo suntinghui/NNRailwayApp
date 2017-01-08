@@ -153,12 +153,12 @@
     <orderEntry type="library" exported="" name="httpmime-4.1.2" level="project" />
     <orderEntry type="library" exported="" name="umeng-analytics-v6.0.3" level="project" />
     <orderEntry type="library" exported="" name="support-core-ui-24.2.1" level="project" />
-    <orderEntry type="library" exported="" name="analytics-6.0.4" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="multipleimageselect-1.0.4" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="utdid4all-1.0.4" level="project" />
+    <orderEntry type="library" exported="" name="analytics-6.0.6" level="project" />
     <orderEntry type="library" exported="" name="app-monitor-sdk-2.5.1.1_for_bc_proguard" level="project" />
     <orderEntry type="library" exported="" name="universal-image-loader-1.9.5" level="project" />
     <orderEntry type="library" exported="" name="materialish-progress-1.0" level="project" />

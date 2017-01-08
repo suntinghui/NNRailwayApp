@@ -2,6 +2,8 @@ package com.lkpower.railway.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -38,11 +40,14 @@ import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.FileUtil;
 import com.lkpower.railway.util.ImageUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import anet.channel.util.StringUtils;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -65,9 +70,16 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
 
     private static String remarkTemp = "";
 
+    private String localTempImgFileName = null;
+    private ArrayList<String> tempImgList = new ArrayList<String>();
+
+    private static String TAG = "DRIVINGINFO";
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Res.init(this);
+
+        refreshImageList();
 
         bimap = BitmapFactory.decodeResource(
                 getResources(),
@@ -135,6 +147,21 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         this.finish();
     }
 
+    private void refreshImageList() {
+        Bimp.tempSelectBitmap.clear();
+        tempImgList.clear();
+
+        HashSet<String> set = (HashSet<String>) ActivityUtil.getSharedPreferences().getStringSet(TAG, new HashSet<String>());
+        Iterator<String> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            String name = iterator.next();
+            tempImgList.add(name);
+            ImageItem imageItem = new ImageItem();
+            imageItem.setImageId(name);
+            Bimp.tempSelectBitmap.add(imageItem);
+        }
+    }
+
     private void upload() {
         // 行车信息可以不输入,但是图片必须上传
         if (Bimp.tempSelectBitmap.isEmpty()) {
@@ -154,7 +181,8 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             ArrayList imgList = new ArrayList();
             for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
                 HashMap<String, String> imgMap = new HashMap<String, String>();
-                imgMap.put("imgData", ImageUtil.bitmapToBase64(Bimp.tempSelectBitmap.get(i).getBitmap()));
+                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg", 480, 320);
+                imgMap.put("imgData", ImageUtil.bitmapToBase64(bitmap));
                 imgList.add(imgMap);
             }
             jsonMap.put("ImgInfo", imgList);
@@ -181,6 +209,14 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                                 Bimp.tempSelectBitmap.clear();
                                 remarkEditText.setText("");
                                 remarkTemp = "";
+
+                                for (String name : tempImgList) {
+                                    FileUtil.deleteFile("", name + ".jpg");
+                                }
+
+                                SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                                editor.remove(TAG);
+                                editor.commit();
 
                                 DrivingInfoActivity.this.finish();
                             }
@@ -249,8 +285,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.item_published_grida,
-                        parent, false);
+                convertView = inflater.inflate(R.layout.item_published_grida, parent, false);
                 holder = new ViewHolder();
                 holder.image = (ImageView) convertView.findViewById(R.id.item_grida_image);
                 convertView.setTag(holder);
@@ -264,7 +299,8 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                holder.image.setImageBitmap(Bimp.tempSelectBitmap.get(position).getBitmap());
+                Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", null);
+                holder.image.setImageBitmap(bitmap);
             }
 
             return convertView;
@@ -314,14 +350,11 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     private static final int TAKE_PICTURE = 0x000001;
 
     public void photo() {
-        File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
-        if (!photoFile.getParentFile().exists()) {
-            photoFile.getParentFile().mkdirs();
-        }
+        localTempImgFileName = System.currentTimeMillis() + "";
 
         try {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg")));
             startActivityForResult(intent, TAKE_PICTURE);
 
         } catch (Exception e) {
@@ -341,18 +374,25 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         switch (requestCode) {
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
-                    File photoFile = new File(Environment.getExternalStorageDirectory() + "/my_camera/0.jpg");
-                    try {
+                    File photoFile = new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg");
+                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384);
+                    FileUtil.saveBitmap(bitmap);
 
-                        ImageItem takePhoto = new ImageItem();
-                        takePhoto.setImagePath(photoFile.getAbsolutePath());
-                        takePhoto.setBitmap(ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384));
-                        Bimp.tempSelectBitmap.add(takePhoto);
+                    SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                    HashSet<String> set = new HashSet<String>(ActivityUtil.getSharedPreferences().getStringSet(TAG, new HashSet<String>()));
+                    set.add(localTempImgFileName);
+                    editor.putStringSet(TAG, set);
+                    editor.commit();
 
+                    refreshImageList();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    // 先判断是否已经回收
+                    if (bitmap != null && !bitmap.isRecycled()) {
+                        // 回收并且置为null
+                        bitmap.recycle();
+                        bitmap = null;
                     }
+                    System.gc();
 
                 }
                 break;
