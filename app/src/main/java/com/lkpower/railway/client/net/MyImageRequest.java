@@ -25,11 +25,15 @@ public class MyImageRequest extends ImageRequest {
     public Map<String, String> getHeaders() throws AuthFailureError {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("Content-Type", "application/x-www-form-urlencoded");
+        //params.put("Content-Type", "application/json;charset=utf-8");
+
+        /*
         params.put("ClientType", "Android");
         params.put("OSVersion", "" + android.os.Build.VERSION.SDK_INT);
         params.put("APPVersion", "" + ActivityUtil.getVersionCode());
         params.put(Constants.Base_Token, ActivityUtil.getSharedPreferences().getString(Constants.Base_Token, ""));
         params.put(Constants.SESSIONID, "JSESSIONID=" + ActivityUtil.getSharedPreferences().getString(Constants.SESSIONID, ""));
+        */
 
         return params;
     }

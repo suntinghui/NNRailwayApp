@@ -74,6 +74,7 @@ public class NetworkHelper {
         try {
             mRequestQueue.cancelAll(this);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -102,6 +103,7 @@ public class NetworkHelper {
                 if (null == hud) {
                     Log.e("NetwrkHelper", "HUD创建失败。。。");
                 }
+
             } else {
                 hud.setMessage(message);
             }
@@ -119,6 +121,7 @@ public class NetworkHelper {
             hud.dismiss();
             hud = null;
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

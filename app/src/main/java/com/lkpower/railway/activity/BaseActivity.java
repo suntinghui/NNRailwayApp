@@ -1,9 +1,12 @@
 package com.lkpower.railway.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.lkpower.railway.MyApplication;
+import com.lkpower.railway.activity.view.ProgressHUD;
 import com.lkpower.railway.client.ActivityManager;
 import com.lkpower.railway.client.net.NetworkHelper;
 import com.umeng.analytics.MobclickAgent;

@@ -18,12 +18,19 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.util.FileUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.BitmapCallback;
+import com.lzy.okgo.request.BaseRequest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.Response;
+
+import static android.R.attr.resource;
 import static java.lang.System.load;
 import static u.aly.av.F;
 
@@ -56,18 +63,19 @@ public class ShowImageActivity extends BaseActivity {
         final String testUrl = this.getIntent().getStringExtra("url");
         Log.e("---", "---:" + testUrl);
 
-        Toast.makeText(this, "正在加载图片,请稍候", Toast.LENGTH_SHORT).show();
-
-        final String downDir = FileUtil.getFilePath();
-        //使用Glide下载图片,保存到本地
-        Glide.with(this)
-                .load(testUrl)
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
+        OkGo.get(testUrl)
+                .tag(this)
+                .execute(new BitmapCallback() {
 
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        File file = new File(downDir, "yaoyao.jpg");
+                    public void onBefore(BaseRequest request) {
+
+                        Toast.makeText(ShowImageActivity.this, "正在加载图片...", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onSuccess(Bitmap bitmap, Call call, Response response) {
+                        File file = new File(FileUtil.getFilePath(), "yaoyao.jpg");
 
                         if (!file.exists()) {
                             try {
@@ -80,7 +88,7 @@ public class ShowImageActivity extends BaseActivity {
                         try {
                             //保存图片
                             fout = new FileOutputStream(file);
-                            resource.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
                             // 将保存的地址给SubsamplingScaleImageView,这里注意设置ImageViewState
                             imageView.setImage(ImageSource.uri(file.getAbsolutePath()), new ImageViewState(1.0F, new PointF(0, 0), 0));
                         } catch (FileNotFoundException e) {

@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.lkpower.railway.client.ActivityManager;
+import com.lkpower.railway.util.FileUtil;
+import com.lzy.okgo.OkGo;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -18,6 +20,8 @@ import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 
 import com.umeng.message.lib.BuildConfig;
+
+import java.util.logging.Level;
 
 /**
  * Created by sth on 3/22/16.
@@ -34,6 +38,13 @@ public class MyApplication extends Application {
         super.onCreate();
 
         instance = this;
+
+        FileUtil.getFilePath();
+
+        //必须调用初始化
+        OkGo.init(this);
+        OkGo.getInstance().debug("OkGo", Level.INFO, true);
+
 
         SDKInitializer.initialize(getApplicationContext());
 

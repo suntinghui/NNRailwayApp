@@ -36,10 +36,14 @@ import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
 import com.lkpower.railway.util.UMengPushUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 import com.umeng.message.IUmengCallback;
 import com.umeng.message.PushAgent;
 
 import org.angmarch.views.NiceSpinner;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +56,7 @@ import cn.aigestudio.datepicker.views.DatePicker;
 import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
 
 
 /**
@@ -88,11 +93,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         setContentView(R.layout.activity_station_list);
 
-//        checkUpdate();
+        checkUpdate();
 
         initView();
 
-        /*
         ActivityUtil.verifyReadPhoneStatePermissions(this);
 
         new UMengPushUtil().new AddAliasTask(this).execute();
@@ -111,8 +115,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         mPushAgent.setPushIntentServiceClass(MyUMengPushService.class);
 
         registerBroadcastReceiver();
-
-        */
     }
 
     private void initView() {
@@ -135,7 +137,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         ActivityUtil.setEmptyView(this, listView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestStationList("正在查询车站信息...");
+                requestStationListEx("正在查询车站信息...");
             }
         });
     }
@@ -146,8 +148,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         UpdateFunGO.onResume(this);
 
-        //requestStationList(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
-        requestStationList("正在查询车站信息...");
+        requestStationListEx(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
     }
 
     @Override
@@ -201,6 +202,100 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         }
     }
 
+    private void requestStationListEx(final String msg){
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "DeviceDetailInfo")
+                .params("DeviceId",DeviceUtil.getDeviceId(this))
+                .params("Version",ActivityUtil.getPackageInfo(this).versionName)
+                .execute(new StringCallback(){
+
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        NetworkHelper.getInstance().showProgress(msg);
+                    }
+
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
+
+                        e.printStackTrace();
+
+                        NetworkHelper.getInstance().hideProgress();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        NetworkHelper.getInstance().hideProgress();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Log.e("===", "okgo response:"+jsonObject);
+
+                            Gson gson = new GsonBuilder().create();
+                            DeviceDetailInfoDto deviceDetailInfoDto = gson.fromJson(jsonObject, DeviceDetailInfoDto.class);
+                            if (deviceDetailInfoDto.getResult().getFlag() == 1) {
+                                trainList.clear();
+
+                                deviceInfo = deviceDetailInfoDto.getDataInfo().getDeviceInfo();
+                                trainInfoList = (ArrayList<TrainInfo>) deviceDetailInfoDto.getDataInfo().getTrainInfo();
+
+                                Constants.DeviceInfo = deviceInfo;
+
+                                if (trainInfoList != null && trainInfoList.size() != 0) {
+                                    runningBtn.setVisibility(View.VISIBLE);
+                                    listView.setAlpha(1.0f);
+
+                                    adapter.setData(trainInfoList.get(0).getStationInfo());
+                                    adapter.notifyDataSetChanged();
+
+                                    Constants.CarNumberId = trainInfoList.get(0).getID();
+                                    Constants.CarNumberName = trainInfoList.get(0).getTrainName();
+
+                                    titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
+
+                                    for (TrainInfo info : trainInfoList) {
+                                        trainList.add(info.getTrainName() + "/" + Constants.DeviceInfo.getUserName());
+                                    }
+
+                                    titleSpinner.attachDataSource(trainList);
+                                    titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                        @Override
+                                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                            changeTrain(i);
+                                        }
+
+                                        @Override
+                                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                        }
+                                    });
+
+                                } else {
+                                    Toast.makeText(StationListActivityEx.this, "未查询到数据", Toast.LENGTH_SHORT).show();
+                                    runningBtn.setVisibility(View.INVISIBLE);
+                                }
+
+                            } else {
+                                Toast.makeText(StationListActivityEx.this, deviceDetailInfoDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                                runningBtn.setVisibility(View.INVISIBLE);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
+    }
+
+    /*
     private void requestStationList(String msg) {
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "DeviceDetailInfo");
@@ -270,6 +365,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         NetworkHelper.getInstance().addToRequestQueue(request, msg);
     }
+    */
 
     private void requestTrainStart() {
         HashMap<String, String> tempMap = new HashMap<String, String>();
@@ -296,7 +392,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                             startWarningLocationService();
                             stopWarningTimeService();
 
-                            requestStationList(null);
+                            requestStationListEx(null);
 
                         } else {
                             startWaringTimeService();
@@ -397,7 +493,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private void checkUpdate() {
         UpdateKey.API_TOKEN = Constants.FIR_API_TOKEN;
         UpdateKey.APP_ID = Constants.FIR_APP_ID;
-        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;
+        UpdateKey.DialogOrNotification = UpdateKey.WITH_DIALOG;
         UpdateFunGO.init(this);
     }
 

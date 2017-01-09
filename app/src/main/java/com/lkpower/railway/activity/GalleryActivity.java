@@ -14,6 +14,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.king.photo.util.Bimp;
 import com.king.photo.util.PublicWay;
@@ -109,15 +110,24 @@ public class GalleryActivity extends BaseActivity {
     };
 
     private void initListViews(String name) {
-        if (listViews == null)
-            listViews = new ArrayList<View>();
-        PhotoView img = new PhotoView(this);
-        img.setBackgroundColor(0xff000000);
-        Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + name + ".jpg");
-        img.setImageBitmap(bitmap);
-        img.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
-        listViews.add(img);
+        try {
+            if (listViews == null)
+                listViews = new ArrayList<View>();
+            PhotoView img = new PhotoView(this);
+            img.setBackgroundColor(0xff000000);
+
+            Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + name + ".jpg", 480, 320);
+
+            img.setImageBitmap(bitmap);
+            img.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT));
+            listViews.add(img);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            Toast.makeText(this, "图片显示失败", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     // 返回按钮添加的监听器

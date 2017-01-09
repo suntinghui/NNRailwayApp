@@ -188,7 +188,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             jsonMap.put("ImgInfo", imgList);
         }
 
-
         HashMap<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("commondKey", "UpdateDrivingInfo");
         tempMap.put("jsonData", new GsonBuilder().create().toJson(jsonMap));

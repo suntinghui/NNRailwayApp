@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,6 +55,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.king.photo.activity.ShowAlbumActivity.bitmap;
 
 
 /**
@@ -230,84 +233,88 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     }
 
     private void requestUpdateTask() {
-        HashMap<String, Object> jsonMap = new HashMap<String, Object>();
-        jsonMap.put("ID", task.getID());
-        jsonMap.put("missionId", task.getMissionId());
-        jsonMap.put("executor", task.getExecutor());
-        jsonMap.put("state", toggleFlag ? "2" : "1"); // 1未完成 2已完成
-        jsonMap.put("remark", remarkEditText.getText().toString());
-        jsonMap.put("updateUser", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
-        jsonMap.put("updateTime", DateUtil.getCurrentDateTime());
+        try {
+            HashMap<String, Object> jsonMap = new HashMap<String, Object>();
+            jsonMap.put("ID", task.getID());
+            jsonMap.put("missionId", task.getMissionId());
+            jsonMap.put("executor", task.getExecutor());
+            jsonMap.put("state", toggleFlag ? "2" : "1"); // 1未完成 2已完成
+            jsonMap.put("remark", remarkEditText.getText().toString());
+            jsonMap.put("updateUser", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
+            jsonMap.put("updateTime", DateUtil.getCurrentDateTime());
 
-        StringBuffer sb = new StringBuffer(new GsonBuilder().create().toJson(jsonMap));
+            StringBuffer sb = new StringBuffer(new GsonBuilder().create().toJson(jsonMap));
 
-        if (!Bimp.tempSelectBitmap.isEmpty()) {
-            sb.deleteCharAt(sb.length() - 1);
-            sb.append(",\"ImgInfo\":[");
+            if (!Bimp.tempSelectBitmap.isEmpty()) {
+                sb.deleteCharAt(sb.length() - 1);
+                sb.append(",\"ImgInfo\":[");
 
-            for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg", 480, 320);
+                for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
+                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg", 480, 320);;
+                    sb.append("{\"imgData\":\"");
+                    sb.append(ImageUtil.bitmapToBase64(bitmap));
+                    sb.append("\"}");
 
-                sb.append("{\"imgData\":\"");
-                sb.append(ImageUtil.bitmapToBase64(bitmap));
-                sb.append("\"}");
-
-                if (i != Bimp.tempSelectBitmap.size() - 1) {
-                    sb.append(",");
-                }
-
-                // 先判断是否已经回收
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    // 回收并且置为null
-                    bitmap.recycle();
-                    bitmap = null;
-                }
-            }
-
-            sb.append("]}");
-        }
-
-
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "UpdateMissionInfo");
-        tempMap.put("jsonData", sb.toString());
-
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-
-                    if (resultMsgDto.getResult().getFlag() == 1) {
-                        Bimp.tempSelectBitmap.clear();
-                        remarkEditText.setText("");
-                        remarkTemp = "";
-
-
-                        for (String name : tempImgList) {
-                            FileUtil.deleteFile("", name + ".jpg");
-                        }
-
-                        SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
-                        editor.remove(task.getID());
-                        editor.commit();
-
-                        showSuccess();
-
-                    } else {
-                        Toast.makeText(TaskInfoUploadActivityEx.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    if (i != Bimp.tempSelectBitmap.size() - 1) {
+                        sb.append(",");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    // 先判断是否已经回收
+                    if (bitmap != null && !bitmap.isRecycled()) {
+                        // 回收并且置为null
+                        bitmap.recycle();
+                        bitmap = null;
+                    }
                 }
 
+                sb.append("]}");
             }
-        });
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
+
+            HashMap<String, String> tempMap = new HashMap<String, String>();
+            tempMap.put("commondKey", "UpdateMissionInfo");
+            tempMap.put("jsonData", sb.toString());
+
+            JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String jsonObject) {
+                    try {
+                        Gson gson = new GsonBuilder().create();
+                        ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+
+                        if (resultMsgDto.getResult().getFlag() == 1) {
+                            Bimp.tempSelectBitmap.clear();
+                            remarkEditText.setText("");
+                            remarkTemp = "";
+
+
+                            for (String name : tempImgList) {
+                                FileUtil.deleteFile("", name + ".jpg");
+                            }
+
+                            SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                            editor.remove(task.getID());
+                            editor.commit();
+
+                            showSuccess();
+
+                        } else {
+                            Toast.makeText(TaskInfoUploadActivityEx.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+            NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -383,7 +390,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", null);
+                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 64);
                 holder.image.setImageBitmap(bitmap);
             }
 
