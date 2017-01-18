@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -26,7 +25,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.king.photo.util.Bimp;
@@ -34,23 +32,26 @@ import com.king.photo.util.ImageItem;
 import com.king.photo.util.Res;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.FileUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lkpower.railway.util.ImageFactory;
 import com.lkpower.railway.util.ImageUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import anet.channel.util.StringUtils;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
 
 import static com.king.photo.activity.BaseActivity.bimap;
 
@@ -100,7 +101,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         noScrollgridview = (GridView) findViewById(R.id.noScrollgridview);
         noScrollgridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
         adapter = new GridAdapter(this);
-        //adapter.update();
         noScrollgridview.setAdapter(adapter);
         noScrollgridview.setOnItemClickListener(new OnItemClickListener() {
 
@@ -169,33 +169,49 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             return;
         }
 
-        HashMap<String, Object> jsonMap = new HashMap<String, Object>();
-        jsonMap.put("CarNumberId", Constants.CarNumberId);
-        jsonMap.put("CarNumberName", Constants.CarNumberName);
-        jsonMap.put("GroupId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID());
-        jsonMap.put("GroupName", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
-        jsonMap.put("SubmitTime", DateUtil.getCurrentDateTime());
-        jsonMap.put("Remark", remarkEditText.getText().toString().trim());
+        PostRequest request = OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .isMultipart(true)       // 强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
+                .params("commondKey", "UpdateDrivingInfoExt")
+                .params("CarNumberId", Constants.CarNumberId)
+                .params("CarNumberName", Constants.CarNumberName)
+                .params("GroupId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID())
+                .params("GroupName", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName())
+                .params("SubmitTime", DateUtil.getCurrentDateTime())
+                .params("Remark", remarkEditText.getText().toString().trim());
 
         if (!Bimp.tempSelectBitmap.isEmpty()) {
-            ArrayList imgList = new ArrayList();
+            ArrayList<File> fileList = new ArrayList<File>();
             for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-                HashMap<String, String> imgMap = new HashMap<String, String>();
-                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg", 480, 320);
-                imgMap.put("imgData", ImageUtil.bitmapToBase64(bitmap));
-                imgList.add(imgMap);
+                fileList.add(new File(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg"));
             }
-            jsonMap.put("ImgInfo", imgList);
+
+            request.addFileParams("ImgInfo", fileList);
         }
 
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "UpdateDrivingInfo");
-        tempMap.put("jsonData", new GsonBuilder().create().toJson(jsonMap));
-
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
+        request.execute(new StringCallback() {
 
             @Override
-            public void onResponse(String jsonObject) {
+            public void onBefore(BaseRequest request) {
+                HUDUtil.showHUD(DrivingInfoActivity.this, "正在上传数据...");
+            }
+
+            @Override
+            public void onAfter(String s, Exception e) {
+                HUDUtil.dismiss();
+            }
+
+            @Override
+            public void onError(Call call, okhttp3.Response response, Exception e) {
+                super.onError(call, response, e);
+
+                e.printStackTrace();
+
+                Toast.makeText(DrivingInfoActivity.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
                 try {
                     Gson gson = new GsonBuilder().create();
                     ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
@@ -229,12 +245,8 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
-
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
-
     }
 
     public class GridAdapter extends BaseAdapter {
@@ -298,8 +310,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", null);
-                holder.image.setImageBitmap(bitmap);
+                holder.image.setImageBitmap(ImageFactory.ratio(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 54));
             }
 
             return convertView;
@@ -374,8 +385,8 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
                     File photoFile = new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg");
-                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384);
-                    FileUtil.saveBitmap(bitmap);
+                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 480, 270);
+                    FileUtil.saveBitmap(bitmap, photoFile.getAbsolutePath());
 
                     SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
                     HashSet<String> set = new HashSet<String>(ActivityUtil.getSharedPreferences().getStringSet(TAG, new HashSet<String>()));

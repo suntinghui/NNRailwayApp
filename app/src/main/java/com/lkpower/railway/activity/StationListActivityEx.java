@@ -18,15 +18,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.DeviceDetailInfoDto;
 import com.lkpower.railway.dto.DeviceInfo;
 import com.lkpower.railway.dto.ResultMsgDto;
@@ -35,6 +31,8 @@ import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
+import com.lkpower.railway.util.ExceptionUtil;
+import com.lkpower.railway.util.HUDUtil;
 import com.lkpower.railway.util.UMengPushUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -43,7 +41,6 @@ import com.umeng.message.IUmengCallback;
 import com.umeng.message.PushAgent;
 
 import org.angmarch.views.NiceSpinner;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -202,18 +199,18 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         }
     }
 
-    private void requestStationListEx(final String msg){
+    private void requestStationListEx(final String msg) {
         OkGo.post(Constants.HOST_IP_REQ)
                 .tag(this)
                 .params("commondKey", "DeviceDetailInfo")
-                .params("DeviceId",DeviceUtil.getDeviceId(this))
-                .params("Version",ActivityUtil.getPackageInfo(this).versionName)
-                .execute(new StringCallback(){
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("Version", ActivityUtil.getPackageInfo(this).versionName)
+                .execute(new StringCallback() {
 
                     @Override
                     public void onBefore(BaseRequest request) {
                         super.onBefore(request);
-                        NetworkHelper.getInstance().showProgress(msg);
+                        HUDUtil.showHUD(StationListActivityEx.this, msg);
                     }
 
                     @Override
@@ -222,20 +219,20 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
                         e.printStackTrace();
 
-                        NetworkHelper.getInstance().hideProgress();
+                        Toast.makeText(StationListActivityEx.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onAfter(String s, Exception e) {
                         super.onAfter(s, e);
 
-                        NetworkHelper.getInstance().hideProgress();
+                        HUDUtil.dismiss();
                     }
 
                     @Override
                     public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
                         try {
-                            Log.e("===", "okgo response:"+jsonObject);
+                            Log.e("===", "okgo response:" + jsonObject);
 
                             Gson gson = new GsonBuilder().create();
                             DeviceDetailInfoDto deviceDetailInfoDto = gson.fromJson(jsonObject, DeviceDetailInfoDto.class);
@@ -368,49 +365,68 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     */
 
     private void requestTrainStart() {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "TrainStart");
-        tempMap.put("trainNumbeId", trainInfoList.get(location).getID());
-        tempMap.put("deviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("startTime", DateUtil.getCurrentDate());
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "TrainStart")
+                .params("trainNumbeId", trainInfoList.get(location).getID())
+                .params("deviceId", DeviceUtil.getDeviceId(this))
+                .params("startTime", DateUtil.getCurrentDate())
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultDto.getResult().getFlag() == 1) {
-                        Constants.RUNNING = true;
-                        runningBtn.setText("停止");
-                        Toast.makeText(StationListActivityEx.this, "列车已标记为开始,请查看相关任务", Toast.LENGTH_SHORT).show();
-                        adapter.notifyDataSetChanged();
-                        listView.setAlpha(1.0f);
-
-                        if (Constants.CURRENT_TRAIN_LATE) {
-                            startWarningLocationService();
-                            stopWarningTimeService();
-
-                            requestStationListEx(null);
-
-                        } else {
-                            startWaringTimeService();
-                            stopWarningLocationService();
-                        }
-
-                    } else {
-                        Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        HUDUtil.showHUD(StationListActivityEx.this, "正在启动,请稍候...");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "请稍候...");
+                        Toast.makeText(StationListActivityEx.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        HUDUtil.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultDto.getResult().getFlag() == 1) {
+                                Constants.RUNNING = true;
+                                runningBtn.setText("停止");
+                                Toast.makeText(StationListActivityEx.this, "列车已标记为开始,请查看相关任务", Toast.LENGTH_SHORT).show();
+                                adapter.notifyDataSetChanged();
+                                listView.setAlpha(1.0f);
+
+                                if (Constants.CURRENT_TRAIN_LATE) {
+                                    startWarningLocationService();
+                                    stopWarningTimeService();
+
+                                    requestStationListEx(null);
+
+                                } else {
+                                    startWaringTimeService();
+                                    stopWarningLocationService();
+                                }
+
+                            } else {
+                                Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     private void startWaringTimeService() {
@@ -438,37 +454,53 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     }
 
     private void requestAlarmUpdateLogInfo(String stationId, TrainInfo trainInfo) {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "AlarmUpdateLogInfo");
-        tempMap.put("InstanceId", trainInfo.getInstanceId());
-        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("LogTime", DateUtil.getCurrentDateTime());
-        tempMap.put("StationId", stationId);
-        tempMap.put("Remark", "");
-        tempMap.put("Args", "");
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "AlarmUpdateLogInfo")
+                .params("InstanceId", trainInfo.getInstanceId())
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("LogTime", DateUtil.getCurrentDateTime())
+                .params("StationId", stationId)
+                .params("Remark", "")
+                .params("Args", "")
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultDto.getResult().getFlag() == 1) {
-                        Log.e("===", "用户点击了预警通知,并成功告知服务器");
-
-                    } else {
-                        Log.e("", "预警失败:" + resultDto.getResult().getFlagInfo());
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, null);
+                        Toast.makeText(StationListActivityEx.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultDto.getResult().getFlag() == 1) {
+                                Log.e("===", "用户点击了预警通知,并成功告知服务器");
+
+                            } else {
+                                Log.e("", "预警失败:" + resultDto.getResult().getFlagInfo());
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
 

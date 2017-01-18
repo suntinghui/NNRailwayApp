@@ -116,7 +116,7 @@ public class GalleryActivity extends BaseActivity {
             PhotoView img = new PhotoView(this);
             img.setBackgroundColor(0xff000000);
 
-            Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + name + ".jpg", 480, 320);
+            Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + name + ".jpg", 480, 270);
 
             img.setImageBitmap(bitmap);
             img.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,

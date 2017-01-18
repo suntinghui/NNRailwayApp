@@ -124,6 +124,7 @@ public class Download extends Thread {
         }
         Log.i("UpdateFun TAG",
                 String.format("ApkDownloadUrl:%s", DownloadKey.apkUrl));
+
         try {
             conn = (HttpURLConnection) url.openConnection();
             conn.connect();

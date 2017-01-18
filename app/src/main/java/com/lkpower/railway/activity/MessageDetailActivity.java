@@ -6,21 +6,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
-import com.lkpower.railway.dto.InfoPublishListDto;
+import com.lkpower.railway.client.Constants;
+import com.lkpower.railway.dto.MessageDto;
 import com.lkpower.railway.dto.MessageModel;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.DeviceUtil;
+import com.lkpower.railway.util.ExceptionUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
-import java.util.HashMap;
-
-import static com.king.photo.activity.ShowAllPhoto.dataList;
+import okhttp3.Call;
 
 /**
  * Created by sth on 08/11/2016.
@@ -71,36 +71,54 @@ public class MessageDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void requestReaded(){
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "UpdateInfoPublish");
-        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("InfoId", message.getID());
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "UpdateInfoPublish")
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("InfoId", message.getID())
+                .execute(new StringCallback() {
 
-
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultMsgDto.getResult().getFlag() == 1) {
-
-                    } else {
-                        Toast.makeText(MessageDetailActivity.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        HUDUtil.showHUD(MessageDetailActivity.this, "正在请求数据...");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-                } finally {
-                    refreshView();
-                }
+                        e.printStackTrace();
 
-            }
-        });
+                        Toast.makeText(MessageDetailActivity.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在请求数据...");
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        HUDUtil.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultMsgDto.getResult().getFlag() == 1) {
+
+                            } else {
+                                Toast.makeText(MessageDetailActivity.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                        } finally {
+                            refreshView();
+                        }
+                    }
+                });
     }
 
     @Override

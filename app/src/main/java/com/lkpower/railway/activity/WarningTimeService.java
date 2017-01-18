@@ -9,25 +9,25 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lkpower.railway.client.ActivityManager;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
+import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
+import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.NotificationUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import okhttp3.Call;
 
 /**
  * Created by sth on 28/11/2016.
@@ -98,7 +98,7 @@ public class WarningTimeService extends Service {
                 Log.e("------", when.toString());
 
                 // 如果本站的时间小于当前的时间则说明已经过站了,则不再提醒。
-                if (when.before(new Date()))
+                if (!when.after(new Date()))
                     continue;
 
                 Log.e("======", when.toString());
@@ -117,13 +117,12 @@ public class WarningTimeService extends Service {
                 handler = new Handler() {
                     public void handleMessage(Message msg) {
                         if (msg.what == 1) {
-                            startTimer();
 
                             Intent warningIntent = new Intent(WarningTimeService.this, WarningNotificationClickReceiver.class);
                             warningIntent.putExtra("PLAY", true);
                             WarningTimeService.this.sendBroadcast(warningIntent);
 
-                            String content = station.getStationName() + "还有" + station.getAheadTime() + "分钟到站,请您及时完成相关任务。";
+                            String content = station.getStationName() + "即将在" + station.getAheadTime() + "分钟后(" + station.getArrivalTime() + ")到站,请您及时完成相关任务。";
                             Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
                             intent.putExtra("EarlyWarning", true);
                             intent.putExtra("TRAIN_INFO", trainInfo);
@@ -131,6 +130,9 @@ public class WarningTimeService extends Service {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                             NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+
+                            // 启动下一轮监测
+                            startTimer();
 
                             requestTellServer();
                         }
@@ -162,46 +164,62 @@ public class WarningTimeService extends Service {
     }
 
     private void requestTellServer() {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "AlarmLogInfo");
-        tempMap.put("InstanceId", trainInfo.getInstanceId());
-        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("LogTime", DateUtil.getCurrentDateTime());
-        tempMap.put("StationId", station.getID());
-        tempMap.put("Remark", "");
-        tempMap.put("Args", "");
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "AlarmLogInfo")
+                .params("InstanceId", trainInfo.getInstanceId())
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("LogTime", DateUtil.getCurrentDateTime())
+                .params("StationId", station.getID())
+                .params("Remark", "")
+                .params("Args", "")
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultMsgDto.getResult().getFlag() == 1) {
-                        Log.e("===", "预警信息已经发送到服务器");
-                        currentSentCount = 0;
-
-                    } else {
-                        //Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
-
-                        if (++currentSentCount < MAX_SEND) {
-                            Log.e("===", "预警信息发送到服务器失败,重发:" + currentSentCount);
-
-                            requestTellServer();
-
-                        } else {
-                            currentSentCount = 0;
-                        }
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, null);
+                        Toast.makeText(WarningTimeService.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultMsgDto.getResult().getFlag() == 1) {
+                                Log.e("===", "预警信息已经发送到服务器");
+                                currentSentCount = 0;
+
+                            } else {
+                                //Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+
+                                if (++currentSentCount < MAX_SEND) {
+                                    Log.e("===", "预警信息发送到服务器失败,重发:" + currentSentCount);
+
+                                    requestTellServer();
+
+                                } else {
+                                    currentSentCount = 0;
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

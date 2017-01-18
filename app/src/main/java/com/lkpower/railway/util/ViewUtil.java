@@ -6,9 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-
 public class ViewUtil {
 
 	public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -56,24 +53,6 @@ public class ViewUtil {
 		// params.height最后得到整个ListView完整显示需要的高度
 		listView.setLayoutParams(params);
 		return params.height;
-	}
-
-	public static void shakeView(final View view) {
-		new Handler().postDelayed(new Runnable() {
-			public void run() {
-				view.setVisibility(View.VISIBLE);
-				YoYo.with(Techniques.Shake).duration(500).playOn(view);
-			}
-		}, 0);
-	}
-
-	public static void dropoutView(final View view, int delay) {
-		new Handler().postDelayed(new Runnable() {
-			public void run() {
-				view.setVisibility(View.VISIBLE);
-				YoYo.with(Techniques.DropOut).duration(500).playOn(view);
-			}
-		}, delay);
 	}
 
 }

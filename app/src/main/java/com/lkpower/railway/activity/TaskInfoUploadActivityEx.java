@@ -9,12 +9,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.king.photo.util.Bimp;
@@ -37,26 +34,28 @@ import com.king.photo.util.ImageItem;
 import com.king.photo.util.Res;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.FileUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lkpower.railway.util.ImageFactory;
 import com.lkpower.railway.util.ImageUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.request.PostRequest;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.king.photo.activity.ShowAlbumActivity.bitmap;
+import okhttp3.Call;
+import okhttp3.Response;
 
 
 /**
@@ -233,88 +232,79 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
     }
 
     private void requestUpdateTask() {
-        try {
-            HashMap<String, Object> jsonMap = new HashMap<String, Object>();
-            jsonMap.put("ID", task.getID());
-            jsonMap.put("missionId", task.getMissionId());
-            jsonMap.put("executor", task.getExecutor());
-            jsonMap.put("state", toggleFlag ? "2" : "1"); // 1未完成 2已完成
-            jsonMap.put("remark", remarkEditText.getText().toString());
-            jsonMap.put("updateUser", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName());
-            jsonMap.put("updateTime", DateUtil.getCurrentDateTime());
+        PostRequest request = OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .isMultipart(true)       // 强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
+                .params("commondKey", "UpdateMissionInfoExt")
+                .params("ID", task.getID())
+                .params("missionId", task.getMissionId())
+                .params("executor", task.getExecutor())
+                .params("state", toggleFlag ? "2" : "1") // 1未完成 2已完成
+                .params("remark", remarkEditText.getText().toString())
+                .params("updateUser", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getUserName())
+                .params("serialNumber", DateUtil.getCurrentDate())
+                .params("updateTime", DateUtil.getCurrentDateTime());
 
-            StringBuffer sb = new StringBuffer(new GsonBuilder().create().toJson(jsonMap));
-
-            if (!Bimp.tempSelectBitmap.isEmpty()) {
-                sb.deleteCharAt(sb.length() - 1);
-                sb.append(",\"ImgInfo\":[");
-
-                for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg", 480, 320);;
-                    sb.append("{\"imgData\":\"");
-                    sb.append(ImageUtil.bitmapToBase64(bitmap));
-                    sb.append("\"}");
-
-                    if (i != Bimp.tempSelectBitmap.size() - 1) {
-                        sb.append(",");
-                    }
-
-                    // 先判断是否已经回收
-                    if (bitmap != null && !bitmap.isRecycled()) {
-                        // 回收并且置为null
-                        bitmap.recycle();
-                        bitmap = null;
-                    }
-                }
-
-                sb.append("]}");
+        if (!Bimp.tempSelectBitmap.isEmpty()) {
+            ArrayList<File> fileList = new ArrayList<File>();
+            for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
+                fileList.add(new File(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg"));
             }
 
+            request.addFileParams("ImgInfo", fileList);
+        }
 
-            HashMap<String, String> tempMap = new HashMap<String, String>();
-            tempMap.put("commondKey", "UpdateMissionInfo");
-            tempMap.put("jsonData", sb.toString());
+        request.execute(new StringCallback() {
 
-            JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
+            @Override
+            public void onBefore(BaseRequest request) {
+                HUDUtil.showHUD(TaskInfoUploadActivityEx.this, "正在上传数据...");
+            }
 
-                @Override
-                public void onResponse(String jsonObject) {
-                    try {
-                        Gson gson = new GsonBuilder().create();
-                        ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+            @Override
+            public void onError(Call call, Response response, Exception e) {
+                super.onError(call, response, e);
 
-                        if (resultMsgDto.getResult().getFlag() == 1) {
-                            Bimp.tempSelectBitmap.clear();
-                            remarkEditText.setText("");
-                            remarkTemp = "";
+                Toast.makeText(TaskInfoUploadActivityEx.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onAfter(String s, Exception e) {
+                HUDUtil.dismiss();
+            }
+
+            @Override
+            public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                try {
+                    Gson gson = new GsonBuilder().create();
+                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+
+                    if (resultMsgDto.getResult().getFlag() == 1) {
+                        Bimp.tempSelectBitmap.clear();
+                        remarkEditText.setText("");
+                        remarkTemp = "";
 
 
-                            for (String name : tempImgList) {
-                                FileUtil.deleteFile("", name + ".jpg");
-                            }
-
-                            SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
-                            editor.remove(task.getID());
-                            editor.commit();
-
-                            showSuccess();
-
-                        } else {
-                            Toast.makeText(TaskInfoUploadActivityEx.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        for (String name : tempImgList) {
+                            FileUtil.deleteFile("", name + ".jpg");
                         }
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                        editor.remove(task.getID());
+                        editor.commit();
+
+                        showSuccess();
+
+                    } else {
+                        Toast.makeText(TaskInfoUploadActivityEx.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
                     }
 
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
-
-            NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            }
+        });
 
     }
 
@@ -390,8 +380,7 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 64);
-                holder.image.setImageBitmap(bitmap);
+                holder.image.setImageBitmap(ImageFactory.ratio(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 54));
             }
 
             return convertView;
@@ -485,8 +474,8 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
 
 
                     File photoFile = new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg");
-                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 512, 384);
-                    FileUtil.saveBitmap(bitmap);
+                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 480, 270);
+                    FileUtil.saveBitmap(bitmap, photoFile.getAbsolutePath());
 
                     SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
                     HashSet<String> set = new HashSet<String>(ActivityUtil.getSharedPreferences().getStringSet(task.getID(), new HashSet<String>()));

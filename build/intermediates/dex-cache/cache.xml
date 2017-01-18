@@ -3,255 +3,21 @@
 
     <item
         is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.4.1/c7c4f9e35c2fd5900da24f9872e3971801f08ce0/okhttp-3.4.1.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="c7c4f9e35c2fd5900da24f9872e3971801f08ce0">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/okhttp-3.4.1_f2680ef19864e777fc71e0e92ffeb4bf74c34e4b.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="09b462bbcb77650284bd6614f1a32f360ef369f8">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-24.2.1_f3df1659d3e02a3f847091484b11de0e9cc3d237.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.6.1/86b122e640af09b0723e1fa44083c354ba6d9089/glide-3.6.1.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="86b122e640af09b0723e1fa44083c354ba6d9089">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/glide-3.6.1_42221eb0bc3df1f4205868c86e1c7bc4632a59d9.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/libs/httpmime-4.1.2.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="ed8b5ee0167cb27dea55851259eb34b609f31df0">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/httpmime-4.1.2_7cb4e784fda9b13a7e6df58a95cf854d39a0abd2.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/libs/app-monitor-sdk-2.5.1.1_for_bc_proguard.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="e8b9d6b75d518d7fb5a4b684e90a1bc886e85f56">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/app-monitor-sdk-2.5.1.1_for_bc_proguard_c69f5da9e3fe2609dc725882b1cac34a456f8b95.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="9c4c3bc902450c39ed54de170db4fb12aea20a35">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-24.2.1_2072864a5b7ddaab3b38b23e3bd84498e9e8b75f.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/jars/libs/internal_impl-24.2.1.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="fbf8da429efd5ad21e02e3e5ecaa1efc4167878d">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/internal_impl-24.2.1_5d0db7973ad882415bb097c419d77dd434c775e8.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-compat-24.2.1_e4709ad44ab2041bc6b300192eb731a406b14f00.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="43b2dba6b5a0b14527961b75329d0b90025f15ea">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-24.2.1_2bd1a13bc01e5c178b802a8a8e2b53f477c8ebc2.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/libs/BaiduLBS_Android.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="e53b14e9054757ca7a1cb3527ed7752e5d4d2444">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/BaiduLBS_Android_b3bf22786f7ad9dfb7134119ab292b5f9176b29e.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.daimajia.easing/library/1.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="d7e947f993bf32a00fcb3078cdda8bb11c930afb">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.daimajia.easing-library-1.0.1_d62f5926009869eb16682d1454c4f9b610cdbbb0.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.darsh.multipleimageselect/multipleimageselect/1.0.4/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="91a335dab6fcecb5f15f9f19e960e02bb3e699aa">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.darsh.multipleimageselect-multipleimageselect-1.0.4_d4bd484d948a70569ed00b2f0c32d14988092520.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/NNRailwayApp/photo/unspecified/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="597304c13c840cd14f661fef18006f368e7fab78">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-photo-unspecified_38471c59fe88598f5baf69bc39c4a3aca857df76.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/org.greenrobot/greendao/3.2.0/e70040568b2929b8e5869ad1ffca8e4386dc53bc/greendao-3.2.0.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="e70040568b2929b8e5869ad1ffca8e4386dc53bc">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/greendao-3.2.0_62cac4cc6f90b8ea51e0e337e22aeca7ffe22922.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.2.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="5a2386ad9bfff580b206a7fe305cdccd00798159">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/io.reactivex-rxandroid-1.2.1_5e63ef0ee3737a6665920c0d7afe96ac82c88b2d.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.jph.takephoto/takephoto_library/3.0.2/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="9ef24bf09e50eebfaafeb72faa60c4765b19fe15">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.jph.takephoto-takephoto_library-3.0.2_adcd4c8830b34893b877dae4e1df417c28407868.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.pnikosis/materialish-progress/1.0/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="57487745ce450899f9f250d5ae5c092a682cd041">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.pnikosis-materialish-progress-1.0_64f44c47f04c7e13276865b1188efd47add833cb.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/NNRailwayApp/PushSDK/unspecified/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="a908a9ecf77c0bb9ef606b0aa7a0c0dc0612eb02">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-PushSDK-unspecified_4feca734fac2989a68d91925d090a9d7bd60ae39.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/org.greenrobot/greendao-api/3.2.0/c6d610abe1d75d758431c9234917a349abc0a0ac/greendao-api-3.2.0.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="c6d610abe1d75d758431c9234917a349abc0a0ac">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/greendao-api-3.2.0_f9070e590ff4f94fb17e2f729f831c80f088beb9.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.soundcloud.android.crop/lib_crop/1.0.0/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="2013b068d3aecc7d4a96f39d343686bcd4a84a63">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.soundcloud.android.crop-lib_crop-1.0.0_018b84b9f35cd6e06a0ae9523e7887d64d3940e5.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/jars/libs/internal_impl-24.2.1.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="867dad63c33388ff8c7644b236579355036d075f">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/internal_impl-24.2.1_762b1c6c25a6f601f511bc4fae8d0b495bbd69f5.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/cn.pedant.sweetalert/library/1.3/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="0c3529d9491be892952749d252ae1defa9b1f937">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/cn.pedant.sweetalert-library-1.3_8635be823a2dd71ed1ab0a9300fb5e4ec1ec3f42.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/subsampling-scale-image-view-3.6.0/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="ae3fb5e70b67cf542338288b0d68c6c367da7367">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/intermediates-exploded-aar-subsampling-scale-image-view-3.6.0_beaaa9ff15ee5c93edb72951cf9a47a3a17d93f5.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.lzy.net/okserver/1.1.3/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="379d026596d204cf421ba7b918e8195a659089ce">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.lzy.net-okserver-1.1.3_6025faa8f3123a321f93fc42b1eda2f53ca31e5e.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.lzy.net/okgo/2.1.4/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="cb698597bf429f71793a87217f63a28cf7de0916">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.lzy.net-okgo-2.1.4_b42b6d9750591b757f7bc286c26febff8c86032b.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.mcxiaoke.volley/library/1.0.19/a8f23f65fc1e522ee4a1a697ee569901a46741fa/library-1.0.19.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="a8f23f65fc1e522ee4a1a697ee569901a46741fa">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/library-1.0.19_db82a9e32d744a232b114c15f343f5b26b30fd32.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/io.reactivex/rxjava/1.2.0/42bfaf64c94f3848ebf5cf1c2ea4ec9d1b3ac6c8/rxjava-1.2.0.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="42bfaf64c94f3848ebf5cf1c2ea4ec9d1b3ac6c8">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/rxjava-1.2.0_343328912ba70e179cba17829fe81f6d0834e2a9.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.1/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
         sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-24.2.1_1f220413ac5065e9894558e756c0a84cb14c1c96.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.4.1/c7c4f9e35c2fd5900da24f9872e3971801f08ce0/okhttp-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="c7c4f9e35c2fd5900da24f9872e3971801f08ce0">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/okhttp-3.4.1_f2680ef19864e777fc71e0e92ffeb4bf74c34e4b.jar" />
     </item>
     <item
         is-multidex="false"
@@ -282,6 +48,24 @@
     </item>
     <item
         is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="09b462bbcb77650284bd6614f1a32f360ef369f8">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-24.2.1_f3df1659d3e02a3f847091484b11de0e9cc3d237.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.6.1/86b122e640af09b0723e1fa44083c354ba6d9089/glide-3.6.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="86b122e640af09b0723e1fa44083c354ba6d9089">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/glide-3.6.1_42221eb0bc3df1f4205868c86e1c7bc4632a59d9.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/NNRailwayApp/PushSDK/unspecified/jars/libs/alicloud-android-sdk-httpdns-1.0.7.jar"
         jumboMode="false"
         optimize="true"
@@ -295,17 +79,35 @@
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="76c623c00bfa58b78be1fdc9504ec9723fd52b9c">
+        sha1="e50ed671414d0c4357d77fee7b432d8759503620">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-updatefun-1.8.6_8da82f4aeb61568189f872051d54ea5223188aef.jar" />
     </item>
     <item
         is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.daimajia.androidanimations/library/1.1.3/jars/classes.jar"
+        jar="/workspace/androidstudio/NNRailwayApp/app/libs/httpmime-4.1.2.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="8cec50fc9cc847bad0d6ed7d93814f4b34744521">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.daimajia.androidanimations-library-1.1.3_7e7bd362970ae4a20b9329ea4c2a0208af5a7492.jar" />
+        sha1="ed8b5ee0167cb27dea55851259eb34b609f31df0">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/httpmime-4.1.2_7cb4e784fda9b13a7e6df58a95cf854d39a0abd2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/libs/app-monitor-sdk-2.5.1.1_for_bc_proguard.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="e8b9d6b75d518d7fb5a4b684e90a1bc886e85f56">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/app-monitor-sdk-2.5.1.1_for_bc_proguard_c69f5da9e3fe2609dc725882b1cac34a456f8b95.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="9c4c3bc902450c39ed54de170db4fb12aea20a35">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-24.2.1_2072864a5b7ddaab3b38b23e3bd84498e9e8b75f.jar" />
     </item>
     <item
         is-multidex="false"
@@ -327,6 +129,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="fbf8da429efd5ad21e02e3e5ecaa1efc4167878d">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/internal_impl-24.2.1_5d0db7973ad882415bb097c419d77dd434c775e8.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -336,12 +147,30 @@
     </item>
     <item
         is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jar="/workspace/androidstudio/NNRailwayApp/app/libs/urlimageviewhelper-1.0.4.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/library-2.4.0_7cb3554ec5cd230164c14f825680e5a2df9550b1.jar" />
+        sha1="67125d743e0035a1b157ba8210c2abf1ff374e10">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/urlimageviewhelper-1.0.4_945772576f87db68f7e2a29aeaf7b98d4340ad3b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-support-compat-24.2.1_e4709ad44ab2041bc6b300192eb731a406b14f00.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="43b2dba6b5a0b14527961b75329d0b90025f15ea">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-24.2.1_2bd1a13bc01e5c178b802a8a8e2b53f477c8ebc2.jar" />
     </item>
     <item
         is-multidex="false"
@@ -351,6 +180,15 @@
         revision="24.0.3"
         sha1="52c959808b11b777248513aa664cd8b2c5e13959">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/gesture-imageview_05ebfab8fac08cecbe7a4eb1809fe3c4ce386abb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.kaopiz/kprogresshud/1.0.5/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="303f3c19296009125297a0cf7971c55c55ec0d6f">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.kaopiz-kprogresshud-1.0.5_b75d07e9afa1f3fdad7938664206369440e9f6d1.jar" />
     </item>
     <item
         is-multidex="false"
@@ -399,21 +237,39 @@
     </item>
     <item
         is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.github.frank-zhu/pullzoomview/1.0.0/jars/classes.jar"
+        jar="/workspace/androidstudio/NNRailwayApp/app/libs/BaiduLBS_Android.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="050ae7aeaf7c02f60dd80f254c251694b79f36fa">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.github.frank-zhu-pullzoomview-1.0.0_0d901a70da6c87de6d9ceba36e1c58f63627ef0e.jar" />
+        sha1="e53b14e9054757ca7a1cb3527ed7752e5d4d2444">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/BaiduLBS_Android_b3bf22786f7ad9dfb7134119ab292b5f9176b29e.jar" />
     </item>
     <item
         is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.jungly/gridPasswordView/0.3/jars/classes.jar"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.darsh.multipleimageselect/multipleimageselect/1.0.4/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="6e62346608e2fb3e9eae3e9351c31672f053fca2">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.jungly-gridPasswordView-0.3_4cc155daf9dd33c88d3cc6c838bb4017d7762550.jar" />
+        sha1="91a335dab6fcecb5f15f9f19e960e02bb3e699aa">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.darsh.multipleimageselect-multipleimageselect-1.0.4_d4bd484d948a70569ed00b2f0c32d14988092520.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/NNRailwayApp/photo/unspecified/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="597304c13c840cd14f661fef18006f368e7fab78">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-photo-unspecified_38471c59fe88598f5baf69bc39c4a3aca857df76.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.jph.takephoto/takephoto_library/3.0.2/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="9ef24bf09e50eebfaafeb72faa60c4765b19fe15">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.jph.takephoto-takephoto_library-3.0.2_adcd4c8830b34893b877dae4e1df417c28407868.jar" />
     </item>
     <item
         is-multidex="false"
@@ -444,12 +300,12 @@
     </item>
     <item
         is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.lzy.net/okrx/0.1.2/jars/classes.jar"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.pnikosis/materialish-progress/1.0/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="e549efd7ac4d8a6b5254bc16c26f5ba098b1f10a">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.lzy.net-okrx-0.1.2_6e2600af86294c93b989f3bd004f884d76829bb6.jar" />
+        sha1="57487745ce450899f9f250d5ae5c092a682cd041">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.pnikosis-materialish-progress-1.0_64f44c47f04c7e13276865b1188efd47add833cb.jar" />
     </item>
     <item
         is-multidex="false"
@@ -459,6 +315,15 @@
         revision="24.0.3"
         sha1="7e4389bd133359a2ff88623ff1e4ff93d6e6f780">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/internal_impl-24.2.1_668e2981adb07ca83b460c811f37c6bfcd920279.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/NNRailwayApp/PushSDK/unspecified/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="a908a9ecf77c0bb9ef606b0aa7a0c0dc0612eb02">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-PushSDK-unspecified_4feca734fac2989a68d91925d090a9d7bd60ae39.jar" />
     </item>
     <item
         is-multidex="false"
@@ -498,6 +363,33 @@
     </item>
     <item
         is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.soundcloud.android.crop/lib_crop/1.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="2013b068d3aecc7d4a96f39d343686bcd4a84a63">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.soundcloud.android.crop-lib_crop-1.0.0_018b84b9f35cd6e06a0ae9523e7887d64d3940e5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="867dad63c33388ff8c7644b236579355036d075f">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/internal_impl-24.2.1_762b1c6c25a6f601f511bc4fae8d0b495bbd69f5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/cn.pedant.sweetalert/library/1.3/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="0c3529d9491be892952749d252ae1defa9b1f937">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/cn.pedant.sweetalert-library-1.3_8635be823a2dd71ed1ab0a9300fb5e4ec1ec3f42.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.1/jars/libs/internal_impl-24.2.1.jar"
         jumboMode="false"
         optimize="true"
@@ -507,12 +399,30 @@
     </item>
     <item
         is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/subsampling-scale-image-view-3.6.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="ae3fb5e70b67cf542338288b0d68c6c367da7367">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/intermediates-exploded-aar-subsampling-scale-image-view-3.6.0_beaaa9ff15ee5c93edb72951cf9a47a3a17d93f5.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.3/a85588bec3e2c4584d593d3f15df1677321bca72/universal-image-loader-1.9.3.jar"
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
         sha1="a85588bec3e2c4584d593d3f15df1677321bca72">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.9.3_a0f9d3fe778e69eb96a01f94827ca0d20009e5a1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.lzy.net/okgo/2.1.4/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="cb698597bf429f71793a87217f63a28cf7de0916">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.lzy.net-okgo-2.1.4_b42b6d9750591b757f7bc286c26febff8c86032b.jar" />
     </item>
     <item
         is-multidex="false"

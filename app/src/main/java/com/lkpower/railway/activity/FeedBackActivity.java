@@ -8,19 +8,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
+import com.lkpower.railway.util.ExceptionUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
 import java.util.HashMap;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
 
 /**
  * Created by sth on 10/11/2016.
@@ -73,10 +77,6 @@ public class FeedBackActivity extends BaseActivity implements View.OnClickListen
     GroupId=644f8661-11f6-4ebd-a77d-5d80b98a5ca0}
      */
     private void requestFeedBack() {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "UpdateFeedBack");
-
-
         HashMap<String, String> jsonMap = new HashMap<String, String>();
         jsonMap.put("CarNumberId", Constants.CarNumberId);
         jsonMap.put("GroupId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID());
@@ -85,29 +85,57 @@ public class FeedBackActivity extends BaseActivity implements View.OnClickListen
         jsonMap.put("DeviceInfo", DeviceUtil.getDeviceId(this));
         jsonMap.put("Remark", contentEditText.getText().toString().trim());
 
-        tempMap.put("jsonData", new GsonBuilder().create().toJson(jsonMap));
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "UpdateFeedBack")
+                .params("jsonData", new GsonBuilder().create().toJson(jsonMap))
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultDto.getResult().getFlag() == 1) {
-                        Toast.makeText(FeedBackActivity.this, "提交成功", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(FeedBackActivity.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        HUDUtil.showHUD(FeedBackActivity.this, "正在提交信息...");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在提交数据...");
+                        Toast.makeText(FeedBackActivity.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        HUDUtil.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultDto.getResult().getFlag() == 1) {
+                                new SweetAlertDialog(FeedBackActivity.this, SweetAlertDialog.NORMAL_TYPE).setTitleText("提示").setContentText("提交成功").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.cancel();
+                                        finish();
+                                    }
+                                }).show();
+
+                            } else {
+                                Toast.makeText(FeedBackActivity.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     @Override

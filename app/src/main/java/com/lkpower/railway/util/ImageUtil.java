@@ -151,8 +151,8 @@ public class ImageUtil {
         Bitmap bm = BitmapFactory.decodeFile(path, options);
 
         int maxMemory = (int) (Runtime.getRuntime().maxMemory());
-        Log.e("TAG", "Max memory is " + maxMemory / 1024 + "KB");
-        Log.e("TAG", "Bitmap ByteCount is " + bm.getByteCount() / 1024 + "KB");
+        //Log.e("TAG", "Max memory is " + maxMemory / 1024 + "KB");
+        //Log.e("TAG", "Bitmap ByteCount is " + bm.getByteCount() / 1024 + "KB");
 
         if (maxMemory > bm.getByteCount()) {
             return bm;
@@ -162,8 +162,8 @@ public class ImageUtil {
             // 使用获取到的inSampleSize值再次解析图片
             options.inJustDecodeBounds = false;
             Bitmap temp = BitmapFactory.decodeFile(path, options);
-            Log.e("TAG", "--Max memory is " + maxMemory / 1024 + "KB");
-            Log.e("TAG", "--Bitmap ByteCount is " + temp.getByteCount() / 1024 + "KB");
+            //Log.e("TAG", "--Max memory is " + maxMemory / 1024 + "KB");
+            //Log.e("TAG", "--Bitmap ByteCount is " + temp.getByteCount() / 1024 + "KB");
             return temp;
         }
     }

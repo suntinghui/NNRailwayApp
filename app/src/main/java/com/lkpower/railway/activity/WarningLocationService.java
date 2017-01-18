@@ -11,24 +11,26 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.android.volley.Response;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lkpower.railway.client.ActivityManager;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
+import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
+import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.NotificationUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+
+import okhttp3.Call;
 
 /**
  * Created by sth on 28/11/2016.
@@ -192,47 +194,63 @@ public class WarningLocationService extends Service {
     }
 
     private void requestTellServer() {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "AlarmLogInfo");
-        tempMap.put("InstanceId", trainInfo.getInstanceId());
-        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("LogTime", DateUtil.getCurrentDateTime());
-        tempMap.put("StationId", "000000");
-        tempMap.put("Remark", "");
-        tempMap.put("Args", "");
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "AlarmLogInfo")
+                .params("InstanceId", trainInfo.getInstanceId())
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("LogTime", DateUtil.getCurrentDateTime())
+                .params("StationId", "000000")
+                .params("Remark", "")
+                .params("Args", "")
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultMsgDto.getResult().getFlag() == 1) {
-                        Log.e("===", "预警信息已经发送到服务器");
-                        currentSentCount = 0;
-
-                    } else {
-                        // Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
-
-                        if (++currentSentCount < MAX_SEND) {
-                            Log.e("===", "预警信息发送到服务器失败,重发:" + currentSentCount);
-
-                            requestTellServer();
-
-                        } else {
-                            currentSentCount = 0;
-                        }
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, null);
+                        Toast.makeText(WarningLocationService.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultMsgDto.getResult().getFlag() == 1) {
+                                Log.e("===", "预警信息已经发送到服务器");
+                                currentSentCount = 0;
+
+                            } else {
+                                // Toast.makeText(ActivityManager.getInstance().peekActivity(), resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+
+                                if (++currentSentCount < MAX_SEND) {
+                                    Log.e("===", "预警信息发送到服务器失败,重发:" + currentSentCount);
+
+                                    requestTellServer();
+
+                                } else {
+                                    currentSentCount = 0;
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
 }

@@ -19,8 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.lkpower.railway.MyApplication;
 import com.lkpower.railway.R;
 
@@ -48,15 +46,6 @@ public class ActivityUtil {
 
         return isAppRunning;
     }
-
-    public static void shakeView(View view) {
-        YoYo.with(Techniques.Shake).duration(500).playOn(view);
-    }
-
-    public static void shakeView(View parentView, int resId) {
-        YoYo.with(Techniques.Shake).duration(500).playOn(parentView.findViewById(resId));
-    }
-
 
     // 只要在设置ListView的Adapter后调用此静态方法即可让ListView正确的显示在其父ListView的ListItem中。
     // 但是要注意的是，子ListView的每个Item必须是LinearLayout，不能是其他的，因为其他的Layout(如RelativeLayout)没有重写onMeasure()，所以会在onMeasure()时抛出异常。

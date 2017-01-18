@@ -1,36 +1,32 @@
 package com.lkpower.railway.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
 import com.lkpower.railway.dto.ResultMsgDto;
 import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DeviceUtil;
-
-import java.util.HashMap;
+import com.lkpower.railway.util.ExceptionUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
 import anet.channel.util.StringUtils;
 import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
 
 /**
  * Created by sth on 19/10/2016.
@@ -232,33 +228,52 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             return;
         }
 
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "SetLaterNotice");
-        tempMap.put("InstanceId", trainInfo.getInstanceId());
-        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("state", toggleFlag ? "0" : "1"); // 1是晚点,其他为正点
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "SetLaterNotice")
+                .params("InstanceId", trainInfo.getInstanceId())
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("state", toggleFlag ? "0" : "1") // 1是晚点,其他为正点
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                    if (resultMsgDto.getResult().getFlag() == 1) {
-                        toggleLaterNotice();
-
-                    } else {
-                        Toast.makeText(SettingActivity.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        HUDUtil.showHUD(SettingActivity.this, "正在上传数据...");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在上传数据...");
+                        Toast.makeText(SettingActivity.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        HUDUtil.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultMsgDto.getResult().getFlag() == 1) {
+                                toggleLaterNotice();
+
+                            } else {
+                                Toast.makeText(SettingActivity.this, resultMsgDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

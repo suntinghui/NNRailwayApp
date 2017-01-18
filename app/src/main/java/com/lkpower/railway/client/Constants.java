@@ -5,11 +5,6 @@ import com.lkpower.railway.util.ActivityUtil;
 
 public class Constants {
 
-    public static final int SMS_MAX_TIME = 60; // 短信平台重发最大时间 秒
-    public static final int INITIAL_DELAY_MILLIS = 175;
-
-    public static final int PAGESIZE = 20;
-
     // 测试
 //    public static final String HOST_IP = "http://103.43.185.166:39/InspectionWork/MobileJson.ashx";
 
@@ -18,11 +13,6 @@ public class Constants {
 
     public static final String HOST_IP_REQ = HOST_IP;
 
-    public static String CUSTOMERNO = "sdp";
-    public static String ACCOUNTNO = "9559980759778592817";
-    public static String ACCOUNTNAME = "";
-
-    public static String CURRENT_STATION_NUM = "1"; // 当前正要奔向的车站序号
     public static boolean CURRENT_TRAIN_LATE = false; // 当前车次是否晚点
 
     public static DeviceInfo DeviceInfo = null;
@@ -32,44 +22,7 @@ public class Constants {
     public static final String FIR_API_TOKEN = "b466e4ea1d74d418b79837f4fd6302a8";
     public static final String FIR_APP_ID = "5848e52a959d69340f002b59";
 
-    public static final String PROTOCOL_IP = HOST_IP + "/app/agreement.html";
-
-    public static boolean TIP_TIME_MODEL = true;
 
     public static boolean RUNNING = false;
-
-    public static String PHONE_SERVICE = "01053812098";
-
-    public static final String Base_Token = "Base-Token";
-    public static final String SESSIONID = "Cookie";
-    public static final String Set_Cookie = "Set-Cookie";
-
-    public static final String DEVICETOKEN = "DEVICETOKEN";
-
-    public static final String FIRST_LANUCH = "FIRST_LANUCH_" + ActivityUtil.getVersionCode();
-
-    public static final String HEAD_RANDOM = "HEAD_RANDOM";
-
-    public static final String UserName = "UserName";
-    public static final String Password = "Password";
-    public static final String USERID = "USERID";
-
-    public static final String CITY_CODE = "CITY_CODE";
-
-    public static final String WX_APP_ID = "wxf7baba5c341a6655";
-    public static final String WX_AppSecret = "d4624c36b6795d1d99dcf0547af5443d";
-
-    public static final String QQ_APP_ID = "1104879229";
-    public static final String QQ_APP_KEY = "qzaUsnB2t7p3uan6";
-
-    public static boolean NEED_REFRESH_LOGIN = false;
-
-    public static String ACTION_CHECK_TABHOST = "com.housekeeper.check.tabhost";
-    public static String ACTION_CHECK_RELATION = "ACTION_CHECK_RELATION";
-
-    public static String APP_EID_CODE = "11";
-
-    public static String eID_APP_ID = "EFBFBDEFBFBDEFBFBDEFBFBD3330333734333038323130303533";
-    public static String eID_APP_KEY = "EFBFBDEFBFBDEFBFBDEFBFBD3DEFBFBD3330343331393733373134363430";
 
 }

@@ -11,22 +11,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.dto.LoginDto;
-import com.lkpower.railway.dto.TrainDto;
 import com.lkpower.railway.dto.TrainInfo;
-import com.lkpower.railway.util.ActivityUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by sth on 17/10/2016.

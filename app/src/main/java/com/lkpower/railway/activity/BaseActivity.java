@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.lkpower.railway.MyApplication;
-import com.lkpower.railway.activity.view.ProgressHUD;
 import com.lkpower.railway.client.ActivityManager;
-import com.lkpower.railway.client.net.NetworkHelper;
+import com.lzy.okgo.OkGo;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.message.PushAgent;
+
+import static com.lkpower.railway.R.style.ProgressHUD;
 
 public class BaseActivity extends Activity {
 
@@ -45,9 +46,7 @@ public class BaseActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        NetworkHelper.getInstance().cancelRequest();
-
-        NetworkHelper.getInstance().hideProgress();
+        OkGo.getInstance().cancelTag(this);
     }
 
 }

@@ -13,25 +13,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
+import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.dto.InfoPublishListDto;
 import com.lkpower.railway.dto.MessageModel;
 import com.lkpower.railway.util.ActivityUtil;
-import com.lkpower.railway.util.DateUtil;
+import com.lkpower.railway.util.ExceptionUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static anetwork.channel.http.NetworkSdkSetting.context;
+import okhttp3.Call;
 
 /**
  * Created by sth on 08/11/2016.
@@ -102,32 +101,52 @@ public class MessageListActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void requestMessageList() {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "InfoPublishList");
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "InfoPublishList")
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
 
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    InfoPublishListDto infoPublishListDto = gson.fromJson(jsonObject, InfoPublishListDto.class);
-                    if (infoPublishListDto.getResult().getFlag() == 1) {
-                        dataList = infoPublishListDto.getDataInfo();
-                        mAdapter.notifyDataSetChanged();
-
-                    } else {
-                        Toast.makeText(MessageListActivity.this, infoPublishListDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                        HUDUtil.showHUD(MessageListActivity.this, "正在查询信息...");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在查询信息...");
+                        Toast.makeText(MessageListActivity.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        HUDUtil.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            InfoPublishListDto infoPublishListDto = gson.fromJson(jsonObject, InfoPublishListDto.class);
+                            if (infoPublishListDto.getResult().getFlag() == 1) {
+                                dataList = infoPublishListDto.getDataInfo();
+                                mAdapter.notifyDataSetChanged();
+
+                            } else {
+                                Toast.makeText(MessageListActivity.this, infoPublishListDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     @Override

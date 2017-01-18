@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import static android.R.attr.path;
+
 public class FileUtil {
     /**
      * 返回程序路径 以 / 结束
@@ -86,13 +88,10 @@ public class FileUtil {
      * @param mBitmap
      * @return
      */
-    public static String saveBitmap(Bitmap mBitmap) {
+    public static String saveBitmap(Bitmap mBitmap, String filePath) {
+        Log.e("===", filePath);
 
-        String path=System.currentTimeMillis()+".jpg";
-        File f = new File(Environment.getExternalStorageDirectory()+"/myphoto/",path);
-
-        getFilePath();
-
+        File f = new File(filePath);
         try {
             FileOutputStream fOut = null;
             fOut = new FileOutputStream(f);

@@ -12,30 +12,33 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import com.lkpower.railway.R;
-import com.lkpower.railway.activity.view.CustomNetworkImageView;
 import com.lkpower.railway.activity.view.MyGridView;
-import com.lkpower.railway.client.RequestEnum;
-import com.lkpower.railway.client.net.ImageCacheManager;
-import com.lkpower.railway.client.net.JSONRequest;
-import com.lkpower.railway.client.net.NetworkHelper;
+import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.dto.ImgDataDto;
-import com.lkpower.railway.dto.LoginDto;
 import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDetailDto;
 import com.lkpower.railway.dto.TaskDto;
-import com.lkpower.railway.dto.TrainDto;
+import com.lkpower.railway.util.ExceptionUtil;
+import com.lkpower.railway.util.HUDUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.request.BaseRequest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import anetwork.channel.cache.ImageCacheManager;
+import okhttp3.Call;
+
+import static com.lkpower.railway.R.id.imageView;
 
 /**
  * Created by sth on 20/10/2016.
@@ -108,36 +111,55 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
     }
 
     private void requestDownloadTask() {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "MissionInfoDetail");
-        tempMap.put("missionStateId", taskInfo.getID());
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "MissionInfoDetail")
+                .params("missionStateId", taskInfo.getID())
+                .execute(new StringCallback() {
 
-        JSONRequest request = new JSONRequest(this, RequestEnum.LoginUserInfo, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    TaskDetailDto taskDetailDto = gson.fromJson(jsonObject, TaskDetailDto.class);
-
-                    if (taskDetailDto.getResult().getFlag() == 1) {
-
-                        info = taskDetailDto.getDataInfo();
-
-                        refreshView();
-
-                    } else {
-                        Toast.makeText(TaskInfoDownloadActivity.this, taskDetailDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        HUDUtil.showHUD(TaskInfoDownloadActivity.this, "正在请求数据...");
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
 
-            }
-        });
+                        e.printStackTrace();
 
-        NetworkHelper.getInstance().addToRequestQueue(request, "正在加载请稍候...");
+                        Toast.makeText(TaskInfoDownloadActivity.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+
+                        HUDUtil.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            TaskDetailDto taskDetailDto = gson.fromJson(jsonObject, TaskDetailDto.class);
+
+                            if (taskDetailDto.getResult().getFlag() == 1) {
+
+                                info = taskDetailDto.getDataInfo();
+
+                                refreshView();
+
+                            } else {
+                                Toast.makeText(TaskInfoDownloadActivity.this, taskDetailDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     private void refreshView() {
@@ -194,22 +216,21 @@ public class TaskInfoDownloadActivity extends BaseActivity implements View.OnCli
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.item_download_grid,
-                        parent, false);
+                convertView = inflater.inflate(R.layout.item_download_grid, parent, false);
                 holder = new ViewHolder();
-                holder.image = (CustomNetworkImageView) convertView.findViewById(R.id.item_grida_image);
+                holder.image = (ImageView) convertView.findViewById(R.id.item_grida_image);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.image.setImageUrl(list.get(position).getImgInfoThumbPath(), ImageCacheManager.getInstance().getImageLoader());
+            UrlImageViewHelper.setUrlDrawable(holder.image, list.get(position).getImgInfoThumbPath(), R.drawable.image_loading);
 
             return convertView;
         }
 
         public class ViewHolder {
-            public CustomNetworkImageView image;
+            public ImageView image;
         }
     }
 }
