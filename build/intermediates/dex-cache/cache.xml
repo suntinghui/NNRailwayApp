@@ -3,6 +3,15 @@
 
     <item
         is-multidex="false"
+        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.umeng.analytics/analytics/6.0.9/5259c1d58a8f2373c2bbb7cb0ff33aee0eef4503/analytics-6.0.9.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.3"
+        sha1="5259c1d58a8f2373c2bbb7cb0ff33aee0eef4503">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/analytics-6.0.9_b8126a384e019a3b7a016179b6b3c69dcc66dc0e.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.1/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -79,7 +88,7 @@
         jumboMode="false"
         optimize="true"
         revision="24.0.3"
-        sha1="e50ed671414d0c4357d77fee7b432d8759503620">
+        sha1="5668d314c61469bbef29e79c32b634b5aff0c9c5">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-updatefun-1.8.6_8da82f4aeb61568189f872051d54ea5223188aef.jar" />
     </item>
     <item
@@ -255,15 +264,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/NNRailwayApp/photo/unspecified/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="597304c13c840cd14f661fef18006f368e7fab78">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/NNRailwayApp-photo-unspecified_38471c59fe88598f5baf69bc39c4a3aca857df76.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/exploded-aar/com.jph.takephoto/takephoto_library/3.0.2/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -333,15 +333,6 @@
         revision="24.0.3"
         sha1="a96e7800ffe107ef0fd262f8025eea5e661377ea">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/utdid4all-1.1.5_proguard_a1bdae9a9f1e911ff961cbd3f7d307f31ead097a.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/sth/.gradle/caches/modules-2/files-2.1/com.umeng.analytics/analytics/6.0.7/7224178d65af1443d8be61a2c20914bf3a6088fd/analytics-6.0.7.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.3"
-        sha1="7224178d65af1443d8be61a2c20914bf3a6088fd">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/analytics-6.0.7_1d7456d8c70f3983f91a4840c0aed02421bc1022.jar" />
     </item>
     <item
         is-multidex="false"

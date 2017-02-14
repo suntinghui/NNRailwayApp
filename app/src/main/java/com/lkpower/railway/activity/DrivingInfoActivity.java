@@ -9,8 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +25,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.king.photo.util.Bimp;
-import com.king.photo.util.ImageItem;
-import com.king.photo.util.Res;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.dto.ResultMsgDto;
@@ -53,7 +48,7 @@ import java.util.Iterator;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 
-import static com.king.photo.activity.BaseActivity.bimap;
+import static com.lkpower.railway.client.Constants.MAXIMG;
 
 
 /**
@@ -72,19 +67,15 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     private static String remarkTemp = "";
 
     private String localTempImgFileName = null;
+
     private ArrayList<String> tempImgList = new ArrayList<String>();
 
     private static String TAG = "DRIVINGINFO";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Res.init(this);
 
         refreshImageList();
-
-        bimap = BitmapFactory.decodeResource(
-                getResources(),
-                R.drawable.icon_addpic_unfocused);
 
         parentView = getLayoutInflater().inflate(R.layout.activity_driving_info, null);
         setContentView(parentView);
@@ -106,13 +97,12 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
 
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
-                if (arg2 == Bimp.tempSelectBitmap.size()) {
+                if (arg2 == tempImgList.size()) {
                     photo();
 
                 } else {
-                    Intent intent = new Intent(DrivingInfoActivity.this, GalleryActivity.class);
-                    intent.putExtra("position", "1");
-                    intent.putExtra("ID", arg2);
+                    Intent intent = new Intent(DrivingInfoActivity.this, ShowLocalImageActivity.class);
+                    intent.putExtra("name", tempImgList.get(arg2));
                     startActivity(intent);
                 }
             }
@@ -148,7 +138,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     }
 
     private void refreshImageList() {
-        Bimp.tempSelectBitmap.clear();
         tempImgList.clear();
 
         HashSet<String> set = (HashSet<String>) ActivityUtil.getSharedPreferences().getStringSet(TAG, new HashSet<String>());
@@ -156,15 +145,12 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         while (iterator.hasNext()) {
             String name = iterator.next();
             tempImgList.add(name);
-            ImageItem imageItem = new ImageItem();
-            imageItem.setImageId(name);
-            Bimp.tempSelectBitmap.add(imageItem);
         }
     }
 
     private void upload() {
         // 行车信息可以不输入,但是图片必须上传
-        if (Bimp.tempSelectBitmap.isEmpty()) {
+        if (tempImgList.isEmpty()) {
             Toast.makeText(this, "请拍照上传图片", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -180,10 +166,10 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                 .params("SubmitTime", DateUtil.getCurrentDateTime())
                 .params("Remark", remarkEditText.getText().toString().trim());
 
-        if (!Bimp.tempSelectBitmap.isEmpty()) {
+        if (!tempImgList.isEmpty()) {
             ArrayList<File> fileList = new ArrayList<File>();
-            for (int i = 0; i < Bimp.tempSelectBitmap.size(); i++) {
-                fileList.add(new File(FileUtil.getFilePath() + Bimp.tempSelectBitmap.get(i).getImageId() + ".jpg"));
+            for (int i = 0; i < tempImgList.size(); i++) {
+                fileList.add(new File(FileUtil.getFilePath() + tempImgList.get(i) + ".jpg"));
             }
 
             request.addFileParams("ImgInfo", fileList);
@@ -221,7 +207,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.cancel();
-                                Bimp.tempSelectBitmap.clear();
+
                                 remarkEditText.setText("");
                                 remarkTemp = "";
 
@@ -234,6 +220,7 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                                 editor.commit();
 
                                 DrivingInfoActivity.this.finish();
+
                             }
                         }).show();
 
@@ -266,15 +253,11 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
             inflater = LayoutInflater.from(context);
         }
 
-        public void update() {
-            loading();
-        }
-
         public int getCount() {
-            if (Bimp.tempSelectBitmap.size() == 9) {
+            if (tempImgList.size() == 9) {
                 return 9;
             }
-            return (Bimp.tempSelectBitmap.size() + 1);
+            return (tempImgList.size() + 1);
         }
 
         public Object getItem(int arg0) {
@@ -304,13 +287,14 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            if (position == Bimp.tempSelectBitmap.size()) {
+            if (position == tempImgList.size()) {
                 holder.image.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.icon_addpic_unfocused));
                 if (position == 9) {
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                holder.image.setImageBitmap(ImageFactory.ratio(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 54));
+                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 64);
+                holder.image.setImageBitmap(bitmap);
             }
 
             return convertView;
@@ -319,42 +303,6 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
         public class ViewHolder {
             public ImageView image;
         }
-
-        Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case 1:
-                        adapter.notifyDataSetChanged();
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-        };
-
-        public void loading() {
-            new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        if (Bimp.max == Bimp.tempSelectBitmap.size()) {
-                            Message message = new Message();
-                            message.what = 1;
-                            handler.sendMessage(message);
-                            break;
-                        } else {
-                            Bimp.max += 1;
-                            Message message = new Message();
-                            message.what = 1;
-                            handler.sendMessage(message);
-                        }
-                    }
-                }
-            }).start();
-        }
-    }
-
-    protected void onRestart() {
-        adapter.update();
-        super.onRestart();
     }
 
     private static final int TAKE_PICTURE = 0x000001;
@@ -383,26 +331,32 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case TAKE_PICTURE:
-                if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
-                    File photoFile = new File(FileUtil.getFilePath() + localTempImgFileName + ".jpg");
-                    Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(photoFile.getAbsolutePath(), 480, 270);
-                    FileUtil.saveBitmap(bitmap, photoFile.getAbsolutePath());
+                if (tempImgList.size() < MAXIMG && resultCode == RESULT_OK) {
+                    try {
+                        String path = FileUtil.getFilePath() + localTempImgFileName + ".jpg";
+                        Bitmap bitmap = ImageFactory.ratio(path, 800, 480);
+                        FileUtil.saveBitmap(bitmap, path);
 
-                    SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
-                    HashSet<String> set = new HashSet<String>(ActivityUtil.getSharedPreferences().getStringSet(TAG, new HashSet<String>()));
-                    set.add(localTempImgFileName);
-                    editor.putStringSet(TAG, set);
-                    editor.commit();
+                        SharedPreferences.Editor editor = ActivityUtil.getSharedPreferences().edit();
+                        HashSet<String> set = new HashSet<String>(ActivityUtil.getSharedPreferences().getStringSet(TAG, new HashSet<String>()));
+                        set.add(localTempImgFileName);
+                        editor.putStringSet(TAG, set);
+                        editor.commit();
 
-                    refreshImageList();
+                        refreshImageList();
 
-                    // 先判断是否已经回收
-                    if (bitmap != null && !bitmap.isRecycled()) {
-                        // 回收并且置为null
-                        bitmap.recycle();
-                        bitmap = null;
+                        adapter.notifyDataSetChanged();
+
+                        // 先判断是否已经回收
+                        if (bitmap != null && !bitmap.isRecycled()) {
+                            // 回收并且置为null
+                            bitmap.recycle();
+                            bitmap = null;
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    System.gc();
 
                 }
                 break;

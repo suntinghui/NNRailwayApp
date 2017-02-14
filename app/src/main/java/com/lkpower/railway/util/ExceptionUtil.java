@@ -11,6 +11,8 @@ import java.net.SocketTimeoutException;
 public class ExceptionUtil {
 
     public static String getMsg(Exception e) {
+        e.printStackTrace();
+
         String msg = "出现错误,请重试。";
 
         if (e instanceof SocketTimeoutException) {

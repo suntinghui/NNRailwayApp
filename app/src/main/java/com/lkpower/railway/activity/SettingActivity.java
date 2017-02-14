@@ -65,7 +65,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         try {
             tel = StringUtils.isBlank(Constants.DeviceInfo.getPhone()) ? "07712769564" : Constants.DeviceInfo.getPhone();
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         initView();

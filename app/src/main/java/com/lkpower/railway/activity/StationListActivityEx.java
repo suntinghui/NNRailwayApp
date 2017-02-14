@@ -72,8 +72,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private StationListAdapter adapter = null;
 
     private DeviceInfo deviceInfo = null;
+
     private ArrayList<TrainInfo> trainInfoList = new ArrayList<TrainInfo>();
 
+    // 标题 车站列表名称
     private ArrayList<String> trainList = new ArrayList<String>();
 
     private Button runningBtn = null;
@@ -149,8 +151,17 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        this.stopWarningTimeService();
+        this.stopWarningLocationService();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+
         UpdateFunGO.onStop(this);
     }
 
@@ -160,42 +171,47 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         Log.e("===", "=======================onNewIntent");
 
-        boolean LATE_TYPE = intent.getBooleanExtra("LATE_TYPE", false);
-        boolean late = intent.getBooleanExtra("LATE", false);
+        try {
+            boolean LATE_TYPE = intent.getBooleanExtra("LATE_TYPE", false);
+            boolean late = intent.getBooleanExtra("LATE", false);
 
-        if (LATE_TYPE) {
-            Constants.CURRENT_TRAIN_LATE = late;
+            if (LATE_TYPE) {
+                Constants.CURRENT_TRAIN_LATE = late;
 
-            if (!Constants.RUNNING) {
-                Toast.makeText(this, "收到列车晚点更新通知,但是应用没有\"启动\",忽略该信息", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (!Constants.RUNNING) {
+                    Toast.makeText(this, "收到列车晚点更新通知,但是应用没有\"启动\",忽略该信息", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (late) {
-                Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
-                this.startWarningLocationService();
-                this.stopWarningTimeService();
+                if (late) {
+                    Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
+                    this.startWarningLocationService();
+                    this.stopWarningTimeService();
 
-            } else {
-                Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
-                this.startWaringTimeService();
-                this.stopWarningLocationService();
-            }
+                } else {
+                    Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
+                    this.startWaringTimeService();
+                    this.stopWarningLocationService();
+                }
 
-            // 用户点击了预警推送,告知服务器
-            requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
-
-        } else {
-            // 停止播放及震动
-            Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
-            warningIntent.putExtra("PLAY", false);
-            this.sendBroadcast(warningIntent);
-
-            boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
-            if (EarlyWarning) { // 预警
                 // 用户点击了预警推送,告知服务器
                 requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
+
+            } else {
+                // 停止播放及震动
+                Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
+                warningIntent.putExtra("PLAY", false);
+                this.sendBroadcast(warningIntent);
+
+                boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
+                if (EarlyWarning) { // 预警
+                    // 用户点击了预警推送,告知服务器
+                    requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
+                }
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -248,19 +264,21 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                                     runningBtn.setVisibility(View.VISIBLE);
                                     listView.setAlpha(1.0f);
 
-                                    adapter.setData(trainInfoList.get(0).getStationInfo());
+                                    adapter.setData(trainInfoList.get(location).getStationInfo());
                                     adapter.notifyDataSetChanged();
 
-                                    Constants.CarNumberId = trainInfoList.get(0).getID();
-                                    Constants.CarNumberName = trainInfoList.get(0).getTrainName();
+                                    Constants.CarNumberId = trainInfoList.get(location).getID();
+                                    Constants.CarNumberName = trainInfoList.get(location).getTrainName();
+                                    Constants.CardUserName = trainInfoList.get(location).getUserName();
 
-                                    titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
+                                    titleSpinner.setText(Constants.CarNumberName + "/" + Constants.CardUserName);
 
                                     for (TrainInfo info : trainInfoList) {
-                                        trainList.add(info.getTrainName() + "/" + Constants.DeviceInfo.getUserName());
+                                        trainList.add(info.getTrainName() + "/" + info.getUserName());
                                     }
 
                                     titleSpinner.attachDataSource(trainList);
+                                    titleSpinner.setSelectedIndex(location);
                                     titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                         @Override
                                         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -291,78 +309,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 });
 
     }
-
-    /*
-    private void requestStationList(String msg) {
-        HashMap<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("commondKey", "DeviceDetailInfo");
-        tempMap.put("DeviceId", DeviceUtil.getDeviceId(this));
-        tempMap.put("Version", ActivityUtil.getPackageInfo(this).versionName);
-
-        JSONRequest request = new JSONRequest(this, RequestEnum.StationList, tempMap, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String jsonObject) {
-                try {
-                    Gson gson = new GsonBuilder().create();
-                    DeviceDetailInfoDto deviceDetailInfoDto = gson.fromJson(jsonObject, DeviceDetailInfoDto.class);
-                    if (deviceDetailInfoDto.getResult().getFlag() == 1) {
-                        trainList.clear();
-
-                        deviceInfo = deviceDetailInfoDto.getDataInfo().getDeviceInfo();
-                        trainInfoList = (ArrayList<TrainInfo>) deviceDetailInfoDto.getDataInfo().getTrainInfo();
-
-                        Constants.DeviceInfo = deviceInfo;
-
-                        if (trainInfoList != null && trainInfoList.size() != 0) {
-                            runningBtn.setVisibility(View.VISIBLE);
-                            listView.setAlpha(1.0f);
-
-                            adapter.setData(trainInfoList.get(0).getStationInfo());
-                            adapter.notifyDataSetChanged();
-
-                            Constants.CarNumberId = trainInfoList.get(0).getID();
-                            Constants.CarNumberName = trainInfoList.get(0).getTrainName();
-
-                            titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
-
-                            for (TrainInfo info : trainInfoList) {
-                                trainList.add(info.getTrainName() + "/" + Constants.DeviceInfo.getUserName());
-                            }
-
-                            titleSpinner.attachDataSource(trainList);
-                            titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                    changeTrain(i);
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                }
-                            });
-
-                        } else {
-                            Toast.makeText(StationListActivityEx.this, "未查询到数据", Toast.LENGTH_SHORT).show();
-                            runningBtn.setVisibility(View.INVISIBLE);
-                        }
-
-                    } else {
-                        Toast.makeText(StationListActivityEx.this, deviceDetailInfoDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
-                        runningBtn.setVisibility(View.INVISIBLE);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        NetworkHelper.getInstance().addToRequestQueue(request, msg);
-    }
-    */
 
     private void requestTrainStart() {
         OkGo.post(Constants.HOST_IP_REQ)
@@ -430,6 +376,18 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     }
 
     private void startWaringTimeService() {
+        try {
+            TrainInfo tempTrain = trainInfoList.get(location);
+            if (null == tempTrain) {
+                requestStationListEx(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            requestStationListEx(null);
+        }
+
+
         Intent intent = new Intent(this, WarningTimeService.class);
         intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
         intent.putExtra("DATE", yyyyMd);
@@ -505,7 +463,9 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
 
     // 更换车次
-    private void changeTrain(int location) {
+    private void changeTrain(int loc) {
+        this.location = loc;
+
         // 停止计时服务
         this.stopWarningLocationService();
         this.stopWarningTimeService();
@@ -518,8 +478,9 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         Constants.CarNumberId = trainInfoList.get(location).getID();
         Constants.CarNumberName = trainInfoList.get(location).getTrainName();
+        Constants.CardUserName = trainInfoList.get(location).getUserName();
 
-        titleSpinner.setText(Constants.CarNumberName + "/" + Constants.DeviceInfo.getUserName());
+        titleSpinner.setText(Constants.CarNumberName + "/" + Constants.CardUserName);
     }
 
     private void checkUpdate() {
@@ -713,8 +674,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             }
 
             final StationModel dto = this.list.get(position);
-
-            // Log.e("=======", dto.getStationName()+" - "+dto.getMissionState().trim());
 
             holder.numTextView.setText(dto.getOrderNum());
             holder.nameTextView.setText(dto.getStationName());

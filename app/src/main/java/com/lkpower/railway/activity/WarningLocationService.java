@@ -142,7 +142,7 @@ public class WarningLocationService extends Service {
             Log.e("Location", "启动WarningLocationService时出现错误。");
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_NOT_STICKY;
     }
 
     private HashMap<String, String> getStationDis(double lat1, double lon1) {

@@ -24,6 +24,8 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import static com.baidu.location.h.j.F;
+
 /**
  * Created by sth on 25/11/2016.
  */
@@ -47,8 +49,8 @@ public class ShowImageActivity extends BaseActivity {
 
         imageView = (SubsamplingScaleImageView) this.findViewById(R.id.imageView);
         imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
-        imageView.setMinScale(0.5F);
-        imageView.setMaxScale(3.0F);
+        imageView.setMinScale(1.0F);
+        imageView.setMaxScale(4.0F);
 
         final String testUrl = this.getIntent().getStringExtra("url");
         Log.e("---", "---:" + testUrl);
@@ -88,7 +90,7 @@ public class ShowImageActivity extends BaseActivity {
                             fout = new FileOutputStream(file);
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
                             // 将保存的地址给SubsamplingScaleImageView,这里注意设置ImageViewState
-                            imageView.setImage(ImageSource.uri(file.getAbsolutePath()), new ImageViewState(1.0F, new PointF(0, 0), 0));
+                            imageView.setImage(ImageSource.uri(file.getAbsolutePath()), new ImageViewState(2.0f, new PointF(0, 0), 0));
 
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();

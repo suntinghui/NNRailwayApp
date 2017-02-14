@@ -57,13 +57,17 @@ public class WarningTimeService extends Service {
             trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
             yyyyMd = intent.getStringExtra("DATE");
 
+            startCheck();
+
             startTimer();
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            Toast.makeText(WarningTimeService.this, "预警提醒启动失败,请退出应用后重试", Toast.LENGTH_LONG).show();
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_NOT_STICKY;
     }
 
     @Override
@@ -85,6 +89,41 @@ public class WarningTimeService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void startCheck() {
+        try {
+            for (final StationModel ss : trainInfo.getStationInfo()) {
+                this.station = ss;
+
+                // 实际到站时间
+                Date arrivalWhen = DateUtil.getDate(yyyyMd, this.station.getArrivalDay(), "0", this.station.getArrivalTime());
+                if (arrivalWhen.before(new Date()))
+                    continue;
+
+                Date when = DateUtil.getDate(yyyyMd, this.station.getArrivalDay(), this.station.getAheadTime(), this.station.getArrivalTime());
+                if (when.after(new Date()))
+                    break;
+
+                Intent warningIntent = new Intent(WarningTimeService.this, WarningNotificationClickReceiver.class);
+                warningIntent.putExtra("PLAY", true);
+                WarningTimeService.this.sendBroadcast(warningIntent);
+
+                String content = station.getStationName() + "将在 " + station.getArrivalTime() + " 到站,请您及时完成相关任务。";
+                Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
+                intent.putExtra("EarlyWarning", true);
+                intent.putExtra("TRAIN_INFO", trainInfo);
+                intent.putExtra("stationId", station.getID());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+
+                break;
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startTimer() {
