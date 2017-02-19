@@ -84,7 +84,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
                 .tag(this)
                 .params("commondKey", "MissionInfoByUser")
                 .params("serialNumber", this.getIntent().getStringExtra("DATE"))
-                .params("userId", null == Constants.DeviceInfo ? "" : Constants.DeviceInfo.getID())
+                .params("userId", train.getUserId())
                 .params("stationId", station.getID())
                 .execute(new StringCallback() {
 

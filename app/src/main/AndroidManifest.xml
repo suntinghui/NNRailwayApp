@@ -233,6 +233,12 @@
 
         <receiver android:name="com.lkpower.railway.activity.WarningNotificationClickReceiver" />
 
+        <receiver android:name="com.lkpower.railway.activity.NetChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

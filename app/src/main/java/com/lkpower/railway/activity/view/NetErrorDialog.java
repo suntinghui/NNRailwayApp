@@ -67,9 +67,9 @@ public class NetErrorDialog {
 
             crouton = Crouton.make(ActivityManager.getInstance().getCurrentActivity(), view);
             // 一直显示，手动关闭
-            //crouton.setConfiguration(CONFIGURATION_INFINITE);
+            crouton.setConfiguration(CONFIGURATION_INFINITE);
 
-            crouton.setConfiguration(CONFIGURATION_LONG);
+//            crouton.setConfiguration(CONFIGURATION_LONG);
 
             crouton.show();
         } catch (Exception e) {

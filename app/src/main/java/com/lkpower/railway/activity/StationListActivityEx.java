@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -47,6 +49,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.aigestudio.datepicker.cons.DPMode;
 import cn.aigestudio.datepicker.views.DatePicker;
@@ -73,16 +77,16 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     private DeviceInfo deviceInfo = null;
 
-    private ArrayList<TrainInfo> trainInfoList = new ArrayList<TrainInfo>();
+    public static ArrayList<TrainInfo> trainInfoList = new ArrayList<TrainInfo>();
 
     // 标题 车站列表名称
     private ArrayList<String> trainList = new ArrayList<String>();
 
     private Button runningBtn = null;
 
-    private int location = 0;
+    public static int location = 0;
 
-    private String yyyyMd = DateUtil.getCurrentDate3();
+    public static String yyyyMd = DateUtil.getCurrentDate3();
 
     private HashMap<String, String> distanceMap = new HashMap<String, String>();
 
@@ -389,8 +393,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
 
         Intent intent = new Intent(this, WarningTimeService.class);
-        intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
-        intent.putExtra("DATE", yyyyMd);
         this.startService(intent);
     }
 
@@ -401,14 +403,45 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     private void startWarningLocationService() {
         Intent intent = new Intent(this, WarningLocationService.class);
-        intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
-        intent.putExtra("DATE", yyyyMd);
         this.startService(intent);
     }
 
     private void stopWarningLocationService() {
         Intent intent = new Intent(this, WarningLocationService.class);
         this.stopService(intent);
+    }
+
+    Timer timer = new Timer();
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case 1:
+                    checkService();
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    private void checkService() {
+        if (Constants.RUNNING) {
+            if (Constants.CURRENT_TRAIN_LATE) {
+                boolean locatilnRunning = ActivityUtil.isServiceRunning(this, "com.lkpower.railway.activity.WarningLocationService");
+                Log.e("@@@", "Location:" + locatilnRunning);
+                if (!locatilnRunning) {
+                    startWarningLocationService();
+                }
+
+            } else {
+                boolean timerRunning = ActivityUtil.isServiceRunning(this, "com.lkpower.railway.activity.WarningTimeService");
+                Log.e("@@@", "Time:" + timerRunning);
+                if (!timerRunning) {
+                    startWaringTimeService();
+                }
+            }
+        }
     }
 
     private void requestAlarmUpdateLogInfo(String stationId, TrainInfo trainInfo) {
@@ -504,9 +537,23 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                     if (Constants.RUNNING) {
                         stopRunning();
 
+                        if (null != timer) {
+                            timer.cancel();
+                            timer = null;
+                        }
+
                     } else {
                         startRunning();
 
+                        timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message msg = new Message();
+                                msg.what = 1;
+                                handler.sendMessage(msg);
+                            }
+                        }, 60 * 1000, 60 * 1000);
                     }
 
                 } catch (Exception e) {

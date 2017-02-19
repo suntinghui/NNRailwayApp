@@ -19,7 +19,9 @@ public class DeviceUtil {
             return "0";
 
         return  deviceId;
-        // 864103025055648
+
+        // 864103022943945
+        // 864103023367557
     }
 
 }

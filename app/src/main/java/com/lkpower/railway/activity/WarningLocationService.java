@@ -32,6 +32,8 @@ import java.util.HashMap;
 
 import okhttp3.Call;
 
+import static com.lkpower.railway.activity.StationListActivityEx.yyyyMd;
+
 /**
  * Created by sth on 28/11/2016.
  */
@@ -133,16 +135,18 @@ public class WarningLocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-            trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
+            trainInfo = StationListActivityEx.trainInfoList.get(StationListActivityEx.location);
 
             startLocation();
 
         } catch (Exception e) {
             e.printStackTrace();
+            stopSelf();
+
             Log.e("Location", "启动WarningLocationService时出现错误。");
         }
 
-        return Service.START_NOT_STICKY;
+        return Service.START_STICKY;
     }
 
     private HashMap<String, String> getStationDis(double lat1, double lon1) {

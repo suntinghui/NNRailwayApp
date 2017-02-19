@@ -29,6 +29,9 @@ import java.util.TimerTask;
 
 import okhttp3.Call;
 
+import static com.lkpower.railway.activity.StationListActivityEx.location;
+import static com.lkpower.railway.activity.StationListActivityEx.trainInfoList;
+
 /**
  * Created by sth on 28/11/2016.
  */
@@ -54,8 +57,8 @@ public class WarningTimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-            trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
-            yyyyMd = intent.getStringExtra("DATE");
+            trainInfo = StationListActivityEx.trainInfoList.get(StationListActivityEx.location);
+            yyyyMd = StationListActivityEx.yyyyMd;
 
             startCheck();
 
@@ -64,10 +67,12 @@ public class WarningTimeService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
 
+            stopSelf();
+
             Toast.makeText(WarningTimeService.this, "预警提醒启动失败,请退出应用后重试", Toast.LENGTH_LONG).show();
         }
 
-        return Service.START_NOT_STICKY;
+        return Service.START_STICKY;
     }
 
     @Override
@@ -80,6 +85,7 @@ public class WarningTimeService extends Service {
             Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
             warningIntent.putExtra("PLAY", false);
             this.sendBroadcast(warningIntent);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,6 +123,8 @@ public class WarningTimeService extends Service {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+
+                requestTellServer();
 
                 break;
 
@@ -170,10 +178,11 @@ public class WarningTimeService extends Service {
 
                             NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
 
+                            requestTellServer();
+
                             // 启动下一轮监测
                             startTimer();
 
-                            requestTellServer();
                         }
                         super.handleMessage(msg);
                     }

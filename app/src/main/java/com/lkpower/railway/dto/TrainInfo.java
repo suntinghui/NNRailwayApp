@@ -12,6 +12,7 @@ public class TrainInfo implements Serializable {
 
     private String ID;
     private String TrainName;
+    private String UserId;
     private String UserName;
     private String SerialNumber;
     private String InstanceId;
@@ -42,6 +43,14 @@ public class TrainInfo implements Serializable {
 
     public void setSerialNumber(String serialNumber) {
         SerialNumber = serialNumber;
+    }
+
+    public String getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(String userId) {
+        UserId = userId;
     }
 
     public String getUserName() {
