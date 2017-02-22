@@ -21,10 +21,10 @@
             android:layout_marginLeft="15dip"
             android:background="@drawable/btn_logout"
             android:paddingBottom="5dip"
-            android:paddingTop="5dip"
-            android:text="启动"
             android:paddingLeft="15dip"
             android:paddingRight="15dip"
+            android:paddingTop="5dip"
+            android:text="启动"
             android:textColor="@color/white"
             android:textSize="13sp" />
 
@@ -39,9 +39,9 @@
                 android:id="@+id/titleSpinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textSize="15sp"
                 tool:paddingEnd="15dip"
-                android:gravity="center"
                 tool:paddingStart="15dip"
                 tool:textTint="#333333" />
 
@@ -57,8 +57,21 @@
             android:textColor="@drawable/text_white_gray_selector"
             android:textSize="16sp" />
 
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/warningStatusTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#FAFAD2"
+        android:maxLines="1"
+        android:paddingBottom="5dip"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:paddingTop="5dip"
+        android:text="到站预警服务运行中"
+        android:textColor="#333333"
+        android:textSize="12sp" />
 
     <LinearLayout
         android:layout_width="fill_parent"

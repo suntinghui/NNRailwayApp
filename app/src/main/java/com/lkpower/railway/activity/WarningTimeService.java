@@ -19,6 +19,7 @@ import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
 import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.NotificationUtil;
+import com.lkpower.railway.util.ShowWarningDialog;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.request.BaseRequest;
@@ -29,9 +30,6 @@ import java.util.TimerTask;
 
 import okhttp3.Call;
 
-import static com.lkpower.railway.activity.StationListActivityEx.location;
-import static com.lkpower.railway.activity.StationListActivityEx.trainInfoList;
-
 /**
  * Created by sth on 28/11/2016.
  */
@@ -40,6 +38,7 @@ public class WarningTimeService extends Service {
 
     private TrainInfo trainInfo = null;
     private String yyyyMd = null;
+    private boolean checkFirst = true;
 
     private Timer timer = null;
     private Handler handler = null;
@@ -57,10 +56,13 @@ public class WarningTimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-            trainInfo = StationListActivityEx.trainInfoList.get(StationListActivityEx.location);
-            yyyyMd = StationListActivityEx.yyyyMd;
+            trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
+            yyyyMd = intent.getStringExtra("DATE");
+            checkFirst = intent.getBooleanExtra("CHECK", true);
 
-            startCheck();
+            if (checkFirst) {
+                startCheck();
+            }
 
             startTimer();
 
@@ -72,7 +74,7 @@ public class WarningTimeService extends Service {
             Toast.makeText(WarningTimeService.this, "预警提醒启动失败,请退出应用后重试", Toast.LENGTH_LONG).show();
         }
 
-        return Service.START_STICKY;
+        return Service.START_NOT_STICKY;
     }
 
     @Override
@@ -116,13 +118,20 @@ public class WarningTimeService extends Service {
                 WarningTimeService.this.sendBroadcast(warningIntent);
 
                 String content = station.getStationName() + "将在 " + station.getArrivalTime() + " 到站,请您及时完成相关任务。";
-                Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
-                intent.putExtra("EarlyWarning", true);
-                intent.putExtra("TRAIN_INFO", trainInfo);
-                intent.putExtra("stationId", station.getID());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+                if (Constants.WarningNotination) {
+                    Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
+                    intent.putExtra("EarlyWarning", true);
+                    intent.putExtra("TRAIN_INFO", trainInfo);
+                    intent.putExtra("stationId", station.getID());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+
+                } else {
+                    ShowWarningDialog warningDialog = new ShowWarningDialog();
+                    warningDialog.showWarningDialog(content, trainInfo, station.getID(), true);
+                }
 
                 requestTellServer();
 
@@ -170,13 +179,20 @@ public class WarningTimeService extends Service {
                             WarningTimeService.this.sendBroadcast(warningIntent);
 
                             String content = station.getStationName() + "即将在" + station.getAheadTime() + "分钟后(" + station.getArrivalTime() + ")到站,请您及时完成相关任务。";
-                            Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
-                            intent.putExtra("EarlyWarning", true);
-                            intent.putExtra("TRAIN_INFO", trainInfo);
-                            intent.putExtra("stationId", station.getID());
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                            NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+                            if (Constants.WarningNotination) {
+                                Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
+                                intent.putExtra("EarlyWarning", true);
+                                intent.putExtra("TRAIN_INFO", trainInfo);
+                                intent.putExtra("stationId", station.getID());
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                                NotificationUtil.showNotification(WarningTimeService.this, "到站提醒", content, intent);
+
+                            } else {
+                                ShowWarningDialog warningDialog = new ShowWarningDialog();
+                                warningDialog.showWarningDialog(content, trainInfo, station.getID(), true);
+                            }
 
                             requestTellServer();
 

@@ -118,14 +118,13 @@ public class ActivityUtil {
     }
 
     /**
-     *
      * 我用的测试机是华为P9，运行android6.0，
-     遇到的问题是这样的：在调用图库获取图片时，返回资源总是为null，也无法向SD卡存入照片，并且我已经在清单文件中配置了读写外部内存的权限
-     最后成功解决的方法是：在当前Activity中添加以下代码，代码的作用是检查是否已经获取到所需要的权限，如果没有则再次请求权限
-
-
+     * 遇到的问题是这样的：在调用图库获取图片时，返回资源总是为null，也无法向SD卡存入照片，并且我已经在清单文件中配置了读写外部内存的权限
+     * 最后成功解决的方法是：在当前Activity中添加以下代码，代码的作用是检查是否已经获取到所需要的权限，如果没有则再次请求权限
+     * <p>
+     * <p>
      * Checks if the app has permission to write to device storage
-     *
+     * <p>
      * If the app does not has permission then the user will be prompted to grant permissions
      *
      * @param activity
@@ -184,22 +183,17 @@ public class ActivityUtil {
         return pi;
     }
 
-    public static boolean isServiceRunning(Context mContext,String className) {
-        boolean isRunning = false;
+    public static boolean isServiceRunning(Context mContext, String className) {
         ActivityManager activityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> serviceList
-                = activityManager.getRunningServices(30);
-        if (!(serviceList.size()>0)) {
-            return false;
-        }
-        for (int i=0; i<serviceList.size(); i++) {
-            if (serviceList.get(i).service.getClassName().equals(className) == true) {
-                isRunning = true;
-                break;
+
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (className.equals(service.service.getClassName())) {
+                return true;
             }
         }
-        return isRunning;
+
+        return false;
     }
 
 }

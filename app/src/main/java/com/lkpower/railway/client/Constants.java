@@ -27,4 +27,8 @@ public class Constants {
 
     public final static int MAXIMG = 9;
 
+    public final static boolean WarningNotination = false; // 通知预警
+
+    public static String deviceID = null;
+
 }

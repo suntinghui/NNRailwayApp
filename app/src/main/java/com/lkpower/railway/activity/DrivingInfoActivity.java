@@ -41,6 +41,7 @@ import com.lzy.okgo.request.BaseRequest;
 import com.lzy.okgo.request.PostRequest;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -293,7 +294,9 @@ public class DrivingInfoActivity extends BaseActivity implements OnClickListener
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 64);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;//图片宽高都为原来的二分之一，即图片为原来的四分之一
+                Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", options);
                 holder.image.setImageBitmap(bitmap);
             }
 

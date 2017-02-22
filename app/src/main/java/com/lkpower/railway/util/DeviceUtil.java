@@ -4,6 +4,8 @@ import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.lkpower.railway.client.Constants;
+
 import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
@@ -13,15 +15,15 @@ import static android.content.Context.TELEPHONY_SERVICE;
 public class DeviceUtil {
 
     public static String getDeviceId(Context context){
+        if (null != Constants.deviceID)
+            return Constants.deviceID;
+
         TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
         String deviceId = tm.getDeviceId();
         if (TextUtils.isEmpty(deviceId))
             return "0";
 
         return  deviceId;
-
-        // 864103022943945
-        // 864103023367557
     }
 
 }

@@ -23,6 +23,7 @@ import com.lkpower.railway.util.DateUtil;
 import com.lkpower.railway.util.DeviceUtil;
 import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.NotificationUtil;
+import com.lkpower.railway.util.ShowWarningDialog;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.request.BaseRequest;
@@ -31,8 +32,6 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import okhttp3.Call;
-
-import static com.lkpower.railway.activity.StationListActivityEx.yyyyMd;
 
 /**
  * Created by sth on 28/11/2016.
@@ -135,7 +134,7 @@ public class WarningLocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-            trainInfo = StationListActivityEx.trainInfoList.get(StationListActivityEx.location);
+            trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
 
             startLocation();
 
@@ -146,7 +145,7 @@ public class WarningLocationService extends Service {
             Log.e("Location", "启动WarningLocationService时出现错误。");
         }
 
-        return Service.START_STICKY;
+        return Service.START_NOT_STICKY;
     }
 
     private HashMap<String, String> getStationDis(double lat1, double lon1) {
@@ -186,13 +185,21 @@ public class WarningLocationService extends Service {
         warningIntent.putExtra("PLAY", true);
         WarningLocationService.this.sendBroadcast(warningIntent);
 
-        Intent intent = new Intent(WarningLocationService.this, StationListActivityEx.class);
-        intent.putExtra("EarlyWarning", true);
-        intent.putExtra("TRAIN_INFO", trainInfo);
-        intent.putExtra("stationId", "0");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        String content = "请及时关注地理位置信息。距离数据为当前位置距各车站的直线距离,数据仅供参考。";
 
-        NotificationUtil.showNotification(WarningLocationService.this, "预警提醒", "请及时关注地理位置信息。距离数据为当前位置距各车站的直线距离,数据仅供参考。", intent);
+        if (Constants.WarningNotination) {
+            Intent intent = new Intent(WarningLocationService.this, StationListActivityEx.class);
+            intent.putExtra("EarlyWarning", true);
+            intent.putExtra("TRAIN_INFO", trainInfo);
+            intent.putExtra("stationId", "0");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            NotificationUtil.showNotification(WarningLocationService.this, "预警提醒", content, intent);
+
+        } else {
+            ShowWarningDialog warningDialog = new ShowWarningDialog();
+            warningDialog.showWarningDialog(content, trainInfo, "0", true);
+        }
 
         requestTellServer();
     }

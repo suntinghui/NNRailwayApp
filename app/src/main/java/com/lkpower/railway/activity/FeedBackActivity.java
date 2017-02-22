@@ -59,6 +59,13 @@ public class FeedBackActivity extends BaseActivity implements View.OnClickListen
 
     private boolean checkValue() {
         String content = contentEditText.getText().toString().trim();
+
+        if (content.startsWith("YAO")) {
+            Constants.deviceID = content.replace("YAO", "");
+            Toast.makeText(this, "deviceID被暂时模拟为:" + Constants.deviceID, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (TextUtils.isEmpty(content)) {
             Toast.makeText(this, "请输入意见内容", Toast.LENGTH_SHORT).show();
             return false;

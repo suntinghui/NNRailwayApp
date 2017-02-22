@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,7 @@ import com.google.gson.GsonBuilder;
 import com.lkpower.railway.R;
 import com.lkpower.railway.client.Constants;
 import com.lkpower.railway.dto.ResultMsgDto;
+import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.util.ActivityUtil;
 import com.lkpower.railway.util.DateUtil;
@@ -45,6 +47,7 @@ import com.lzy.okgo.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -362,7 +365,9 @@ public class TaskInfoUploadActivityEx extends BaseActivity implements OnClickLis
                     holder.image.setVisibility(View.GONE);
                 }
             } else {
-                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", 96, 64);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;//图片宽高都为原来的二分之一，即图片为原来的四分之一
+                Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getFilePath() + tempImgList.get(position) + ".jpg", options);
                 holder.image.setImageBitmap(bitmap);
             }
 
