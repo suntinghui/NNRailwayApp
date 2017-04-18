@@ -585,7 +585,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                                 handler.sendMessage(msg);
                             }
 
-                        }, 1 * 1000, 20 * 1000);
+                        }, 10 * 1000, 20 * 1000);
                     }
 
                 } catch (Exception e) {
