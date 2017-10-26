@@ -15,6 +15,10 @@ import static android.content.Context.TELEPHONY_SERVICE;
 public class DeviceUtil {
 
     public static String getDeviceId(Context context){
+
+        return "864103025121036";
+
+        /*
         if (null != Constants.deviceID)
             return Constants.deviceID;
 
@@ -24,6 +28,7 @@ public class DeviceUtil {
             return "0";
 
         return  deviceId;
+        */
     }
 
 }

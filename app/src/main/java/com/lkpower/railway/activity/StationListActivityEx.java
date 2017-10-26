@@ -574,7 +574,10 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         }
 
                     } else {
-                        startRunning();
+                        //startRunning();
+
+                        Toast.makeText(StationListActivityEx.this, "请选择本次列车始发日期", Toast.LENGTH_LONG).show();
+                        showUpdateDate();
 
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
@@ -603,6 +606,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             public void onClick(SweetAlertDialog sDialog) {
                 sDialog.cancel();
                 requestTrainStart();
+
             }
         }).setCancelText("修改日期").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -622,13 +626,14 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         DatePicker picker = new DatePicker(this);
         picker.setDate(Integer.parseInt(DateUtil.getCurrentYear()), Integer.parseInt(DateUtil.getCurrentDay()));
         picker.setMode(DPMode.SINGLE);
-        picker.setTodayDisplay(true);
+        picker.setTodayDisplay(false);
         picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
             @Override
             public void onDatePicked(String date) {
                 dialog.dismiss();
 
                 yyyyMd = date;
+
                 requestTrainStart();
             }
         });

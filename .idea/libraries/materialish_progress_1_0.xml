@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="materialish-progress-1.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.pnikosis/materialish-progress/1.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.pnikosis/materialish-progress/1.0/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/28072ce66bb4664289cd818c9fc66cd08e4afdd2/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/28072ce66bb4664289cd818c9fc66cd08e4afdd2/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
