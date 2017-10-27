@@ -22,6 +22,7 @@ import com.lkpower.railway.dto.StationModel;
 import com.lkpower.railway.dto.TaskDto;
 import com.lkpower.railway.dto.TrainInfo;
 import com.lkpower.railway.util.ActivityUtil;
+import com.lkpower.railway.util.DeviceUtil;
 import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.HUDUtil;
 import com.lzy.okgo.OkGo;
@@ -86,6 +87,7 @@ public class TaskListActivity extends BaseActivity implements View.OnClickListen
                 .params("serialNumber", this.getIntent().getStringExtra("DATE"))
                 .params("userId", train.getUserId())
                 .params("stationId", station.getID())
+                .params("deviceId", DeviceUtil.getDeviceId(this))
                 .execute(new StringCallback() {
 
                     @Override
