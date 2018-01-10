@@ -23,8 +23,6 @@ public class Constants {
     public static final String FIR_API_TOKEN = "b466e4ea1d74d418b79837f4fd6302a8";
     public static final String FIR_APP_ID = "5848e52a959d69340f002b59";
 
-    public static boolean RUNNING = false;
-
     public final static int MAXIMG = 9;
 
     public final static boolean WarningNotination = false; // 通知预警

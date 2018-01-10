@@ -1,10 +1,18 @@
 package com.lkpower.railway.util;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+
+import static com.lkpower.railway.R.id.listView;
 
 public class ViewUtil {
 

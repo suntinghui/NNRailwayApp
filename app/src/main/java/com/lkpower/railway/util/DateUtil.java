@@ -113,7 +113,7 @@ public class DateUtil {
 
 
         try {
-            SimpleDateFormat sdftemp = new SimpleDateFormat("yyyy-M-d");
+            SimpleDateFormat sdftemp = new SimpleDateFormat("yyyyMMdd");
             Date date = sdftemp.parse(yyyyMd);
 
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");

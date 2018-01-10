@@ -183,6 +183,14 @@ public class ActivityUtil {
         return pi;
     }
 
+    public static boolean isTimeServiceWorked(Activity ctx) {
+        return ActivityUtil.isServiceRunning(ctx, "com.lkpower.railway.activity.WarningTimeService");
+    }
+
+    public static boolean isLocationServiceWorked(Activity ctx) {
+        return ActivityUtil.isServiceRunning(ctx, "com.lkpower.railway.activity.WarningLocationService");
+    }
+
     public static boolean isServiceRunning(Context mContext, String className) {
         ActivityManager activityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);

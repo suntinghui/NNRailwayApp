@@ -37,6 +37,7 @@ import com.lkpower.railway.util.DeviceUtil;
 import com.lkpower.railway.util.ExceptionUtil;
 import com.lkpower.railway.util.HUDUtil;
 import com.lkpower.railway.util.UMengPushUtil;
+import com.lkpower.railway.util.ViewUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.request.BaseRequest;
@@ -60,6 +61,8 @@ import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
+
+import static com.lkpower.railway.R.id.runningBtn;
 
 
 /**
@@ -85,8 +88,6 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     // 标题 车站列表名称
     private ArrayList<String> trainList = new ArrayList<String>();
-
-    private Button runningBtn = null;
 
     public int location = 0;
 
@@ -132,18 +133,14 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         TextView settingTextView = (TextView) this.findViewById(R.id.settingTextView);
         settingTextView.setOnClickListener(this);
 
-        runningBtn = (Button) this.findViewById(R.id.runningBtn);
-        runningBtn.setOnClickListener(this);
-        runningBtn.setVisibility(View.INVISIBLE);
-
         warningStatusTextView = (TextView) this.findViewById(R.id.warningStatusTextView);
-        warningStatusTextView.setVisibility(View.GONE);
 
         listView = (ListView) this.findViewById(R.id.listView);
         adapter = new StationListAdapter(this);
         listView.setAdapter(adapter);
         listView.setAlpha(0.5f);
 
+        // 为空的时候用户可以手动查询车站列表数据
         ActivityUtil.setEmptyView(this, listView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +155,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         UpdateFunGO.onResume(this);
 
+        // 每一次重新进入该界面都刷新一下，主要是为了刷新任务完成情况。
         requestStationListEx(trainInfoList.isEmpty() ? "正在查询车站信息..." : null);
     }
 
@@ -180,7 +178,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Log.e("===", "=======================onNewIntent");
+        Log.e("onNewIntent", "=======================onNewIntent");
 
         try {
             boolean LATE_TYPE = intent.getBooleanExtra("LATE_TYPE", false);
@@ -189,19 +187,14 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             if (LATE_TYPE) {
                 Constants.CURRENT_TRAIN_LATE = late;
 
-                if (!Constants.RUNNING) {
-                    Toast.makeText(this, "收到列车晚点更新通知,但是应用没有\"启动\",忽略该信息", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 if (late) {
                     Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
-                    this.startWarningLocationService(true);
+                    this.startWarningLocationService();
                     this.stopWarningTimeService();
 
                 } else {
                     Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
-                    this.startWaringTimeService(true);
+                    this.startWaringTimeService();
                     this.stopWarningLocationService();
                 }
 
@@ -226,6 +219,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         }
     }
 
+    // 请求车站列表数据
     private void requestStationListEx(final String msg) {
         OkGo.post(Constants.HOST_IP_REQ)
                 .tag(this)
@@ -239,6 +233,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                         super.onBefore(request);
                         HUDUtil.showHUD(StationListActivityEx.this, msg);
                     }
+
 
                     @Override
                     public void onError(Call call, okhttp3.Response response, Exception e) {
@@ -272,15 +267,34 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                                 Constants.DeviceInfo = deviceInfo;
 
                                 if (trainInfoList != null && trainInfoList.size() != 0) {
-                                    runningBtn.setVisibility(View.VISIBLE);
-                                    listView.setAlpha(1.0f);
 
-                                    adapter.setData(trainInfoList.get(location).getStationInfo());
+                                    TrainInfo trainInfo = trainInfoList.get(location);
+
+
+                                    adapter.setData(trainInfo.getStationInfo());
                                     adapter.notifyDataSetChanged();
 
-                                    Constants.CarNumberId = trainInfoList.get(location).getID();
-                                    Constants.CarNumberName = trainInfoList.get(location).getTrainName();
-                                    Constants.CardUserName = trainInfoList.get(location).getUserName();
+                                    yyyyMd = trainInfo.getSerialNumber();
+
+                                    if ("".equals(yyyyMd.trim())){
+                                        listView.setAlpha(0.5f);
+                                    } else {
+                                        listView.setAlpha(1.0f);
+                                    }
+
+                                    if (Constants.CURRENT_TRAIN_LATE) {
+                                        startWarningLocationService();
+                                        stopWarningTimeService();
+
+                                    } else {
+                                        startWaringTimeService();
+                                        stopWarningLocationService();
+                                    }
+
+
+                                    Constants.CarNumberId = trainInfo.getID();
+                                    Constants.CarNumberName = trainInfo.getTrainName();
+                                    Constants.CardUserName = trainInfo.getUserName();
 
                                     titleSpinner.setText(Constants.CarNumberName + "/" + Constants.CardUserName);
 
@@ -304,12 +318,12 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
                                 } else {
                                     Toast.makeText(StationListActivityEx.this, "未查询到数据", Toast.LENGTH_SHORT).show();
-                                    runningBtn.setVisibility(View.INVISIBLE);
+
                                 }
 
                             } else {
                                 Toast.makeText(StationListActivityEx.this, deviceDetailInfoDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
-                                runningBtn.setVisibility(View.INVISIBLE);
+
                             }
 
                         } catch (Exception e) {
@@ -321,74 +335,20 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
     }
 
-    private void requestTrainStart() {
-        OkGo.post(Constants.HOST_IP_REQ)
-                .tag(this)
-                .params("commondKey", "TrainStart")
-                .params("trainNumbeId", trainInfoList.get(location).getID())
-                .params("deviceId", DeviceUtil.getDeviceId(this))
-                .params("startTime", DateUtil.getCurrentDate())
-                .execute(new StringCallback() {
+    private void startWaringTimeService() {
+        if ("".equals(yyyyMd.trim())) {
+            Log.e("Time Service", "车次时间为空，未启动车次");
+            return;
+        }
 
-                    @Override
-                    public void onBefore(BaseRequest request) {
-                        super.onBefore(request);
-                        HUDUtil.showHUD(StationListActivityEx.this, "正在启动,请稍候...");
-                    }
+        if (ActivityUtil.isTimeServiceWorked(StationListActivityEx.this)) {
+            Log.e("Time Service", "时间监控服务正在运行中，没有必要再次启动");
+            return;
 
-                    @Override
-                    public void onError(Call call, okhttp3.Response response, Exception e) {
-                        super.onError(call, response, e);
+        } else {
+            Log.e("Location Service", "即将启动时间监控服务");
+        }
 
-                        e.printStackTrace();
-
-                        Toast.makeText(StationListActivityEx.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onAfter(String s, Exception e) {
-                        super.onAfter(s, e);
-
-                        HUDUtil.dismiss();
-                    }
-
-                    @Override
-                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
-                        try {
-                            Gson gson = new GsonBuilder().create();
-                            ResultMsgDto resultDto = gson.fromJson(jsonObject, ResultMsgDto.class);
-                            if (resultDto.getResult().getFlag() == 1) {
-                                Constants.RUNNING = true;
-
-                                runningBtn.setText("停止");
-                                warningStatusTextView.setVisibility(View.VISIBLE);
-                                Toast.makeText(StationListActivityEx.this, "列车已标记为开始,请查看相关任务", Toast.LENGTH_SHORT).show();
-                                adapter.notifyDataSetChanged();
-                                listView.setAlpha(1.0f);
-
-                                if (Constants.CURRENT_TRAIN_LATE) {
-                                    startWarningLocationService(true);
-                                    stopWarningTimeService();
-
-                                    requestStationListEx(null);
-
-                                } else {
-                                    startWaringTimeService(true);
-                                    stopWarningLocationService();
-                                }
-
-                            } else {
-                                Toast.makeText(StationListActivityEx.this, resultDto.getResult().getFlagInfo(), Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-    }
-
-    private void startWaringTimeService(boolean checkFirst) {
         try {
             TrainInfo tempTrain = trainInfoList.get(location);
             if (null == tempTrain) {
@@ -404,24 +364,44 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         Intent intent = new Intent(this, WarningTimeService.class);
         intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
         intent.putExtra("DATE", yyyyMd);
-        intent.putExtra("CHECK", checkFirst);
         this.startService(intent);
+
+        startCheckService();
     }
 
     private void stopWarningTimeService() {
+        if (null != timer) {
+            timer.cancel();
+            timer = null;
+        }
+
         Intent intent = new Intent(this, WarningTimeService.class);
         this.stopService(intent);
     }
 
-    private void startWarningLocationService(boolean checkFirst) {
+    private void startWarningLocationService() {
+        if (ActivityUtil.isLocationServiceWorked(StationListActivityEx.this)) {
+            Log.e("Location Service", "位置监控服务正在运行中，没有必要再次启动");
+            return;
+
+        } else {
+            Log.e("Location Service", "即将启动位置监控服务");
+        }
+
         Intent intent = new Intent(this, WarningLocationService.class);
         intent.putExtra("TRAIN_INFO", trainInfoList.get(location));
         intent.putExtra("DATE", yyyyMd);
-        intent.putExtra("CHECK", checkFirst);
         this.startService(intent);
+
+        startCheckService();
     }
 
     private void stopWarningLocationService() {
+        if (null != timer) {
+            timer.cancel();
+            timer = null;
+        }
+
         Intent intent = new Intent(this, WarningLocationService.class);
         this.stopService(intent);
     }
@@ -433,42 +413,53 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
             switch (msg.what) {
                 case 1:
-                    checkService();
+                    checkServiceAction();
                     break;
             }
             super.handleMessage(msg);
         }
     };
 
-    private void checkService() {
-        if (Constants.RUNNING) {
-            if (Constants.CURRENT_TRAIN_LATE) {
-                boolean locatilnRunning = ActivityUtil.isServiceRunning(this, "com.lkpower.railway.activity.WarningLocationService");
-                Log.e("@@@", "Location:" + locatilnRunning);
-                if (!locatilnRunning) {
-                    startWarningLocationService(true);
+    private void startCheckService() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
 
-                    warningStatusTextView.setText("到站预警服务已被关闭, 系统正在尝试自启动或您重启APP");
-                    warningStatusTextView.setTextColor(Color.parseColor("#FF001A"));
+        }, 10 * 1000, 20 * 1000);
+    }
 
-                } else {
-                    warningStatusTextView.setText("到站预警服务运行中, 如果不能收到预警请重启APP");
-                    warningStatusTextView.setTextColor(Color.parseColor("#333333"));
-                }
+    private void checkServiceAction() {
+        if (Constants.CURRENT_TRAIN_LATE) {
+            boolean locatilnRunning = ActivityUtil.isLocationServiceWorked(this);
+            Log.e("@@@", "Location:" + locatilnRunning);
+            if (!locatilnRunning) {
+                startWarningLocationService();
+
+                warningStatusTextView.setText("到站预警服务已被关闭, 系统正在尝试自启动或您重启APP");
+                warningStatusTextView.setTextColor(Color.parseColor("#FF001A"));
 
             } else {
-                boolean timerRunning = ActivityUtil.isServiceRunning(this, "com.lkpower.railway.activity.WarningTimeService");
-                Log.e("@@@", "Time:" + timerRunning);
-                if (!timerRunning) {
-                    startWaringTimeService(false);
-                    warningStatusTextView.setText("到站预警服务已关闭, 系统正在尝试自启动或您重启APP");
-                    warningStatusTextView.setTextColor(Color.parseColor("#FF001A"));
+                warningStatusTextView.setText("到站预警服务运行中, 如果不能收到预警请重启APP");
+                warningStatusTextView.setTextColor(Color.parseColor("#333333"));
+            }
 
-                } else {
-                    StationModel s = getNextStation();
-                    warningStatusTextView.setText("到站预警服务运行中" + (null == s ? "" : ", 下一站是" + s.getStationName()));
-                    warningStatusTextView.setTextColor(Color.parseColor("#333333"));
-                }
+        } else {
+            boolean timerRunning = ActivityUtil.isTimeServiceWorked(this);
+            Log.e("@@@", "Time:" + timerRunning);
+            if (!timerRunning) {
+                startWaringTimeService();
+                warningStatusTextView.setText("到站预警服务已关闭, 系统正在尝试自启动或您重启APP");
+                warningStatusTextView.setTextColor(Color.parseColor("#FF001A"));
+
+            } else {
+                StationModel s = getNextStation();
+                warningStatusTextView.setText("到站预警服务运行中" + (null == s ? "" : ", 下一站是" + s.getStationName()));
+                warningStatusTextView.setTextColor(Color.parseColor("#333333"));
             }
         }
     }
@@ -528,23 +519,23 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     private void changeTrain(int loc) {
         this.location = loc;
 
+        TrainInfo trainInfo = trainInfoList.get(location);
+
+        adapter.setData(trainInfo.getStationInfo());
+        adapter.notifyDataSetChanged();
+
+        Constants.CarNumberId = trainInfo.getID();
+        Constants.CarNumberName = trainInfo.getTrainName();
+        Constants.CardUserName = trainInfo.getUserName();
+
+        titleSpinner.setText(Constants.CarNumberName + "/" + Constants.CardUserName);
+
         // 停止计时服务
         this.stopWarningLocationService();
         this.stopWarningTimeService();
 
-        Constants.RUNNING = false;
+        requestStationListEx("正在查询车站数据...");
 
-        runningBtn.setText("启动");
-        warningStatusTextView.setVisibility(View.GONE);
-
-        adapter.setData(trainInfoList.get(location).getStationInfo());
-        adapter.notifyDataSetChanged();
-
-        Constants.CarNumberId = trainInfoList.get(location).getID();
-        Constants.CarNumberName = trainInfoList.get(location).getTrainName();
-        Constants.CardUserName = trainInfoList.get(location).getUserName();
-
-        titleSpinner.setText(Constants.CarNumberName + "/" + Constants.CardUserName);
     }
 
     private void checkUpdate() {
@@ -562,114 +553,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 intent.putExtra("TRAIN_INFO", trainInfoList.isEmpty() ? null : trainInfoList.get(location));
                 this.startActivity(intent);
                 break;
-
-            case R.id.runningBtn: {
-                try {
-                    if (Constants.RUNNING) {
-                        stopRunning();
-
-                        if (null != timer) {
-                            timer.cancel();
-                            timer = null;
-                        }
-
-                    } else {
-                        //startRunning();
-
-                        Toast.makeText(StationListActivityEx.this, "请选择本次列车始发日期", Toast.LENGTH_LONG).show();
-                        showUpdateDate();
-
-                        timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                Message msg = new Message();
-                                msg.what = 1;
-                                handler.sendMessage(msg);
-                            }
-
-                        }, 10 * 1000, 20 * 1000);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                break;
-            }
         }
-    }
-
-    private void startRunning() {
-        SweetAlertDialog dialog = new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定启动?").setContentText("请确认列车发车日期:" + DateUtil.getCurrentDate2()).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sDialog) {
-                sDialog.cancel();
-                requestTrainStart();
-
-            }
-        }).setCancelText("修改日期").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.cancel();
-                showUpdateDate();
-            }
-        });
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.show();
-    }
-
-    private void showUpdateDate() {
-        final AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.show();
-
-        DatePicker picker = new DatePicker(this);
-        picker.setDate(Integer.parseInt(DateUtil.getCurrentYear()), Integer.parseInt(DateUtil.getCurrentDay()));
-        picker.setMode(DPMode.SINGLE);
-        picker.setTodayDisplay(false);
-        picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
-            @Override
-            public void onDatePicked(String date) {
-                dialog.dismiss();
-
-                yyyyMd = date;
-
-                requestTrainStart();
-            }
-        });
-
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setContentView(picker, params);
-        dialog.getWindow().setGravity(Gravity.CENTER);
-    }
-
-    private void stopRunning() {
-        new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.WARNING_TYPE).setTitleText("确定停止?").setContentText("停止后将无法完成任务并停止到站预警").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sDialog) {
-                Constants.RUNNING = !Constants.RUNNING;
-
-                sDialog.cancel();
-
-                // 停止计时服务
-                stopWarningLocationService();
-                stopWarningTimeService();
-
-                runningBtn.setText("启动");
-
-                warningStatusTextView.setVisibility(View.GONE);
-
-                listView.setAlpha(0.5f);
-
-                Toast.makeText(StationListActivityEx.this, "已停止", Toast.LENGTH_SHORT).show();
-
-            }
-        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.cancel();
-            }
-        }).show();
     }
 
     private StationModel getNextStation() {
@@ -791,25 +675,15 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
             holder.contentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (Constants.RUNNING) {
-                        Intent intent = new Intent(StationListActivityEx.this, TaskListActivity.class);
-                        intent.putExtra("TRAIN", trainInfoList.get(location));
-                        intent.putExtra("STATION", dto);
-                        intent.putExtra("DATE", DateUtil.yyyyMd2yyyyMMDD(yyyyMd));
-                        StationListActivityEx.this.startActivity(intent);
-
-                    } else {
-                        new SweetAlertDialog(StationListActivityEx.this, SweetAlertDialog.NORMAL_TYPE).setTitleText("提示").setContentText("火车尚未出发,暂不能查看任务。请点击左上角的开始按纽。").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.cancel();
-                            }
-                        }).show();
-                    }
+                    Intent intent = new Intent(StationListActivityEx.this, TaskListActivity.class);
+                    intent.putExtra("TRAIN", trainInfoList.get(location));
+                    intent.putExtra("STATION", dto);
+                    intent.putExtra("DATE", yyyyMd);
+                    StationListActivityEx.this.startActivity(intent);
                 }
             });
 
-            holder.contentLayout.setAlpha(Constants.RUNNING ? 1.0f : 0.5f);
+            holder.contentLayout.setAlpha(1.0f);
 
 
             return convertView;

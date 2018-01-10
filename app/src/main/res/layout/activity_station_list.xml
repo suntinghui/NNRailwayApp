@@ -25,6 +25,7 @@
             android:paddingRight="15dip"
             android:paddingTop="5dip"
             android:text="启动"
+            android:visibility="invisible"
             android:textColor="@color/white"
             android:textSize="13sp" />
 

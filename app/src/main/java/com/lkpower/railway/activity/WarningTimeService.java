@@ -38,7 +38,6 @@ public class WarningTimeService extends Service {
 
     private TrainInfo trainInfo = null;
     private String yyyyMd = null;
-    private boolean checkFirst = true;
 
     private Timer timer = null;
     private Handler handler = null;
@@ -58,11 +57,8 @@ public class WarningTimeService extends Service {
         try {
             trainInfo = (TrainInfo) intent.getSerializableExtra("TRAIN_INFO");
             yyyyMd = intent.getStringExtra("DATE");
-            checkFirst = intent.getBooleanExtra("CHECK", true);
 
-            if (checkFirst) {
-                startCheck();
-            }
+            startCheck();
 
             startTimer();
 
