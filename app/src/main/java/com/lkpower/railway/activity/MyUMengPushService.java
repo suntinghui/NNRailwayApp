@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.lkpower.railway.R;
+import com.umeng.message.PushAgent;
 import com.umeng.message.UmengBaseIntentService;
 import com.umeng.message.UmengMessageService;
 import com.umeng.message.entity.UMessage;
@@ -18,13 +19,16 @@ import com.umeng.message.entity.UMessage;
 import org.android.agoo.common.AgooConstants;
 import org.json.JSONObject;
 
-;
 
 public class MyUMengPushService extends UmengMessageService {
+
+    PushAgent mPushAgent = null;
 
     // 如果需要打开Activity，请调用Intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)；否则无法打开Activity。
     @Override
     public void onMessage(Context context, Intent intent) {
+
+        mPushAgent = PushAgent.getInstance(this);
 
         Log.e("PUSH", "----------------收到推送了------------------------");
 
@@ -40,10 +44,12 @@ public class MyUMengPushService extends UmengMessageService {
              LateType_Late    晚点
              LateType_Normal  正点
              Publish 段发信息
+             MissionWarning  到点提醒
              */
             if ("LateType_Late".equalsIgnoreCase(PushType)) { // 晚点
                 Intent tempIntent = new Intent(context, StationListActivityEx.class);
                 tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                tempIntent.putExtra("PushType", PushType);
                 tempIntent.putExtra("LATE_TYPE", true);
                 tempIntent.putExtra("LATE", true);
                 showNotification(context, msg, tempIntent);
@@ -51,6 +57,7 @@ public class MyUMengPushService extends UmengMessageService {
             } else if ("LateType_Normal".equalsIgnoreCase(PushType)) { // 取消晚点
                 Intent tempIntent = new Intent(context, StationListActivityEx.class);
                 tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                tempIntent.putExtra("PushType", PushType);
                 tempIntent.putExtra("LATE_TYPE", true);
                 tempIntent.putExtra("LATE", false);
                 showNotification(context, msg, tempIntent);
@@ -60,10 +67,30 @@ public class MyUMengPushService extends UmengMessageService {
                 tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 tempIntent.putExtra("PUSH", true);
                 context.startActivity(tempIntent);
+
+            } else if("MissionWarning".equalsIgnoreCase(PushType)){
+                Intent tempIntent = new Intent(context, StationListActivityEx.class);
+                tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                tempIntent.putExtra("PushType", PushType);
+                tempIntent.putExtra("InstanceId", msg.extra.get("InstanceId"));//发车实例ID
+                tempIntent.putExtra("StationId", msg.extra.get("StationId"));//站点ID
+                tempIntent.putExtra("DeviceId", msg.extra.get("DeviceId"));//设备ID
+                tempIntent.putExtra("MissionInstanceId", msg.extra.get("MissionInstanceId"));//任务实例ID
+                tempIntent.putExtra("StationName", msg.extra.get("StationName"));// 车站名称
+                tempIntent.putExtra("ArriveDate", msg.extra.get("ArriveDate"));// 到达时间
+
+                context.startActivity(tempIntent);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            //mPushAgent.setPushIntentServiceClass(null);
+
+            Intent tempIntent = new Intent(context, StationListActivityEx.class);
+            tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            tempIntent.putExtra("PushType", "Test");
+            startActivity(tempIntent);
         }
     }
 

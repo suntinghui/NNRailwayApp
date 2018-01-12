@@ -66,30 +66,12 @@
     </item>
     <item
         is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/PushSDK/build/intermediates/bundles/default/libs/com.umeng.message_v3.0.4.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="662513b57c41625921b7030cfb162b0c97f09f03">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.umeng.message_v3.0.4_2984c2be220ae7cde316ab053dac003222e61c95.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/workspace/androidstudio/NNRailwayApp/app/libs/BaiduLBS_Android.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="e53b14e9054757ca7a1cb3527ed7752e5d4d2444">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/BaiduLBS_Android_b3bf22786f7ad9dfb7134119ab292b5f9176b29e.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/workspace/androidstudio/NNRailwayApp/PushSDK/build/intermediates/bundles/default/libs/utdid4all-1.1.5_proguard.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="a96e7800ffe107ef0fd262f8025eea5e661377ea">
-        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/utdid4all-1.1.5_proguard_9b74645f76d23d66378ca31a1e0c08c01e6685bd.jar" />
     </item>
     <item
         is-multidex="false"
@@ -144,6 +126,24 @@
         revision="25.0.0"
         sha1="67125d743e0035a1b157ba8210c2abf1ff374e10">
         <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/urlimageviewhelper-1.0.4_945772576f87db68f7e2a29aeaf7b98d4340ad3b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/PushSDK/build/intermediates/bundles/default/libs/com.umeng.message_3.1.5a.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="1e90241ab59c944f3c392cab4c735da000a3c78e">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/com.umeng.message_3.1.5a_0995568a9b5424b8a9c6329a7c87b9fdb3a96212.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/workspace/androidstudio/NNRailwayApp/PushSDK/build/intermediates/bundles/default/libs/utdid4all-1.1.5.3_proguard.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="1a4a47c44b68ea5c20e370d37f1779c57211aa68">
+        <dex dex="/workspace/androidstudio/NNRailwayApp/app/build/intermediates/pre-dexed/debug/utdid4all-1.1.5.3_proguard_9efbb25780bbeeecefede71c02d1dc7b4bfc9e25.jar" />
     </item>
     <item
         is-multidex="false"

@@ -21,8 +21,6 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 
-import com.umeng.message.lib.BuildConfig;
-
 import java.util.logging.Level;
 
 /**

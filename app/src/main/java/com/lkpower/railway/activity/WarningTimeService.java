@@ -117,6 +117,7 @@ public class WarningTimeService extends Service {
 
                 if (Constants.WarningNotination) {
                     Intent intent = new Intent(WarningTimeService.this, StationListActivityEx.class);
+                    intent.putExtra("PushType", "OldWarning");
                     intent.putExtra("EarlyWarning", true);
                     intent.putExtra("TRAIN_INFO", trainInfo);
                     intent.putExtra("stationId", station.getID());

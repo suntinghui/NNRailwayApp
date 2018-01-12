@@ -123,6 +123,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         mPushAgent.setPushIntentServiceClass(MyUMengPushService.class);
 
         registerBroadcastReceiver();
+
+        yaoyaoAction(this.getIntent());
     }
 
     private void initView() {
@@ -180,28 +182,35 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         Log.e("onNewIntent", "=======================onNewIntent");
 
+        yaoyaoAction(intent);
+
+    }
+
+    private void yaoyaoAction(Intent intent) {
         try {
+            String pushType = intent.getStringExtra("PushType");
             boolean LATE_TYPE = intent.getBooleanExtra("LATE_TYPE", false);
             boolean late = intent.getBooleanExtra("LATE", false);
 
-            if (LATE_TYPE) {
+            if ("LateType_Late".equalsIgnoreCase(pushType)) {
+                Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
                 Constants.CURRENT_TRAIN_LATE = late;
-
-                if (late) {
-                    Toast.makeText(this, "列车被标记为晚点,切换到GPS地理预警模式", Toast.LENGTH_SHORT).show();
-                    this.startWarningLocationService();
-                    this.stopWarningTimeService();
-
-                } else {
-                    Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
-                    this.startWaringTimeService();
-                    this.stopWarningLocationService();
-                }
+                this.startWarningLocationService();
+                this.stopWarningTimeService();
 
                 // 用户点击了预警推送,告知服务器
-                requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
+                requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location).getInstanceId());
 
-            } else {
+            } else if ("LateType_Normal".equalsIgnoreCase(pushType)) {
+                Toast.makeText(this, "列车晚点状态取消,切换到时间预警模式", Toast.LENGTH_SHORT).show();
+                Constants.CURRENT_TRAIN_LATE = late;
+                this.startWaringTimeService();
+                this.stopWarningLocationService();
+
+                // 用户点击了预警推送,告知服务器
+                requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location).getInstanceId());
+
+            } else if ("OldWarning".equalsIgnoreCase(pushType)){
                 // 停止播放及震动
                 Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
                 warningIntent.putExtra("PLAY", false);
@@ -210,13 +219,101 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
                 boolean EarlyWarning = intent.getBooleanExtra("EarlyWarning", false);
                 if (EarlyWarning) { // 预警
                     // 用户点击了预警推送,告知服务器
-                    requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location));
+                    requestAlarmUpdateLogInfo(intent.getStringExtra("stationId"), trainInfoList.get(location).getInstanceId());
                 }
+
+            } else if ("MissionWarning".equalsIgnoreCase(pushType)) {
+                requestTellServer(intent.getStringExtra("InstanceId"), intent.getStringExtra("StationId"));
+
+                showPushDialog(intent);
+
+            } else if ("Test".equalsIgnoreCase(pushType)) {
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("提示").setContentText("收到测试消息").setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.cancel();
+                    }
+                }).show();
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // 新的方案
+    private void showPushDialog(final Intent intent) {
+        Intent warningIntent = new Intent(this, WarningNotificationClickReceiver.class);
+        warningIntent.putExtra("PLAY", true);
+        this.sendBroadcast(warningIntent);
+
+        String content = intent.getStringExtra("StationName") + "将在 " + intent.getStringExtra("ArriveDate") + " 到站,请您及时完成相关任务。";
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("提示").setContentText(content).setConfirmText("确定").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                sDialog.cancel();
+
+                // 停止播放及震动
+                Intent warningIntent = new Intent(StationListActivityEx.this, WarningNotificationClickReceiver.class);
+                warningIntent.putExtra("PLAY", false);
+                StationListActivityEx.this.sendBroadcast(warningIntent);
+
+                // 用户点击了预警推送,告知服务器
+                requestAlarmUpdateLogInfo(intent.getStringExtra("StationId"), intent.getStringExtra("InstanceId"));
+
+            }
+        }).show();
+    }
+
+    private void requestTellServer(String InstanceId, String StationId) {
+        OkGo.post(Constants.HOST_IP_REQ)
+                .tag(this)
+                .params("commondKey", "AlarmLogInfo")
+                .params("InstanceId", InstanceId)
+                .params("DeviceId", DeviceUtil.getDeviceId(this))
+                .params("LogTime", DateUtil.getCurrentDateTime())
+                .params("StationId", StationId)
+                .params("Remark", "")
+                .params("Args", "")
+                .execute(new StringCallback() {
+
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                    }
+
+                    @Override
+                    public void onError(Call call, okhttp3.Response response, Exception e) {
+                        super.onError(call, response, e);
+
+                        e.printStackTrace();
+
+                        Toast.makeText(StationListActivityEx.this, ExceptionUtil.getMsg(e), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onAfter(String s, Exception e) {
+                        super.onAfter(s, e);
+                    }
+
+                    @Override
+                    public void onSuccess(String jsonObject, Call call, okhttp3.Response response) {
+                        try {
+                            Gson gson = new GsonBuilder().create();
+                            ResultMsgDto resultMsgDto = gson.fromJson(jsonObject, ResultMsgDto.class);
+                            if (resultMsgDto.getResult().getFlag() == 1) {
+                                Log.e("===", "预警信息已经发送到服务器");
+
+                            } else {
+                                Log.e("===", "预警信息发送到服务器失败");
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     // 请求车站列表数据
@@ -336,6 +433,8 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
     }
 
     private void startWaringTimeService() {
+        /*
+
         if ("".equals(yyyyMd.trim())) {
             Log.e("Time Service", "车次时间为空，未启动车次");
             return;
@@ -367,9 +466,12 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.startService(intent);
 
         startCheckService();
+
+         **/
     }
 
     private void stopWarningTimeService() {
+        /*
         if (null != timer) {
             timer.cancel();
             timer = null;
@@ -377,9 +479,11 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         Intent intent = new Intent(this, WarningTimeService.class);
         this.stopService(intent);
+        */
     }
 
     private void startWarningLocationService() {
+        /*
         if (ActivityUtil.isLocationServiceWorked(StationListActivityEx.this)) {
             Log.e("Location Service", "位置监控服务正在运行中，没有必要再次启动");
             return;
@@ -394,9 +498,11 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         this.startService(intent);
 
         startCheckService();
+        */
     }
 
     private void stopWarningLocationService() {
+        /*
         if (null != timer) {
             timer.cancel();
             timer = null;
@@ -404,6 +510,7 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
 
         Intent intent = new Intent(this, WarningLocationService.class);
         this.stopService(intent);
+        */
     }
 
     Timer timer = new Timer();
@@ -464,11 +571,11 @@ public class StationListActivityEx extends BaseActivity implements View.OnClickL
         }
     }
 
-    private void requestAlarmUpdateLogInfo(String stationId, TrainInfo trainInfo) {
+    private void requestAlarmUpdateLogInfo(String stationId, String InstanceId) {
         OkGo.post(Constants.HOST_IP_REQ)
                 .tag(this)
                 .params("commondKey", "AlarmUpdateLogInfo")
-                .params("InstanceId", trainInfo.getInstanceId())
+                .params("InstanceId", InstanceId)
                 .params("DeviceId", DeviceUtil.getDeviceId(this))
                 .params("LogTime", DateUtil.getCurrentDateTime())
                 .params("StationId", stationId)
