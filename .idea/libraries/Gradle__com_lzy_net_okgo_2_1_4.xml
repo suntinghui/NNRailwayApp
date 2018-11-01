@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.lzy.net:okgo-2.1.4">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/2409831b271a2952e0a50d1cc456e1695eacd198/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/2409831b271a2952e0a50d1cc456e1695eacd198/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.lzy.net/okgo/2.1.4/c592fc30b9a9be1b3315af76dd69cfce5b09fae8/okgo-2.1.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
